@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>To Hold a Mountain</title>
+  <meta name="description" content="To Hold a Mountain — coming soon.">
+  <meta name="theme-color" content="#0d1220">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Each layer moves at its own speed while scrolling (data-speed: 0 = fixed, 1 = moves with the page). -->
+  <section class="scene" aria-label="To Hold a Mountain">
+    <div class="layer sky" data-speed="0.05"></div>
+    <div class="layer stars" data-speed="0.1"></div>
+    <div class="layer moon" data-speed="0.15"></div>
+    <svg class="layer ridge ridge-far" data-speed="0.25" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 400 L0 260 L120 190 L230 240 L360 120 L470 210 L560 170 L700 60 L830 190 L940 140 L1060 220 L1180 110 L1300 200 L1440 150 L1440 400 Z"/>
+    </svg>
+    <div class="title" data-speed="0.4">
+      <p class="eyebrow">Coming soon</p>
+      <h1>To Hold<br><em>a Mountain</em></h1>
+    </div>
+    <svg class="layer ridge ridge-mid" data-speed="0.55" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 400 L0 280 L160 220 L300 290 L450 180 L600 270 L760 200 L900 290 L1050 210 L1200 280 L1340 230 L1440 260 L1440 400 Z"/>
+    </svg>
+    <svg class="layer ridge ridge-near" data-speed="0.8" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 400 L0 330 L200 290 L380 340 L560 300 L740 350 L920 310 L1100 345 L1280 300 L1440 330 L1440 400 Z"/>
+    </svg>
+  </section>
+
+  <section class="after">
+    <p>A new story is on its way.</p>
+  </section>
+
+  <script src="main.js"></script>
+</body>
+</html>
