@@ -18,7 +18,7 @@ body {
 }
 
 /* Scroll length of the whole sequence: taller = slower. */
-.journey { position: relative; height: 600vh; }
+.journey { position: relative; height: 700vh; }
 
 .stage {
   position: sticky;
@@ -44,34 +44,52 @@ body {
 }
 .logo img { width: min(78vw, 820px); height: auto; }
 
-.clouds { position: absolute; inset: 0; pointer-events: none; }
-
-/* A cloud is a few soft overlapping ellipses, blurred together. */
-.cloud {
+/* Moves as one piece: its top is the video's top edge. */
+.rise {
   position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--w);
-  aspect-ratio: 2.4;
-  background:
-    radial-gradient(ellipse 24% 42% at 28% 58%, #fff 55%, #fff0 100%),
-    radial-gradient(ellipse 28% 52% at 50% 44%, #fff 55%, #fff0 100%),
-    radial-gradient(ellipse 22% 40% at 72% 58%, #fff 55%, #fff0 100%),
-    radial-gradient(ellipse 46% 30% at 50% 72%, #f1f5fb 60%, #fff0 100%);
-  filter: blur(10px);
-  opacity: 0;
-  will-change: transform, opacity;
+  inset: 0;
+  will-change: transform;
+}
+
+/* Overscan above and below so the clip can drift inside its frame (parallax)
+   and its letterbox bars stay out of view. */
+.video-wrap { position: absolute; inset: 0; overflow: hidden; }
+.video-wrap video {
+  position: absolute;
+  left: 0;
+  top: -12.5%;
+  width: 100%;
+  height: 125%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Cloud bank images are 2.4:1; their solid band sits at 52–75% of their height,
+   placed over the video's top edge, then melts into the film's sky below. */
+.cloud-layer {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  top: -52.5vh;
+  height: 70vh;
+  background-size: cover;
+  background-position: center bottom;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .cloud-text {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 14vh;
   display: grid;
-  place-content: center;
+  justify-items: center;
   gap: 1rem;
   padding: 0 16px;
   text-align: center;
-  color: #1d3157;
+  color: var(--ink);
+  text-shadow: 0 1px 18px #0e235055;
   opacity: 0;
   will-change: opacity, transform;
 }
@@ -88,21 +106,7 @@ body {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
-.cloud-text .eyebrow { color: #3f5a86; }
-
-.video-wrap {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  will-change: opacity, transform;
-}
-/* Slightly enlarged so the clip's letterbox bars fall outside the screen. */
-.video-wrap video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.08);
-}
+.cloud-text .eyebrow { color: var(--cream); }
 
 .story {
   max-width: 40rem;
