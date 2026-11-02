@@ -1,17 +1,15 @@
 :root {
-  --night: #0d1220;
-  --dusk: #2a2f4f;
-  --glow: #c98f6b;
-  --far: #3b4266;
-  --mid: #232842;
-  --near: #121627;
-  --ink: #f2ece3;
-  --muted: #a9a6b8;
+  --sky-top: #7fa9dc;
+  --sky-mid: #3f6fae;
+  --sky-bottom: #0e2350;
+  --ink: #f6efe6;
+  --cream: #f3e3d3;
+  --muted: #b9c6dd;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { background: var(--night); color: var(--ink); }
+html, body { background: var(--sky-bottom); color: var(--ink); }
 
 body {
   font-family: "Inter", system-ui, sans-serif;
@@ -19,94 +17,110 @@ body {
   overflow-x: hidden;
 }
 
-.scene {
-  position: relative;
+/* Scroll length of the whole sequence: taller = slower. */
+.journey { position: relative; height: 600vh; }
+
+.stage {
+  position: sticky;
+  top: 0;
   height: 100vh;
   height: 100svh;
   overflow: hidden;
 }
 
-.layer {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  will-change: transform;
-}
-
 .sky {
-  inset: 0;
-  height: 100%;
-  background: linear-gradient(180deg, var(--night) 0%, var(--dusk) 55%, var(--glow) 100%);
-}
-
-.stars {
-  inset: 0;
-  height: 100%;
-  background-image:
-    radial-gradient(1px 1px at 10% 20%, #fff8 50%, transparent 51%),
-    radial-gradient(1px 1px at 30% 8%, #fff6 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 55% 15%, #fff9 50%, transparent 51%),
-    radial-gradient(1px 1px at 72% 28%, #fff5 50%, transparent 51%),
-    radial-gradient(1px 1px at 88% 10%, #fff8 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 18% 38%, #fff4 50%, transparent 51%),
-    radial-gradient(1px 1px at 64% 40%, #fff6 50%, transparent 51%),
-    radial-gradient(1px 1px at 42% 30%, #fff5 50%, transparent 51%);
-}
-
-.moon {
-  top: 14vh;
-  left: 68%;
-  width: clamp(60px, 9vw, 120px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fbf3e4, #e4d2b4);
-  box-shadow: 0 0 80px 20px #f5e3c233;
-}
-
-.ridge {
-  bottom: 0;
-  height: 55vh;
-}
-.ridge-far  { fill: var(--far);  bottom: 22vh; }
-.ridge-mid  { fill: var(--mid);  bottom: 8vh; }
-.ridge-near { fill: var(--near); height: 40vh; }
-
-.title {
   position: absolute;
-  top: 22vh;
-  left: 0;
-  right: 0;
-  padding: 0 16px;
-  text-align: center;
-  will-change: transform;
+  inset: 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-bottom) 100%);
 }
 
-.eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 1.2rem;
-}
-
-h1 {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-weight: 500;
-  font-size: clamp(3rem, 11vw, 8.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.01em;
-}
-h1 em { font-weight: 400; color: #f0d2b8; }
-
-.after {
-  min-height: 70vh;
+.logo {
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
   padding: 0 16px;
-  background: var(--near);
-  color: var(--muted);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-style: italic;
+  will-change: transform, opacity;
+}
+.logo img { width: min(78vw, 820px); height: auto; }
+
+.clouds { position: absolute; inset: 0; pointer-events: none; }
+
+/* A cloud is a few soft overlapping ellipses, blurred together. */
+.cloud {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  aspect-ratio: 2.4;
+  background:
+    radial-gradient(ellipse 24% 42% at 28% 58%, #fff 55%, #fff0 100%),
+    radial-gradient(ellipse 28% 52% at 50% 44%, #fff 55%, #fff0 100%),
+    radial-gradient(ellipse 22% 40% at 72% 58%, #fff 55%, #fff0 100%),
+    radial-gradient(ellipse 46% 30% at 50% 72%, #f1f5fb 60%, #fff0 100%);
+  filter: blur(10px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cloud-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  padding: 0 16px;
   text-align: center;
+  color: #1d3157;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.cloud-text p:last-child {
+  max-width: 34rem;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.cloud-text .eyebrow { color: #3f5a86; }
+
+.video-wrap {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+/* Slightly enlarged so the clip's letterbox bars fall outside the screen. */
+.video-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+}
+
+.story {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 18vh 16px 22vh;
+}
+.story .eyebrow { color: var(--muted); margin-bottom: 1.2rem; }
+.story h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  line-height: 1.05;
+  margin-bottom: 1.6rem;
+  color: var(--cream);
+}
+.story p:not(.eyebrow) {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
 }
