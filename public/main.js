@@ -25,12 +25,6 @@ const introClouds = document.querySelector(".intro-clouds");
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
 const ease = (t) => t * t * (3 - 2 * t);
 
-// Phones only: the video fills the screen's height (cropped at the sides) and pans
-// across while it plays. 0% = its left edge, 100% = its right edge.
-const mobile = window.matchMedia("(max-width: 767px)");
-const PAN_FROM = 0;
-const PAN_TO = 70; // ends where the rider is, rather than at the far right edge
-
 // Where the text's stretch starts on the page (the clouds' position before they are
 // held over the video), measured on load and when the window changes size.
 let trackTop = 0;
@@ -178,13 +172,6 @@ Promise.all([
 setTimeout(reveal, 20000); // never keep people waiting forever on a slow connection
 
 
-// Phones: the crop pans across with the rider, following the clip's own time.
-function pan() {
-  video.style.objectPosition = mobile.matches && video.duration
-    ? `${PAN_FROM + (PAN_TO - PAN_FROM) * (video.currentTime / video.duration)}% 50%` : "";
-  if (!video.paused) requestAnimationFrame(pan);
-}
-video.addEventListener("play", () => requestAnimationFrame(pan));
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
