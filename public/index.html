@@ -35,22 +35,9 @@
     </div>
     <div class="intro-clouds">
       <div class="clouds" aria-hidden="true"></div>
-      <!-- The logline, then two press quotes, ride up with the clouds and hold in the
-           centre, each turning into the next, then move on. -->
-      <div class="cloud-text-track">
-        <div class="cloud-text">
-          <figure class="quote logline">
-            <p>In the remote highlands of Montenegro, a shepherd mother and daughter proudly defend their ancestral mountain from the threat of becoming a NATO military training ground, stirring memories of the violence that shattered their family.</p>
-          </figure>
-          <figure class="quote">
-            <blockquote>“Masterful, tender, immersive”</blockquote>
-            <figcaption><img src="press-screendaily.png" width="210" height="27" alt="Screen Daily"></figcaption>
-          </figure>
-          <figure class="quote">
-            <blockquote>“Emotionally shattering… the kind of film that entrances its audience”</blockquote>
-            <figcaption><img src="press-variety.png" width="150" height="42" alt="Variety"></figcaption>
-          </figure>
-        </div>
+      <!-- Marks where the logline and quotes ride with the clouds (the text itself is
+           further down: main.js moves it along this stretch). -->
+      <div class="cloud-text-track"></div>
       </div>
     </div>
 
@@ -78,6 +65,23 @@
       </div>
     </section>
   </div>
+
+  <!-- The logline, then two press quotes: they ride up with the clouds, ease into the
+       centre and hold, each turning into the next, then move on. Fixed to the screen and
+       placed only by main.js, so the scrolling never shakes them. -->
+    <div class="cloud-text">
+      <figure class="quote logline">
+        <p>In the remote highlands of Montenegro, a shepherd mother and daughter proudly defend their ancestral mountain from the threat of becoming a NATO military training ground, stirring memories of the violence that shattered their family.</p>
+      </figure>
+      <figure class="quote">
+        <blockquote>“Masterful, tender, immersive”</blockquote>
+        <figcaption><img src="press-screendaily.png" width="210" height="27" alt="Screen Daily"></figcaption>
+      </figure>
+      <figure class="quote">
+        <blockquote>“Emotionally shattering… the kind of film that entrances its audience”</blockquote>
+        <figcaption><img src="press-variety.png" width="150" height="42" alt="Variety"></figcaption>
+      </figure>
+  
 
   <script src="menu.js"></script>
   <script src="trailer.js"></script>

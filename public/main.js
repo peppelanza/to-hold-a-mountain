@@ -4,7 +4,8 @@
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
 const textTrack = document.querySelector(".cloud-text-track");
-const cloudText = textTrack.querySelector(".cloud-text");
+const cloudText = document.querySelector(".cloud-text");
+const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
 const TEXT_HOLD = 1.35; // screens of scrolling the logline and quotes stay in the centre
 const film = document.querySelector(".film");
@@ -24,6 +25,15 @@ const mobile = window.matchMedia("(max-width: 767px)");
 const PAN_FROM = 0;
 const PAN_TO = 70; // ends where the rider is, rather than at the far right edge
 
+// Where the text's stretch starts on the page (the clouds' position before they are
+// held over the video), measured on load and when the window changes size.
+let trackTop = 0;
+function measure() {
+  const cloudsTop = logoHold.getBoundingClientRect().top + window.scrollY + logoHold.offsetHeight +
+    parseFloat(getComputedStyle(introClouds).marginTop);
+  trackTop = cloudsTop + textTrack.offsetTop;
+}
+
 function update() {
   // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
   const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
@@ -33,12 +43,15 @@ function update() {
   // then speeds up again and moves on. u is how far the track has scrolled past the
   // top of the screen; the text stays back by an amount that grows and shrinks
   // smoothly (no sudden stop or start).
+  // The text is fixed to the screen and only this moves it (no fight with the page's
+  // own scrolling, so it doesn't tremble).
   const vh = window.innerHeight;
-  const u = -textTrack.getBoundingClientRect().top;
+  const u = window.scrollY - trackTop;
   const soft = 0.12 * vh; // how gently it slows down and speeds up
   const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
-  const behind = u - (smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
-  cloudText.style.transform = `translateY(${behind}px)`;
+  const y = -(smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
+  cloudText.style.visibility = Math.abs(y) < vh ? "visible" : "hidden";
+  cloudText.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
 
   // The pause is shared evenly: at each third, one text fades out as the next fades in.
   const each = (TEXT_HOLD * vh) / quotes.length;
@@ -176,6 +189,7 @@ fitStory();
 window.addEventListener("resize", fitStory);
 document.fonts && document.fonts.ready.then(fitStory);
 
-window.addEventListener("resize", requestUpdate);
+window.addEventListener("resize", () => { measure(); requestUpdate(); });
 video.addEventListener("loadedmetadata", requestUpdate);
+measure();
 update();

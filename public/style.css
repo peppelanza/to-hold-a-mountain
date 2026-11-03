@@ -119,12 +119,16 @@
   pointer-events: none;
 }
 .cloud-text {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 2; /* above the clouds, below the menu */
   height: 100vh;
   height: 100svh;
+  pointer-events: none;
+  visibility: hidden; /* until main.js places it */
+  will-change: transform;
   display: grid;
   align-content: center;
   justify-items: center;
