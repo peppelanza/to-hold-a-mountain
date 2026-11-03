@@ -109,9 +109,9 @@ a { color: inherit; }
   line-height: 1.1;
   text-decoration: none;
   color: var(--ink);
-  transition: color 0.25s, transform 0.35s;
+  transition: color 0.25s;
 }
-.menu a:hover, .menu a:focus-visible { color: var(--cream); transform: translateX(12px); font-style: italic; font-weight: 600; outline: none; }
+.menu a:hover, .menu a:focus-visible { color: var(--cream); font-style: italic; font-weight: 600; outline: none; }
 .menu a[aria-current="page"] { font-style: italic; font-weight: 600; color: var(--cream); }
 
 .home-link {
