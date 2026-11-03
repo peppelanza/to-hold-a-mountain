@@ -2,20 +2,20 @@
 // frosted panel (the page blurred behind it); the links slide in one after another.
 (function () {
   var items = [
-    ["Homepage", "./"],
+    ["Home", "./"],
+    ["About the film", "about.html"],
     ["Screenings & Awards", "screenings.html"],
     ["Press", "press.html"],
-    ["About the film", "about.html"],
-    ["Community", "community.html"],
-    ["Soundtrack", "soundtrack.html"]
+    ["Soundtrack", "soundtrack.html"],
+    ["Community", "community.html"]
   ];
   var here = location.pathname.split("/").pop() || "index.html";
 
-  // The page you are on is left out of the menu.
-  var links = items.filter(function (item) {
-    return (item[1] === "./" ? "index.html" : item[1]) !== here;
-  }).map(function (item, i) {
-    return '<li style="--i:' + i + '"><a href="' + item[1] + '">' + item[0] + "</a></li>";
+  // The page you are on stays in the list, marked as the current one.
+  var links = items.map(function (item, i) {
+    var current = (item[1] === "./" ? "index.html" : item[1]) === here;
+    return '<li style="--i:' + i + '"><a href="' + item[1] + '"' +
+      (current ? ' aria-current="page"' : "") + ">" + item[0] + "</a></li>";
   }).join("");
 
   var html =
