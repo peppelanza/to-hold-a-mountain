@@ -1,7 +1,6 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
 :root {
-  --lake: #6e8492; /* the lake at the bottom of the film clip */
   --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
@@ -109,7 +108,7 @@
 
 /* The block the clouds are held in. It ends 32vh below the video's top edge (its content,
    the video section, carries on past it), so the clouds are let go, and scroll up and
-   away with the page, just as the zoom into the lake starts (the moment the video fills
+   away with the page, just as the zoom starts (the moment the video fills
    the screen). Clouds top at 42vh + their height, video top 32vh above their bottom:
    height = cloud height + 42vh. */
 .flow { height: calc(var(--cloud-h) + 42vh); }
@@ -117,7 +116,7 @@
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 32% down the screen (the same
    moment the video fills the screen) they are over the top third of the video, and
-   from there they scroll away as the zoom into the lake starts. */
+   from there they scroll away as the zoom starts. */
 .intro-clouds {
   position: sticky;
   top: calc(32vh - var(--cloud-h));
@@ -213,7 +212,7 @@
 .film {
   position: relative;
   z-index: 0;
-  height: 226vh; /* scrolling on through it: zoom into the lake straight away, then the synopsis */
+  height: 226vh; /* scrolling on through it: zoom in straight away, then the synopsis */
   margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
@@ -231,19 +230,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform-origin: 50% 100%; /* zooms into the lake, bottom centre */
+  /* zooms straight in, towards the centre */
   will-change: transform, filter;
 }
-/* The lake's colour, fading in over the end of the zoom so the page below continues it. */
+/* A light shade over the blurred video, fading in with the blur, so the synopsis reads well. */
 .film-wash {
   position: absolute;
   inset: 0;
-  background: var(--lake);
+  background: rgba(24, 26, 20, 0.28);
   opacity: 0;
   pointer-events: none;
 }
 
-/* Poster and synopsis over the lake colour at the end of the video, in place:
+/* Poster and synopsis over the blurred video (still playing) at the end, in place:
    main.js brings them into focus from a blur. Poster on the left, synopsis on the right. */
 .film-story {
   position: absolute;

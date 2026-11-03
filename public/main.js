@@ -1,7 +1,7 @@
 // Homepage: everything scrolls naturally. This shows the loading screen until the
 // fonts, images and video are all in, shrinks the logo as the clouds come over it,
-// plays the video (looping) while it is on screen, and zooms it into the lake as you
-// scroll on (on phones it also pans across with the rider).
+// plays the video (looping) while it is on screen, and zooms it in and blurs it as you
+// scroll on, for the synopsis to sit on.
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
 const textTrack = document.querySelector(".cloud-text-track");
@@ -76,20 +76,20 @@ function update() {
 
   // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
   // of the moment the video fills the screen) the video slows down into place instead
-  // of stopping dead, while the zoom into the lake (bottom centre) already begins. The
-  // zoom grows the video upward, so it always covers the space the slowing leaves.
-  // Then blur, until the lake's colour fills the screen and the section below carries it on.
+  // of stopping dead, while the zoom (straight in, from the centre) already begins. The
+  // zoom grows the video past its edges, so it always covers the space the slowing leaves.
+  // Halfway into the zoom it starts to blur, not all the way: the synopsis sits on it.
   const BLEND = 0.2 * window.innerHeight;
   const t = filmBox.top; // where the video would be, scrolling with the page
   const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
   const into = ease(range(BLEND - t, 0, BLEND + 0.39 * scrollable)); // fully zoomed at play 0.39
-  video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 1.8 * into})`;
-  const blur = range(into, 0.5, 1); // the blur waits until the zoom is halfway in
-  video.style.filter = blur > 0 ? `blur(${30 * blur}px)` : "";
-  wash.style.opacity = ease(range(play, 0.25, 0.39));
+  video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
+  const blur = range(into, 0.5, 1);
+  video.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
+  wash.style.opacity = ease(blur);
 
-  // As the lake blurs out, the poster and synopsis come into focus in place, from a
+  // As the video blurs, the poster and synopsis come into focus in place, from a
   // blur, and stay to be read until the end of the page.
   const shown = ease(range(play, 0.31, 0.5));
   filmStory.style.opacity = shown;
