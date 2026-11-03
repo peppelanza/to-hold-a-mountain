@@ -72,11 +72,12 @@
 .intro-logo img { width: min(78vw, 820px); height: auto; }
 
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
-   photo. Sticky: once their soft bottom edge has risen to halfway down the screen, the
-   browser keeps them there, over the top of the video, until the video section ends. */
+   photo. Sticky: once their soft bottom edge has risen to 45% down the screen (the same
+   moment the video fills the screen), the browser keeps them there, over the top third
+   of the video, until the video section ends. */
 .intro-clouds {
   position: sticky;
-  top: calc(50vh - var(--cloud-h));
+  top: calc(45vh - var(--cloud-h));
   z-index: 1;
   margin-top: -152vh;
   height: var(--cloud-h);
@@ -158,7 +159,7 @@
   position: relative;
   z-index: 0;
   height: 340vh; /* the last part is for reading the synopsis */
-  margin-top: -80vh; /* under the clouds' whole soft bottom */
+  margin-top: -45vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
   position: sticky;
