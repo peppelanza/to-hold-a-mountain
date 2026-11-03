@@ -1,6 +1,9 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
-:root { --lake: #6e8492; } /* the lake at the bottom of the film clip */
+:root {
+  --lake: #6e8492; /* the lake at the bottom of the film clip */
+  --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */
+}
 
 /* Loading screen: the sky photo blurred, a small bar and percentage. Nothing scrolls
    until it is done; then it fades and the logo comes into focus. */
@@ -73,26 +76,28 @@
   position: relative;
   z-index: 1;
   margin-top: -152vh;
+  height: var(--cloud-h);
+  overflow-x: clip;
 }
-.clouds {
-  display: block;
-  /* 20% wider than the screen, so it can drift without its sides showing */
-  width: 120%;
-  margin-left: -10%;
-  height: max(174vw, 360vh); /* thick from 28% to 84% of its height; sides cropped on narrow screens */
-  object-fit: cover;
-  object-position: center top;
-  /* A slow drift, as if the wind carried the clouds across and back. */
-  animation: cloud-drift 22.5s ease-in-out infinite alternate;
+/* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
+   copies side by side drift left by one copy, then start over, so the clouds move
+   steadily with the wind and never stop or turn back. */
+.clouds, .film-clouds-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(var(--cloud-h) * 0.401 * 3);
+  background: url(clouds.webp) left top / auto var(--cloud-h) repeat-x;
+  animation: cloud-drift 80s linear infinite;
   will-change: transform;
 }
-.intro-clouds { overflow-x: clip; }
 @keyframes cloud-drift {
-  from { transform: translateX(-7.5%); }
-  to { transform: translateX(7.5%); }
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.3333%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .clouds { animation: none; transform: none; }
+  .clouds, .film-clouds-strip { animation: none; transform: none; }
 }
 
 /* Where the text rides with the clouds; main.js slows it gently into the centre of
@@ -135,7 +140,7 @@
   position: relative;
   z-index: 0;
   height: 300vh;
-  margin-top: -57vh;
+  margin-top: -80vh; /* under the clouds' whole soft bottom */
 }
 .film-stage {
   position: sticky;
@@ -161,6 +166,22 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* Clouds kept over the video: solid at the top edge, fading out by about a third of
+   the way down. Shows the thick middle of the cloud image, drifting with the rest. */
+.film-clouds {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 48%;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+  will-change: opacity;
+}
+.film-clouds-strip { height: 100%; background-position: left calc(var(--cloud-h) * -0.62); }
 
 .lake { background: var(--lake); }
 

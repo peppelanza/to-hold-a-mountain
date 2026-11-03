@@ -3,13 +3,13 @@
 // and plays the video with the scroll while it is on screen (and, on phones, pans it).
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
-const clouds = document.querySelector(".clouds");
 const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = textTrack.querySelector(".cloud-text");
 const TEXT_HOLD = 0.5; // screens of scrolling the text stays in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
+const filmClouds = film.querySelector(".film-clouds");
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -53,6 +53,7 @@ function update() {
   video.style.transform = `scale(${1 + 1.8 * into})`;
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
   wash.style.opacity = 0.95 * ease(range(play, 0.7, 1));
+  filmClouds.style.opacity = 1 - ease(range(play, 0.5, 0.8)); // the clouds part as it zooms into the lake
   ticking = false;
 }
 
@@ -69,9 +70,12 @@ const bar = document.querySelector(".loader-bar span");
 const pct = document.querySelector(".loader-pct");
 let videoShare = 0; // 0 → 1, by bytes received
 let imagesDone = 0;
+// The sky and the clouds are CSS backgrounds: load them here to know when they are in.
 const sky = new Image();
 sky.src = "sky.webp";
-const images = [logo, clouds, sky];
+const clouds = new Image();
+clouds.src = "clouds.webp";
+const images = [logo, sky, clouds];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);

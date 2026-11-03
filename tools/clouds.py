@@ -9,6 +9,7 @@
 - a touch of the sky photo's slate; lower down, softened toward the film's overcast sky
 - the thick middle is extended with flipped, cross-faded copies (more room to scroll)
 - the bottom fades out where the video starts
+- its sides join seamlessly, so the page can drift it sideways without end
 """
 import sys
 import numpy as np
@@ -32,7 +33,7 @@ lum = c.mean(2) / 255
 # form; fully solid from 32% down. A short ramp at the very top avoids a line.
 form = smooth(0.86, 0.66, lum)
 alpha = np.maximum(form, smooth(0.14, 0.32, v)) * smooth(0.0, 0.05, v)
-alpha *= 1 - smooth(0.72, 1.0, v)
+alpha *= 1 - smooth(0.6, 1.0, v)  # long, soft fade into the video
 
 rgb = c * np.array([0.84, 0.89, 0.93], np.float32)
 # Lower down, the film's overcast sky: light blue-grey, low contrast.
@@ -54,4 +55,14 @@ out = im[:r(0.72)]
 for seg in (im[r(0.42):r(0.74), ::-1], im[r(0.40):r(0.72)], im[r(0.44):r(0.76), ::-1]):
     out = join(out, seg, r(0.12))
 out = join(out, im[r(0.44):], r(0.12))
-Image.fromarray(out.astype(np.uint8), "RGBA").save(dst)
+
+# Seamless sideways, so it can drift without end: the last 30% of the width is
+# cross-faded into the first 30%, and the image ends where that blend begins, so its
+# right edge runs straight on into its left edge.
+b = int(W * 0.3)
+w = np.linspace(0, 1, b)[None, :, None]
+w = w * w * (3 - 2 * w)
+tile = out[:, : W - b].copy()
+tile[:, :b] = out[:, :b] * w + out[:, W - b:] * (1 - w)
+Image.fromarray(tile.clip(0, 255).astype(np.uint8), "RGBA").save(dst)
+print(f"tile {tile.shape[1]}×{tile.shape[0]}, width/height {tile.shape[1] / tile.shape[0]:.4f}")
