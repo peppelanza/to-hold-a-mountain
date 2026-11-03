@@ -8,7 +8,12 @@ const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
-const TEXT_HOLD = 1.35; // screens of scrolling the logline and quotes stay in the centre
+const TEXT_HOLD = 1.2; // screens of scrolling the logline and quotes stay in the centre
+// Where (in screens of scrolling into the pause) each text gives way to the next, and
+// where the last one fades as it leaves, so both press quotes get the same time.
+const TEXT_SWAPS = [0.3, 0.85];
+const TEXT_OUT = 1.3;
+const FADE = 0.14;
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
@@ -54,11 +59,11 @@ function update() {
   cloudText.style.visibility = Math.abs(y) < vh ? "visible" : "hidden";
   cloudText.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
 
-  // The pause is shared evenly: at each third, one text fades out as the next fades in.
-  const each = (TEXT_HOLD * vh) / quotes.length;
+  // Each text fades out as the next fades in; the last fades out as it moves away.
+  const at = (screens) => ease(range(u / vh, screens - FADE / 2, screens + FADE / 2));
   quotes.forEach((q, i) => {
-    const fadeIn = i === 0 ? 1 : ease(Math.min(1, Math.max(0, (u - (i - 0.2) * each) / (0.4 * each))));
-    const fadeOut = i === quotes.length - 1 ? 0 : ease(Math.min(1, Math.max(0, (u - (i + 0.8) * each) / (0.4 * each))));
+    const fadeIn = i === 0 ? 1 : at(TEXT_SWAPS[i - 1]);
+    const fadeOut = i < TEXT_SWAPS.length ? at(TEXT_SWAPS[i]) : ease(range(u / vh, TEXT_OUT, TEXT_OUT + 0.15));
     q.style.opacity = fadeIn * (1 - fadeOut);
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
@@ -90,9 +95,9 @@ function update() {
 
   // The clouds over the top of the video (held there by CSS) lift up and away as the
   // video zooms into the lake.
-  const away = ease(range(play, 0.05, 0.3));
+  const away = ease(range(play, 0.25, 0.45)); // they stay on the video until the zoom is well under way
   introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
-  introClouds.style.opacity = 1 - ease(range(play, 0.1, 0.3));
+  introClouds.style.opacity = 1 - ease(range(play, 0.28, 0.45));
   ticking = false;
 }
 
