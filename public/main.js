@@ -88,14 +88,20 @@ function update() {
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
-  // together), and stay to be read until the end of the page. On phones they are taller
-  // than the screen: after that, scrolling on moves them up over the video, which stays put.
+  // together), and stay to be read until the end of the page.
+  // Phones: they scroll up from below the screen instead, like the rest of a page, over
+  // the video, which stays put; they fade in as they come up.
   const shown = ease(range(blur, 0.6, 1));
-  const rise = Math.min(storyExtra, Math.max(0, -t - ZOOMED));
-  filmStory.style.opacity = shown;
-  filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
-  filmStory.style.transform = (rise ? `translate3d(0, ${(-rise).toFixed(1)}px, 0)` : "") +
-    (shown < 1 ? ` scale(${0.88 + 0.12 * shown})` : ""); // and zooms in as it sharpens
+  if (phone.matches) {
+    const y = Math.max(-storyExtra, Math.min(stage.clientHeight, stage.clientHeight - (-t - STORY_FROM)));
+    filmStory.style.opacity = ease(range(blur, 0.2, 1));
+    filmStory.style.filter = "";
+    filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+  } else {
+    filmStory.style.opacity = shown;
+    filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
+    filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
+  }
   filmStory.classList.toggle("shown", shown > 0.5);
 
   ticking = false;
@@ -184,15 +190,56 @@ setTimeout(reveal, 20000); // never keep people waiting forever on a slow connec
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
+// Phones: the laurels above the logo drift left to right for ever, one copy following
+// the other. A finger can drag them either way; let go, and they glide on with the
+// throw, easing back into the steady drift.
+const belt = document.querySelector(".logo-laurels");
+const track = belt.querySelector(".laurel-track");
+const DRIFT = 24; // px per second, to the right
+let beltX = 0, beltV = DRIFT, beltLast = 0, drag = null;
+function beltStep(now) {
+  const dt = Math.min(0.05, (now - (beltLast || now)) / 1000);
+  beltLast = now;
+  const w = track.firstElementChild.offsetWidth + 28; // one copy and its gap
+  if (w > 28 && belt.offsetParent) {
+    if (!drag) {
+      beltV += (DRIFT - beltV) * Math.min(1, dt * 1.5);
+      beltX += beltV * dt;
+    }
+    beltX = ((beltX % w) + w) % w - w; // always between one copy to the left and none
+    track.style.transform = `translate3d(${beltX.toFixed(1)}px, 0, 0)`;
+  }
+  requestAnimationFrame(beltStep);
+}
+requestAnimationFrame(beltStep);
+belt.addEventListener("pointerdown", (e) => {
+  drag = { x: e.clientX, from: beltX, t: e.timeStamp, lastX: e.clientX };
+  belt.setPointerCapture(e.pointerId);
+});
+belt.addEventListener("pointermove", (e) => {
+  if (!drag) return;
+  const dt = (e.timeStamp - drag.t) / 1000;
+  if (dt > 0) beltV = Math.max(-1500, Math.min(1500, (e.clientX - drag.lastX) / dt)); // the throw, if let go now
+  drag.t = e.timeStamp;
+  drag.lastX = e.clientX;
+  beltX = drag.from + (e.clientX - drag.x);
+});
+const letGo = () => { drag = null; };
+belt.addEventListener("pointerup", letGo);
+belt.addEventListener("pointercancel", letGo);
+
 // Larger screens: on short ones, scale the poster and synopsis down until they fit.
 // Phones: they stack and scroll instead, so the film section gets the extra length.
 const phone = window.matchMedia("(max-width: 767px)");
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
+let STORY_FROM = 0; // phones: how far past the video filling the screen it starts coming up
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
+    STORY_FROM = 0.2 * window.innerHeight; // as the blur begins
     storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
-    film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight + storyExtra}px`;
+    // room to scroll it all the way up from below the screen until its end is at the bottom
+    film.style.height = `${stage.clientHeight + STORY_FROM + stage.clientHeight + storyExtra}px`;
     return;
   }
   storyExtra = 0;
