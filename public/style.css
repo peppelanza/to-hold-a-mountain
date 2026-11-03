@@ -75,11 +75,16 @@
 }
 .laurels img { height: auto; }
 .laurels .laurels-wide { display: block; width: 100%; max-width: 1000px; }
-.laurels .laurels-grid { display: none; }
+.intro-logo .logo-laurels { display: none; }
 @media (max-width: 767px) {
-  .laurels { left: 16px; right: 100px; height: auto; justify-content: flex-start; } /* top left, clear of the button */
-  .laurels .laurels-wide { display: none; }
-  .laurels .laurels-grid { display: block; width: 100%; }
+  .laurels { display: none; }
+  /* Above the logo (first in the grid), 155px wide, close to the logo's glow. */
+  .intro-logo .logo-laurels { display: block; order: -1; width: 155px; margin: 0 0 -34px; opacity: 0.7; }
+  .revealing .intro-logo .logo-laurels, .loaded .intro-logo .logo-laurels { animation-name: laurels-in; }
+}
+@keyframes laurels-in { /* as logo-in, ending at their 70% */
+  from { opacity: 0; filter: blur(18px); }
+  to { opacity: 0.7; filter: none; }
 }
 
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
@@ -299,19 +304,21 @@
 .button:hover, .button:focus-visible { background: var(--ink); color: #46462e; outline: none; }
 .buttons { display: flex; flex-wrap: wrap; gap: 12px; }
 .watch { background: rgba(20, 30, 40, 0.15); }
-/* Phones: the poster small at the top left beside the heading and button, the
-   synopsis below; main.js scales it all down if a short screen still can't fit it. */
+/* Phones: stacked, taller than the screen: the poster full width, then the heading, the
+   synopsis, the two buttons and the footer. It stays inside the pinned video's box (cut
+   off at its bottom edge, which is the screen's); main.js moves it up as you scroll on. */
 @media (max-width: 767px) {
-  .film-story { padding: 84px 16px 124px; }
-  .story {
-    grid-template-columns: 38% 1fr;
-    grid-template-areas: "poster head" "poster btn" "text text";
-    gap: 14px 16px;
+  .film-story {
+    inset: 0 0 auto 0;
+    display: block;
+    min-height: 100%;
+    padding: 84px 16px 0;
+    transform-origin: 50% 0;
   }
-  .synopsis { display: contents; }
-  .poster { grid-area: poster; height: auto; width: 100%; }
-  .synopsis h2 { grid-area: head; align-self: end; margin: 0; font-size: 2rem; }
-  .synopsis .buttons { grid-area: btn; align-self: start; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .synopsis .button { padding: 0.7em 1em; font-size: 0.7rem; letter-spacing: 0.14em; }
-  .synopsis p { grid-area: text; font-size: 1rem; line-height: 1.5; margin: 0; }
+  .story { display: block; }
+  .poster { height: auto; width: 100%; }
+  .synopsis h2 { margin: 32px 0 16px; font-size: 2.4rem; }
+  .synopsis p { font-size: 1.1rem; line-height: 1.55; margin-bottom: 28px; }
+  .synopsis .button { padding: 0.8em 1.1em; font-size: 0.72rem; letter-spacing: 0.14em; }
+  .film-story .site-footer { position: static; margin-top: 56px; padding: 16px 0 24px; }
 }

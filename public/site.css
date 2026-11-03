@@ -36,7 +36,7 @@ a { color: inherit; }
 
 .menu-button {
   position: fixed;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top, 0px)); /* clear of the iPhone status bar, the page drawing under it */
   right: 20px;
   z-index: 30;
   width: 68px;
@@ -119,7 +119,7 @@ a { color: inherit; }
 /* Scrolls away with the page (only the menu button stays put), so text never runs under it. */
 .home-link {
   position: absolute;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top, 0px));
   left: 20px;
   height: 68px;
   display: flex;
@@ -203,7 +203,7 @@ a { color: inherit; }
 .trailer-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
 .trailer-close {
   position: absolute;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top, 0px));
   right: 20px;
   width: 52px;
   height: 52px;

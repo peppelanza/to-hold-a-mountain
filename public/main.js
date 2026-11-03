@@ -15,6 +15,7 @@ const TEXT_SWAPS = [0.3, 0.85];
 const TEXT_OUT = 1.3;
 const FADE = 0.14;
 const film = document.querySelector(".film");
+const stage = film.querySelector(".film-stage");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
@@ -69,11 +70,6 @@ function update() {
   if (onScreen && video.paused) video.play().catch(() => {});
   else if (!onScreen && !video.paused) video.pause();
 
-  // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
-  const scrollable = film.offsetHeight - window.innerHeight;
-  const play = Math.min(1, Math.max(0, -film.getBoundingClientRect().top / scrollable));
-
-
   // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
   // of the moment the video fills the screen) the video slows down into place instead
   // of stopping dead, while the zoom (straight in, from the centre) already begins. The
@@ -83,7 +79,8 @@ function update() {
   const t = filmBox.top; // where the video would be, scrolling with the page
   const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
-  const into = ease(range(BLEND - t, 0, BLEND + 0.39 * scrollable)); // fully zoomed at play 0.39
+  const ZOOMED = 0.49 * window.innerHeight; // fully zoomed this far past the video filling the screen
+  const into = ease(range(BLEND - t, 0, BLEND + ZOOMED));
   video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
   const blur = range(into, 0.5, 1);
   video.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
@@ -91,11 +88,14 @@ function update() {
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
-  // together), and stay to be read until the end of the page.
+  // together), and stay to be read until the end of the page. On phones they are taller
+  // than the screen: after that, scrolling on moves them up over the video, which stays put.
   const shown = ease(range(blur, 0.6, 1));
+  const rise = Math.min(storyExtra, Math.max(0, -t - ZOOMED));
   filmStory.style.opacity = shown;
   filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
-  filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
+  filmStory.style.transform = (rise ? `translate3d(0, ${(-rise).toFixed(1)}px, 0)` : "") +
+    (shown < 1 ? ` scale(${0.88 + 0.12 * shown})` : ""); // and zooms in as it sharpens
   filmStory.classList.toggle("shown", shown > 0.5);
 
   ticking = false;
@@ -184,16 +184,26 @@ setTimeout(reveal, 20000); // never keep people waiting forever on a slow connec
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
-// On short screens, scale the poster and synopsis down until they fit.
+// Larger screens: on short ones, scale the poster and synopsis down until they fit.
+// Phones: they stack and scroll instead, so the film section gets the extra length.
+const phone = window.matchMedia("(max-width: 767px)");
+let storyExtra = 0; // how much taller than the screen the stacked synopsis is
 function fitStory() {
   story.style.transform = "";
+  if (phone.matches) {
+    storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
+    film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight + storyExtra}px`;
+    return;
+  }
+  storyExtra = 0;
+  film.style.height = "";
   const room = filmStory.clientHeight - parseFloat(getComputedStyle(filmStory).paddingTop) - parseFloat(getComputedStyle(filmStory).paddingBottom);
   const need = story.offsetHeight;
   if (need > room) story.style.transform = `scale(${room / need})`;
 }
 fitStory();
 window.addEventListener("resize", fitStory);
-document.fonts && document.fonts.ready.then(fitStory);
+document.fonts && document.fonts.ready.then(() => { fitStory(); requestUpdate(); });
 
 window.addEventListener("resize", () => { measure(); requestUpdate(); });
 video.addEventListener("loadedmetadata", requestUpdate);
