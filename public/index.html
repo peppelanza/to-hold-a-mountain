@@ -15,41 +15,37 @@
 </head>
 <body>
   <!-- The journey is a tall section; its stage stays pinned to the screen while
-       main.js turns the scroll position into the sequence: logo → clouds → video. -->
+       main.js turns the scroll position into the sequence: sky → into the cloud → out below it, onto the video. -->
   <section class="journey" aria-label="To Hold a Mountain">
     <div class="stage">
       <div class="sky"></div>
-      <!-- Fog thickens as you scroll: one layer behind the clouds, one in front (inside .rise). -->
-      <div class="fog fog-back" style="background-image: url(fog-1.webp)"></div>
-      <!-- Storm clouds from the cloud photo: one already in view on arrival, two thick
-           ones that cover the logo and the text, and a close blurred one you fly through. -->
-      <div class="storm storm-far"></div>
+      <!-- The storm clouds already in view on arrival; scrolling flies into them. -->
+      <div class="storm"></div>
 
-      <!-- Logo and text sit behind two thick clouds: the first rises over the logo, then
-           moves on and uncovers the text; the second rises over the text. -->
       <div class="logo">
         <img src="logo.png" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
+      </div>
+
+      <!-- Below the cloud: revealed when you come out of its base. -->
+      <div class="video-wrap">
+        <video src="film.mp4" muted playsinline preload="metadata" aria-hidden="true"></video>
+      </div>
+
+      <!-- Inside the cloud: mist that thickens until it fills the screen, drifting
+           wisps, then lifts away at the end. The text sits between two mists, so it
+           can surface when the front one thins and sink again when it closes. -->
+      <div class="mist mist-back">
+        <div class="mist-tex" style="background-image: url(mist-1.webp)"></div>
+        <div class="mist-tex mist-tex-2" style="background-image: url(mist-2.webp)"></div>
       </div>
       <div class="cloud-text">
         <p class="eyebrow">Placeholder</p>
         <p>High above the valley, where the clouds pass close enough to touch, a family keeps its flock and its way of life.</p>
       </div>
-      <div class="storm storm-cover storm-cover-a"></div>
-      <div class="storm storm-cover storm-cover-b"></div>
-
-      <!-- The video rises from below; the cloud bank rides on its top edge so the
-           edge is never seen. data-depth: parallax speed of each cloud layer. -->
-      <div class="rise">
-        <div class="video-wrap">
-          <video src="film.mp4" muted playsinline preload="metadata" aria-hidden="true"></video>
-        </div>
-        <div class="cloud-layer" data-depth="0.82" data-drift="-3" style="background-image: url(cloud-1.webp)"></div>
-        <div class="cloud-layer" data-depth="1"    data-drift="2"  style="background-image: url(cloud-2.webp)"></div>
-        <div class="cloud-layer" data-depth="1.12" data-drift="5"  style="background-image: url(cloud-3.webp)"></div>
-        <div class="fog fog-front" style="background-image: url(fog-2.webp)"></div>
+      <div class="mist mist-front">
+        <div class="mist-tex mist-tex-2" style="background-image: url(mist-2.webp)"></div>
+        <div class="mist-tex" style="background-image: url(mist-1.webp)"></div>
       </div>
-
-      <div class="storm storm-near"></div>
     </div>
   </section>
 

@@ -2,11 +2,11 @@
 
 Static website, served by Render from `public/` (no build step).
 
-- `public/index.html`, `style.css`, `main.js` — homepage: sky photo, logo, cloud bank carrying the film clip up as you scroll
+- `public/index.html`, `style.css`, `main.js` — homepage: sky and storm-cloud photos, logo, then scrolling flies into the cloud (mist), the text surfaces inside it, and you come out below onto the film clip
 - `public/site.css`, `menu.js` — shared styles and the menu (its items are listed at the top of `menu.js`)
 - `public/screenings.html`, `press.html`, `about.html` — empty pages for now
 - `public/soundtrack.html`, `soundtrack.css`, `soundtrack.js` — one-track player with a soundwave
-- `tools/clouds.py` — generates `cloud-1/2/3.webp` (needs numpy and Pillow)
+- `tools/mist.py` — generates the mist textures `mist-1/2.webp` (needs numpy and Pillow); `storm-band.webp` is the cloudy lower part of the storm photo, its top and bottom faded to transparent
 
 New track: replace `public/soundtrack.mp3`, then regenerate the soundwave:
 

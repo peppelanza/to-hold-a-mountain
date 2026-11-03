@@ -1,7 +1,7 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
 /* Scroll length of the whole sequence: taller = slower. */
-.journey { position: relative; height: 1600vh; }
+.journey { position: relative; height: 1400vh; }
 
 .stage {
   position: sticky;
@@ -32,16 +32,8 @@
 }
 .logo img { width: min(78vw, 820px); height: auto; }
 
-/* Moves as one piece: its top is the video's top edge. */
-.rise {
-  position: absolute;
-  inset: 0;
-  will-change: transform;
-}
-
-/* Overscan above and below so the clip can drift inside its frame (parallax)
-   and its letterbox bars stay out of view. */
-.video-wrap { position: absolute; inset: 0; overflow: hidden; }
+/* Overscan above and below so its letterbox bars stay out of view. */
+.video-wrap { position: absolute; inset: 0; overflow: hidden; opacity: 0; will-change: transform, opacity; }
 .video-wrap video {
   position: absolute;
   left: 0;
@@ -49,64 +41,52 @@
   width: 100%;
   height: 125%;
   object-fit: cover;
-  will-change: transform;
 }
 
-/* Cloud bank images are 2.4:1; their solid band sits at 52–75% of their height,
-   placed over the video's top edge, then melts into the film's sky below. */
-.cloud-layer {
-  position: absolute;
-  left: -8%;
-  width: 116%;
-  top: -52.5vh;
-  height: 70vh;
-  background-size: cover;
-  background-position: center bottom;
-  pointer-events: none;
-  /* Tops fade into the sky instead of ending in a hard edge. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 6%, #000 52%);
-  mask-image: linear-gradient(to bottom, transparent 6%, #000 52%);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Twice the screen width, repeating sideways, so it can drift without an edge. */
-.fog {
-  position: absolute;
-  left: 0;
-  width: 200%;
-  background-size: 50% 100%;
-  background-repeat: repeat-x;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.fog-back { top: 25%; height: 75%; }
-
-/* Storm cloud photo layers; their tops and bottoms fade out, so they can rise
-   right past the screen without an edge. */
+/* The storm cloud photo seen on arrival; its top fades into the sky photo. */
 .storm {
   position: absolute;
   left: -5%;
   width: 110%;
-  background: center top / cover no-repeat;
+  top: 42vh;
+  height: 98vh;
+  background: url(storm-band.webp) center top / cover no-repeat;
+  transform-origin: 50% 20%;
   pointer-events: none;
   will-change: transform, opacity;
 }
-.storm-far { top: 42vh; height: 98vh; background-image: url(storm-band.webp); }
-/* Thick clouds with a tall solid middle, rising from below the screen. */
-.storm-cover { top: 100vh; height: 130vh; background-image: url(storm-thick.webp); background-position: center; }
 @media (min-aspect-ratio: 1/1) {
-  .storm { background-size: 100% 100%; } /* never crop away their soft top and bottom on wide screens */
+  .storm { background-size: 100% 100%; } /* never crop away its soft bottom on wide screens */
 }
-.storm-near { top: 100vh; height: 170vh; background-image: url(storm-near.webp); opacity: 0; }
-/* Rides with the cloud bank; its thick lower part veils the top of the video. */
-.fog-front {
-  top: -95vh;
-  height: 112vh;
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+
+/* Mist: a cloud-grey wash with drifting textures. Taller than the screen with a soft
+   lower edge, so at the end it can lift away like the base of a cloud. */
+.mist {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 175vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #8592a0 0%, #737f8c 55%, #66727e 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
 }
+/* Twice the screen width, repeating sideways, so it can drift without an edge. */
+.mist-tex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-size: auto 120vh; /* sized by screen height, so it keeps its proportions on phones too */
+  background-repeat: repeat;
+  will-change: transform;
+}
+.mist-tex-2 { background-size: auto 90vh; background-position: 37% 41%; opacity: 0.8; } /* offset, so the two textures' joins never line up */
 
 .cloud-text {
   position: absolute;
