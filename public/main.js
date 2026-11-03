@@ -21,6 +21,7 @@ const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
 const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
+const watch = document.querySelector(".intro-logo .watch");
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -33,9 +34,14 @@ function measure() {
   const cloudsTop = logoHold.getBoundingClientRect().top + window.scrollY + logoHold.offsetHeight +
     parseFloat(getComputedStyle(introClouds).marginTop);
   trackTop = cloudsTop + textTrack.offsetTop;
-  // Phones: the laurels 21px above the logo's lettering (the image's glow is 74/1411 of
-  // its width at the top), where the logo is before any scrolling.
-  belt.style.top = `${logo.offsetTop + logo.offsetWidth * 74 / 1411 - 21 - belt.offsetHeight}px`;
+  // Phones: the laurels above the logo's lettering by as much as the trailer button is
+  // below it, where the logo is before any scrolling. (The phone logo's glow is 74/1411
+  // of its width on each side; the lettering fills the rest.)
+  const glow = logo.offsetWidth * 74 / 1411;
+  const lettersTop = logo.offsetTop + glow;
+  const lettersBottom = logo.offsetTop + logo.offsetHeight - glow;
+  const space = watch.offsetTop - lettersBottom;
+  belt.style.top = `${lettersTop - space - belt.offsetHeight}px`;
 }
 
 function update() {
