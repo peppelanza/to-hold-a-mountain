@@ -18,6 +18,12 @@ const fogBack = document.querySelector(".fog-back");
 const fogFront = document.querySelector(".fog-front");
 const video = document.querySelector("video");
 
+// Phones only: the video fills the screen's height (cropped at the sides) and pans
+// across while it plays. 0% = its left edge, 100% = its right edge.
+const mobile = window.matchMedia("(max-width: 767px)");
+const PAN_FROM = 0;
+const PAN_TO = 100;
+
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
 const ease = (t) => t * t * (3 - 2 * t);
@@ -81,10 +87,12 @@ function update() {
   cloudText.style.transform = `translateY(${(1 - textIn) * 4 - textOut * 6}vh)`;
 
   // Scrolling plays the clip while it rises and once it fills the screen.
+  const play = range(p, 0.62, 1);
   if (video.duration) {
-    const t = range(p, 0.62, 1) * (video.duration - 0.05);
+    const t = play * (video.duration - 0.05);
     if (Math.abs(video.currentTime - t) > 0.01) video.currentTime = t;
   }
+  video.style.objectPosition = mobile.matches ? `${lerp(PAN_FROM, PAN_TO, play)}% 50%` : "";
 
   ticking = false;
 }
