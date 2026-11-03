@@ -66,11 +66,9 @@ function update() {
   const scrollable = film.offsetHeight - window.innerHeight;
   const play = Math.min(1, Math.max(0, -film.getBoundingClientRect().top / scrollable));
 
-  // The scroll sets where the clip should be; chase() takes it there no faster than
-  // its normal speed (slower is fine), forwards or backwards.
   if (video.duration) {
-    clipTarget = play * (video.duration - 0.05);
-    if (!chasing) { chasing = true; lastChase = performance.now(); requestAnimationFrame(chase); }
+    const t = play * (video.duration - 0.05);
+    if (Math.abs(video.currentTime - t) > 0.01) video.currentTime = t;
   }
   video.style.objectPosition = mobile.matches ? `${PAN_FROM + (PAN_TO - PAN_FROM) * play}% 50%` : "";
 
@@ -94,17 +92,6 @@ function update() {
   introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
   introClouds.style.opacity = 1 - ease(range(play, 0.74, 0.9));
   ticking = false;
-}
-
-let clipTarget = 0, clipShown = 0, chasing = false, lastChase = 0;
-function chase(now) {
-  const step = Math.max(0, (now - lastChase) / 1000); // seconds since the last frame = 1x speed
-  lastChase = now;
-  const diff = clipTarget - clipShown;
-  clipShown += Math.max(-step, Math.min(step, diff));
-  if (Math.abs(video.currentTime - clipShown) > 0.01) video.currentTime = clipShown;
-  if (Math.abs(clipTarget - clipShown) > 0.001) requestAnimationFrame(chase);
-  else chasing = false;
 }
 
 let ticking = false;
