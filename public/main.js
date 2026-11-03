@@ -19,7 +19,7 @@ const ease = (t) => t * t * (3 - 2 * t);
 // across while it plays. 0% = its left edge, 100% = its right edge.
 const mobile = window.matchMedia("(max-width: 767px)");
 const PAN_FROM = 0;
-const PAN_TO = 100;
+const PAN_TO = 70; // ends where the rider is, rather than at the far right edge
 
 function update() {
   // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
