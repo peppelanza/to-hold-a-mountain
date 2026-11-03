@@ -1,0 +1,43 @@
+// Site menu, shared by every page: a big round button that opens a full-screen
+// panel with a circular reveal; the links slide in one after another.
+(function () {
+  var items = [
+    ["Screening & Awards", "screenings.html"],
+    ["Press", "press.html"],
+    ["About the film", "about.html"],
+    ["Soundtrack", "soundtrack.html"]
+  ];
+  var here = location.pathname.split("/").pop() || "index.html";
+
+  var links = items.map(function (item, i) {
+    var current = item[1] === here ? ' aria-current="page"' : "";
+    return '<li style="--i:' + i + '"><a href="' + item[1] + '"' + current + ">" + item[0] + "</a></li>";
+  }).join("");
+
+  var html =
+    (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
+    '<button class="menu-button" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">' +
+    "<span></span><span></span><span></span></button>" +
+    '<nav class="menu" id="site-menu" aria-label="Site"><ul>' + links + "</ul></nav>";
+  document.body.insertAdjacentHTML("afterbegin", html);
+
+  var button = document.querySelector(".menu-button");
+  var menu = document.getElementById("site-menu");
+
+  function setOpen(open) {
+    document.documentElement.classList.toggle("menu-open", open);
+    button.setAttribute("aria-expanded", String(open));
+    button.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) menu.querySelector("a").focus({ preventScroll: true });
+  }
+
+  button.addEventListener("click", function () {
+    setOpen(button.getAttribute("aria-expanded") !== "true");
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
+      setOpen(false);
+      button.focus();
+    }
+  });
+})();

@@ -1,0 +1,142 @@
+/* Shared by every page: colours, type, the menu, and the empty inner pages. */
+:root {
+  --slate: #1c2a36;
+  --slate-deep: #121c25;
+  --ink: #f6efe6;
+  --cream: #f3e3d3;
+  --muted: #b3c0cc;
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { background: var(--slate); color: var(--ink); }
+
+body {
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; }
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* ---------- Menu ---------- */
+
+.menu-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 30;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 239, 230, 0.45);
+  background: rgba(18, 28, 37, 0.35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.menu-button:hover { background: rgba(18, 28, 37, 0.6); transform: scale(1.05); }
+.menu-button:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
+
+.menu-button span {
+  position: absolute;
+  left: 21px;
+  width: 26px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink);
+  transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.25s;
+}
+.menu-button span:nth-child(1) { top: 26px; }
+.menu-button span:nth-child(2) { top: 33px; }
+.menu-button span:nth-child(3) { top: 40px; }
+
+.menu-open .menu-button { background: transparent; border-color: rgba(246, 239, 230, 0.7); }
+.menu-open .menu-button span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-open .menu-button span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.menu-open .menu-button span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* The panel grows as a circle from the button. */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 96px 16px 48px clamp(16px, 9vw, 160px);
+  background: linear-gradient(160deg, #2c4255 0%, var(--slate-deep) 100%);
+  -webkit-clip-path: circle(0 at calc(100% - 54px) 54px);
+  clip-path: circle(0 at calc(100% - 54px) 54px);
+  visibility: hidden;
+  transition: -webkit-clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), visibility 0s 0.7s;
+  overflow-y: auto;
+}
+.menu-open .menu {
+  -webkit-clip-path: circle(150% at calc(100% - 54px) 54px);
+  clip-path: circle(150% at calc(100% - 54px) 54px);
+  visibility: visible;
+  transition: -webkit-clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1), clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1), visibility 0s;
+}
+.menu-open, .menu-open body { overflow: hidden; }
+
+.menu ul { list-style: none; }
+.menu li {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.menu-open .menu li {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s calc(0.25s + var(--i) * 0.08s), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.25s + var(--i) * 0.08s);
+}
+.menu a {
+  display: inline-block;
+  padding: 0.12em 0;
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  line-height: 1.1;
+  text-decoration: none;
+  color: var(--ink);
+  transition: color 0.25s, transform 0.35s;
+}
+.menu a:hover, .menu a:focus-visible { color: var(--cream); transform: translateX(12px); font-style: italic; outline: none; }
+.menu a[aria-current="page"] { font-style: italic; color: var(--cream); }
+
+.home-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  z-index: 30;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Inner pages (empty for now) ---------- */
+
+.page-main {
+  min-height: 100vh;
+  padding: 140px 16px 80px;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+.page-main h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  color: var(--cream);
+}

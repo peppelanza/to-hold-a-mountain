@@ -1,21 +1,4 @@
-:root {
-  --sky-top: #7fa9dc;
-  --sky-mid: #3f6fae;
-  --sky-bottom: #0e2350;
-  --ink: #f6efe6;
-  --cream: #f3e3d3;
-  --muted: #b9c6dd;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body { background: var(--sky-bottom); color: var(--ink); }
-
-body {
-  font-family: "Inter", system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
+/* Homepage only; colours, type and the menu are in site.css. */
 
 /* Scroll length of the whole sequence: taller = slower. */
 .journey { position: relative; height: 700vh; }
@@ -28,10 +11,15 @@ body {
   overflow: hidden;
 }
 
+/* Taller than the screen: it slides up slowly as the clouds come in. */
 .sky {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-bottom) 100%);
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 140%;
+  background: #2b4255 url(sky.webp) center top / cover no-repeat;
+  will-change: transform;
 }
 
 .logo {
@@ -89,7 +77,7 @@ body {
   padding: 0 16px;
   text-align: center;
   color: var(--ink);
-  text-shadow: 0 1px 18px #0e235055;
+  text-shadow: 0 1px 18px #121c2566;
   opacity: 0;
   will-change: opacity, transform;
 }

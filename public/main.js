@@ -1,6 +1,7 @@
 // The journey section is tall and its stage is pinned; scroll progress p (0 → 1)
 // through it drives the sequence. Each step lists the slice of p it runs in.
 const journey = document.querySelector(".journey");
+const sky = document.querySelector(".sky");
 const logo = document.querySelector(".logo");
 const rise = document.querySelector(".rise");
 const cloudLayers = [...document.querySelectorAll(".cloud-layer")];
@@ -28,6 +29,9 @@ function update() {
   const logoOut = ease(range(p, 0, 0.12));
   logo.style.opacity = 1 - logoOut;
   logo.style.transform = `translateY(${-12 * logoOut}vh) scale(${1 - 0.05 * logoOut})`;
+
+  // The sky photo drifts up slowly behind everything.
+  sky.style.transform = `translateY(${-28 * ease(range(p, 0, 0.6))}vh)`;
 
   // Video and its cloud bank rise together; each cloud layer lags or leads a little
   // (parallax) and drifts sideways, and the clip drifts inside its own frame.

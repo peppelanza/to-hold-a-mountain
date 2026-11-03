@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soundtrack — To Hold a Mountain</title>
+  <meta name="theme-color" content="#1c2a36">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="soundtrack.css">
+</head>
+<body>
+  <!-- Placeholder background: the homepage clip, looping silently. -->
+  <video class="bg-video" src="film.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
+  <div class="bg-shade"></div>
+
+  <main class="player-page">
+    <p class="eyebrow">Original soundtrack</p>
+    <h1>Placeholder track title</h1>
+    <p class="composer">Composer name</p>
+
+    <!-- A plain <audio> element does the playing (works on every browser and phone);
+         the controls below are drawn on top of it. -->
+    <audio src="soundtrack.mp3" preload="metadata"></audio>
+
+    <div class="player">
+      <button class="play" type="button" aria-label="Play">
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      </button>
+      <div class="track">
+        <div class="wave" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <canvas></canvas>
+        </div>
+        <div class="times"><span class="current">0:00</span><span class="duration">0:00</span></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="menu.js"></script>
+  <script src="soundtrack.js"></script>
+</body>
+</html>
