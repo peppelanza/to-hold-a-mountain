@@ -19,7 +19,7 @@
   }).join("");
 
   var html =
-    (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
+    (here === "index.html" ? "" : '<a class="home-link" href="./"><img src="logo.png" alt="To Hold a Mountain — homepage"></a>') +
     '<button class="menu-button" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">' +
     "<span></span><span></span><span></span></button>" +
     '<nav class="menu" id="site-menu" aria-label="Site"><ul>' + links + "</ul></nav>";
