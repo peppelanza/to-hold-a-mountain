@@ -82,8 +82,8 @@
   object-position: center top;
 }
 
-/* The text's stretch of the page: it sticks in the centre of the screen for as long
-   as this track is longer than the screen (here 50vh of scrolling), then moves on. */
+/* Where the text rides with the clouds; main.js slows it gently into the centre of
+   the screen, holds it there for 50vh of scrolling, then lets it move on. */
 .cloud-text-track {
   position: absolute;
   left: 0;
@@ -93,8 +93,10 @@
   pointer-events: none;
 }
 .cloud-text {
-  position: sticky;
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
   height: 100vh;
   height: 100svh;
   display: grid;

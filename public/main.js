@@ -4,6 +4,9 @@
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
 const clouds = document.querySelector(".clouds");
+const textTrack = document.querySelector(".cloud-text-track");
+const cloudText = textTrack.querySelector(".cloud-text");
+const TEXT_HOLD = 0.5; // screens of scrolling the text stays in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
@@ -22,6 +25,17 @@ function update() {
   // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
   const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
   logo.style.transform = `scale(${1 - 0.1 * covered})`;
+
+  // Text: rides up with the clouds, slows to a stop in the centre of the screen, holds,
+  // then speeds up again and moves on. u is how far the track has scrolled past the
+  // top of the screen; the text stays back by an amount that grows and shrinks
+  // smoothly (no sudden stop or start).
+  const vh = window.innerHeight;
+  const u = -textTrack.getBoundingClientRect().top;
+  const soft = 0.12 * vh; // how gently it slows down and speeds up
+  const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
+  const behind = u - (smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
+  cloudText.style.transform = `translateY(${behind}px)`;
 
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
   const scrollable = film.offsetHeight - window.innerHeight;
