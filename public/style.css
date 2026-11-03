@@ -80,6 +80,19 @@
   height: max(174vw, 360vh); /* thick from 28% to 84% of its height; sides cropped on narrow screens */
   object-fit: cover;
   object-position: center top;
+  /* A slow drift, as if the wind carried the clouds across and back; a little wider
+     than the screen so its sides never show. */
+  transform-origin: 50% 0;
+  animation: cloud-drift 70s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.intro-clouds { overflow-x: clip; }
+@keyframes cloud-drift {
+  from { transform: scaleX(1.08) translateX(-2.5%); }
+  to { transform: scaleX(1.08) translateX(2.5%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clouds { animation: none; transform: none; }
 }
 
 /* Where the text rides with the clouds; main.js slows it gently into the centre of
