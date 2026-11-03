@@ -168,7 +168,14 @@
   pointer-events: none;
 }
 
-.lake { background: var(--lake); }
+/* Pulled up over the end of the video: it starts rising into view just as the blur
+   into the lake is complete, in the same colour, so there's no seam. */
+.lake {
+  position: relative;
+  z-index: 1;
+  margin-top: -40vh;
+  background: var(--lake);
+}
 
 /* Poster on the left, synopsis on the right; stacked on phones. */
 .story {
@@ -178,7 +185,7 @@
   align-items: center;
   max-width: 72rem;
   margin: 0 auto;
-  padding: 18vh 16px 22vh;
+  padding: 10vh 16px 22vh;
 }
 .poster {
   display: block;
@@ -214,6 +221,6 @@
 }
 .button:hover, .button:focus-visible { background: var(--ink); color: #46462e; outline: none; }
 @media (max-width: 767px) {
-  .story { grid-template-columns: 1fr; padding-top: 14vh; }
+  .story { grid-template-columns: 1fr; padding-top: 10vh; }
   .poster { max-width: 360px; margin: 0 auto; }
 }

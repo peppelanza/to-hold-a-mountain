@@ -51,10 +51,10 @@ function update() {
 
   // Second half: zoom into the lake (bottom centre) and blur, until the lake's colour
   // fills the screen and the section below carries it on.
-  const into = ease(range(play, 0.5, 1));
+  const into = ease(range(play, 0.5, 0.85)); // fully blurred into the lake at 0.85
   video.style.transform = `scale(${1 + 1.8 * into})`;
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
-  wash.style.opacity = 0.95 * ease(range(play, 0.7, 1));
+  wash.style.opacity = ease(range(play, 0.65, 0.85));
 
   // The clouds scroll up until their soft bottom is two thirds of the way down the
   // screen, then stay over the top of the video while it plays (and leave with it).
