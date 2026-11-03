@@ -33,6 +33,9 @@ function measure() {
   const cloudsTop = logoHold.getBoundingClientRect().top + window.scrollY + logoHold.offsetHeight +
     parseFloat(getComputedStyle(introClouds).marginTop);
   trackTop = cloudsTop + textTrack.offsetTop;
+  // Phones: the laurels 21px above the logo's lettering (the image's glow is 74/1411 of
+  // its width at the top), where the logo is before any scrolling.
+  belt.style.top = `${logo.offsetTop + logo.offsetWidth * 74 / 1411 - 21 - belt.offsetHeight}px`;
 }
 
 function update() {

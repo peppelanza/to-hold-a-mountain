@@ -75,18 +75,21 @@
 }
 .laurels img { height: auto; }
 .laurels .laurels-wide { display: block; width: 100%; max-width: 1000px; }
-.intro-logo .logo-laurels { display: none; }
+.logo-laurels { display: none; }
 @media (max-width: 767px) {
   .laurels { display: none; }
-  /* Above the logo (first in the grid), the full width of the screen, close to the
-     logo's glow. Sideways drags move it; up and down still scroll the page. */
-  .intro-logo .logo-laurels {
+  /* On the page (not pinned with the logo), the full width of the screen, placed by
+     main.js just above the logo's lettering. Sideways drags move it; up and down still
+     scroll the page. */
+  .intro-logo-hold { position: relative; }
+  .logo-laurels {
     display: block;
-    order: -1;
-    width: 100vw;
-    justify-self: center;
+    position: absolute;
+    top: 30vh;
+    left: 0;
+    right: 0;
+    z-index: 1;
     overflow: hidden;
-    margin: 0 0 -40px;
     opacity: 0.7;
     touch-action: pan-y;
     user-select: none;
@@ -94,9 +97,9 @@
   }
   .laurel-track { display: flex; width: max-content; will-change: transform; }
   /* 42px tall: the laurels 65% larger than in the three rows. */
-  .intro-logo .laurel-track img { width: auto; height: 42px; margin: 0 28px 0 0; pointer-events: none; }
-  .loading .intro-logo .logo-laurels { opacity: 0; }
-  .revealing .intro-logo .logo-laurels, .loaded .intro-logo .logo-laurels { animation: laurels-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+  .laurel-track img { display: block; width: auto; height: 42px; margin: 0 28px 0 0; pointer-events: none; }
+  .loading .logo-laurels { opacity: 0; }
+  .revealing .logo-laurels, .loaded .logo-laurels { animation: laurels-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 }
 @keyframes laurels-in { /* as logo-in, ending at their 70% */
   from { opacity: 0; filter: blur(18px); }
