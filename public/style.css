@@ -1,7 +1,7 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
 /* Scroll length of the whole sequence: taller = slower. */
-.journey { position: relative; height: 1200vh; }
+.journey { position: relative; height: 1600vh; }
 
 .stage {
   position: sticky;
@@ -94,7 +94,11 @@
   will-change: transform, opacity;
 }
 .storm-far { top: 42vh; height: 98vh; background-image: url(storm-band.webp); }
-.storm-mid { top: 100vh; height: 120vh; background-image: url(storm-band.webp); opacity: 0; }
+/* Thick clouds with a tall solid middle, rising from below the screen. */
+.storm-cover { top: 100vh; height: 130vh; background-image: url(storm-thick.webp); background-position: center; }
+@media (min-aspect-ratio: 1/1) {
+  .storm { background-size: 100% 100%; } /* never crop away their soft top and bottom on wide screens */
+}
 .storm-near { top: 100vh; height: 170vh; background-image: url(storm-near.webp); opacity: 0; }
 /* Rides with the cloud bank; its thick lower part veils the top of the video. */
 .fog-front {

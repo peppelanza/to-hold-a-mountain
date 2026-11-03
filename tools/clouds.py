@@ -145,8 +145,8 @@ def fog(name, seed, colour):
     """A wide, soft fog bank: thin at the top, thick lower down, wispy throughout.
     Repeats seamlessly sideways so it can drift."""
     rng = np.random.default_rng(seed)
-    n = fbm(rng, octaves=5, base=(2, 6), persistence=0.55)
-    wisps = fbm(rng, octaves=4, base=(3, 14), persistence=0.5)  # stretched sideways, like drifting fog
+    n = fbm(rng, octaves=5, base=(4, 3), persistence=0.55)  # (rows, columns): wide cells
+    wisps = fbm(rng, octaves=4, base=(10, 3), persistence=0.5)  # long sideways wisps
     # Make the left and right edges meet: blend the texture with its mirror near the seam.
     ramp = np.clip(np.abs(np.linspace(-1, 1, W)) * 4 - 3, 0, 1)[None, :]
     n = n * (1 - ramp * 0.5) + n[:, ::-1] * ramp * 0.5

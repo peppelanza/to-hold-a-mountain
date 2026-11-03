@@ -19,19 +19,23 @@
   <section class="journey" aria-label="To Hold a Mountain">
     <div class="stage">
       <div class="sky"></div>
+      <!-- Fog thickens as you scroll: one layer behind the clouds, one in front (inside .rise). -->
+      <div class="fog fog-back" style="background-image: url(fog-1.webp)"></div>
+      <!-- Storm clouds from the cloud photo: one already in view on arrival, two thick
+           ones that cover the logo and the text, and a close blurred one you fly through. -->
+      <div class="storm storm-far"></div>
 
-      <!-- Behind the fog and storm clouds, which rise over it. -->
+      <!-- Logo and text sit behind two thick clouds: the first rises over the logo, then
+           moves on and uncovers the text; the second rises over the text. -->
       <div class="logo">
         <img src="logo.png" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
       </div>
-
-      <!-- Fog thickens as you scroll: one layer behind the clouds, one in front (inside .rise). -->
-      <div class="fog fog-back" style="background-image: url(fog-1.webp)"></div>
-      <!-- Storm clouds you rise through, from the cloud photo: one already in view on
-           arrival, a mirrored one further back, and a close blurred one (after the text)
-           that you pass straight through. -->
-      <div class="storm storm-far"></div>
-      <div class="storm storm-mid"></div>
+      <div class="cloud-text">
+        <p class="eyebrow">Placeholder</p>
+        <p>High above the valley, where the clouds pass close enough to touch, a family keeps its flock and its way of life.</p>
+      </div>
+      <div class="storm storm-cover storm-cover-a"></div>
+      <div class="storm storm-cover storm-cover-b"></div>
 
       <!-- The video rises from below; the cloud bank rides on its top edge so the
            edge is never seen. data-depth: parallax speed of each cloud layer. -->
@@ -43,11 +47,6 @@
         <div class="cloud-layer" data-depth="1"    data-drift="2"  style="background-image: url(cloud-2.webp)"></div>
         <div class="cloud-layer" data-depth="1.12" data-drift="5"  style="background-image: url(cloud-3.webp)"></div>
         <div class="fog fog-front" style="background-image: url(fog-2.webp)"></div>
-      </div>
-
-      <div class="cloud-text">
-        <p class="eyebrow">Placeholder</p>
-        <p>High above the valley, where the clouds pass close enough to touch, a family keeps its flock and its way of life.</p>
       </div>
 
       <div class="storm storm-near"></div>
