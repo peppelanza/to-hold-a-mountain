@@ -12,8 +12,17 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
   <link rel="stylesheet" href="style.css">
+  <!-- With JavaScript, the page waits behind the loading screen until everything is in. -->
+  <script>document.documentElement.classList.add("loading")</script>
 </head>
 <body>
+  <div class="loader" aria-hidden="true">
+    <div class="loader-box">
+      <div class="loader-bar"><span></span></div>
+      <p class="loader-pct">0%</p>
+    </div>
+  </div>
+
   <!-- The logo stays in the middle of the screen over the sky photo; the storm clouds
        scroll up over it, carrying the text, and fade out onto the video below. -->
   <section class="intro">
@@ -23,7 +32,7 @@
       </div>
     </div>
     <div class="intro-clouds">
-      <img class="clouds" src="storm-band.webp" alt="">
+      <img class="clouds" src="clouds.webp" alt="">
       <!-- The text rides up with the clouds, holds in the centre for a while, then moves on. -->
       <div class="cloud-text-track">
         <div class="cloud-text">

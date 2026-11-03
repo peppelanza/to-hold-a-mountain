@@ -2,7 +2,7 @@
 
 Static website, served by Render from `public/` (no build step).
 
-- `public/index.html`, `style.css`, `main.js` — homepage: logo over the sky photo (`sky.webp`), the storm clouds (`storm-band.webp`: the cloudy part of the storm photo, top and bottom faded to transparent) scroll up over it carrying the text and fade onto the film clip, which plays as you scroll
+- `public/index.html`, `style.css`, `main.js` — homepage: logo over the sky photo (`sky.webp`), the storm clouds (`clouds.webp`: the cloudy part of the storm photo, top and bottom faded to transparent, softened toward the film's overcast sky lower down, its thick middle extended with cross-faded copies) scroll up over it carrying the text and fade onto the film clip, which plays as you scroll. A loading screen (blurred sky, small bar) holds the page until fonts, images and the clip are loaded; then the logo comes into focus
 - `public/site.css`, `menu.js` — shared styles and the menu (its items are listed at the top of `menu.js`)
 - `public/screenings.html`, `press.html`, `about.html` — empty pages for now
 - `public/soundtrack.html`, `soundtrack.css`, `soundtrack.js` — one-track player with a soundwave

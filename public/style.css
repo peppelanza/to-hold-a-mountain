@@ -1,8 +1,59 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
+/* Loading screen: the sky photo blurred, a small bar and percentage. Nothing scrolls
+   until it is done; then it fades and the logo comes into focus. */
+.loader { display: none; }
+.loading .loader, .revealing .loader {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  background: #2b4255;
+  transition: opacity 0.9s ease;
+}
+.loader::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  background: url(sky.webp) center top / cover no-repeat;
+  filter: blur(28px);
+}
+.revealing .loader { opacity: 0; pointer-events: none; }
+.loading, .loading body { overflow: hidden; }
+
+.loader-box { position: relative; width: 140px; text-align: center; }
+.loader-bar { height: 1px; background: rgba(246, 239, 230, 0.25); overflow: hidden; }
+.loader-bar span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--ink);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.3s ease-out;
+}
+.loader-pct {
+  margin-top: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The logo comes into focus once the loading screen fades. */
+.loading .intro-logo img { opacity: 0; }
+.revealing .intro-logo img, .loaded .intro-logo img { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+@keyframes logo-in {
+  from { opacity: 0; filter: blur(18px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
-   until their thick part covers it (100vh of scrolling); then it moves on, hidden. */
-.intro-logo-hold { height: 200vh; }
+   until their thick part covers it (94vh of scrolling); then it moves on, hidden. */
+.intro-logo-hold { height: 194vh; }
 .intro-logo {
   position: sticky;
   top: 0;
@@ -19,24 +70,24 @@
 .intro-clouds {
   position: relative;
   z-index: 1;
-  margin-top: -158vh;
+  margin-top: -152vh;
 }
 .clouds {
   display: block;
   width: 100%;
-  height: max(100vw, 200vh); /* tall enough on phones too; the sides are cropped there */
+  height: max(174vw, 360vh); /* thick from 28% to 84% of its height; sides cropped on narrow screens */
   object-fit: cover;
   object-position: center top;
 }
 
 /* The text's stretch of the page: it sticks in the centre of the screen for as long
-   as this track is longer than the screen (here 40vh of scrolling), then moves on. */
+   as this track is longer than the screen (here 50vh of scrolling), then moves on. */
 .cloud-text-track {
   position: absolute;
   left: 0;
   right: 0;
-  top: 36%; /* the text arrives as the logo disappears, and holds over the clouds */
-  height: 140vh;
+  top: 41%; /* arrives half a screen of clouds after the logo is gone */
+  height: 150vh;
   pointer-events: none;
 }
 .cloud-text {
@@ -67,7 +118,7 @@
   position: relative;
   z-index: 0;
   height: 300vh;
-  margin-top: -45vh;
+  margin-top: -57vh;
 }
 .film-stage {
   position: sticky;
