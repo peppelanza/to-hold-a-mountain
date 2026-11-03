@@ -107,7 +107,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 41%; /* arrives half a screen of clouds after the logo is gone */
+  top: 33%; /* arrives just after the logo is gone, and is done before the video comes up */
   height: 150vh;
   pointer-events: none;
 }
@@ -121,19 +121,33 @@
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 1rem;
   padding: 0 16px;
   text-align: center;
   color: var(--ink);
   text-shadow: 0 1px 18px rgba(46, 46, 30, 0.6);
 }
-.cloud-text .eyebrow { color: var(--cream); }
-.cloud-text p:last-child {
-  max-width: 34rem;
-  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
-  font-style: italic;
-  font-weight: 600;
-  line-height: 1.25;
+/* Both quotes sit in the same place; main.js cross-fades from the first to the second. */
+.quote {
+  grid-area: 1 / 1;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 1.6rem;
+  will-change: opacity, transform;
+}
+.quote + .quote { opacity: 0; }
+.quote blockquote {
+  max-width: 22ch;
+  font-size: clamp(1.7rem, 4.2vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.quote img {
+  display: block;
+  height: auto;
+  filter: drop-shadow(0 1px 10px rgba(46, 46, 30, 0.5));
 }
 
 /* Starts under the clouds' faded bottom, so they melt into it. */

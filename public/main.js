@@ -5,7 +5,8 @@ const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
 const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = textTrack.querySelector(".cloud-text");
-const TEXT_HOLD = 0.5; // screens of scrolling the text stays in the centre
+const quotes = [...cloudText.querySelectorAll(".quote")];
+const TEXT_HOLD = 0.9; // screens of scrolling the quotes stay in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
@@ -38,6 +39,13 @@ function update() {
   const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
   const behind = u - (smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
   cloudText.style.transform = `translateY(${behind}px)`;
+
+  // Halfway through the pause the first quote fades out as the second fades in.
+  const swap = ease(Math.min(1, Math.max(0, (u - 0.35 * TEXT_HOLD * vh) / (0.3 * TEXT_HOLD * vh))));
+  quotes[0].style.opacity = 1 - swap;
+  quotes[0].style.transform = `translateY(${-12 * swap}px)`;
+  quotes[1].style.opacity = swap;
+  quotes[1].style.transform = `translateY(${12 * (1 - swap)}px)`;
 
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
   const scrollable = film.offsetHeight - window.innerHeight;
