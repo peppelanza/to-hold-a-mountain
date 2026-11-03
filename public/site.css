@@ -152,7 +152,7 @@ a { color: inherit; }
   z-index: 60;
   display: grid;
   place-items: center;
-  padding: 72px 16px;
+  padding: 72px 16px 32px;
   background: rgba(12, 12, 8, 0.94);
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -160,7 +160,8 @@ a { color: inherit; }
 .trailer.open { opacity: 1; }
 .trailer-open, .trailer-open body { overflow: hidden; }
 .trailer-frame {
-  width: min(100%, 1200px, calc((100vh - 144px) * 16 / 9));
+  /* As large as the screen allows: YouTube picks higher quality for bigger players. */
+  width: min(100%, 1600px, calc((100vh - 104px) * 16 / 9));
   aspect-ratio: 16 / 9;
   background: #000;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);

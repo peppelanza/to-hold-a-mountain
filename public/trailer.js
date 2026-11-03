@@ -28,7 +28,7 @@
     overlay.innerHTML =
       '<button class="trailer-close" type="button" aria-label="Close the trailer"><span></span><span></span></button>' +
       '<div class="trailer-frame"><iframe src="https://www.youtube-nocookie.com/embed/' + VIDEO +
-      '?autoplay=1&rel=0&playsinline=1&modestbranding=1" title="To Hold a Mountain — trailer" ' +
+      '?autoplay=1&rel=0&playsinline=1&modestbranding=1&vq=hd1080" title="To Hold a Mountain — trailer" ' +
       'allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>';
     document.body.appendChild(overlay);
     document.documentElement.classList.add("trailer-open");
