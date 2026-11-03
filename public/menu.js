@@ -2,6 +2,7 @@
 // panel with a circular reveal; the links slide in one after another.
 (function () {
   var items = [
+    ["Homepage", "./"],
     ["Screening & Awards", "screenings.html"],
     ["Press", "press.html"],
     ["About the film", "about.html"],
@@ -10,7 +11,8 @@
   var here = location.pathname.split("/").pop() || "index.html";
 
   var links = items.map(function (item, i) {
-    var current = item[1] === here ? ' aria-current="page"' : "";
+    var page = item[1] === "./" ? "index.html" : item[1];
+    var current = page === here ? ' aria-current="page"' : "";
     return '<li style="--i:' + i + '"><a href="' + item[1] + '"' + current + ">" + item[0] + "</a></li>";
   }).join("");
 
