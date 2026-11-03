@@ -1,7 +1,7 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
 /* Scroll length of the whole sequence: taller = slower. */
-.journey { position: relative; height: 700vh; }
+.journey { position: relative; height: 1200vh; }
 
 .stage {
   position: sticky;
@@ -83,16 +83,19 @@
 }
 .fog-back { top: 25%; height: 75%; }
 
-.hero-clouds {
+/* Storm cloud photo layers; their tops and bottoms fade out, so they can rise
+   right past the screen without an edge. */
+.storm {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 42vh;
-  height: 98vh;
-  background: url(hero-clouds.webp) center top / cover no-repeat;
+  left: -5%;
+  width: 110%;
+  background: center top / cover no-repeat;
   pointer-events: none;
   will-change: transform, opacity;
 }
+.storm-far { top: 42vh; height: 98vh; background-image: url(storm-band.webp); }
+.storm-mid { top: 100vh; height: 120vh; background-image: url(storm-band.webp); opacity: 0; }
+.storm-near { top: 100vh; height: 170vh; background-image: url(storm-near.webp); opacity: 0; }
 /* Rides with the cloud bank; its thick lower part veils the top of the video. */
 .fog-front {
   top: -95vh;
@@ -103,10 +106,9 @@
 
 .cloud-text {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 14vh;
+  inset: 0;
   display: grid;
+  align-content: center;
   justify-items: center;
   gap: 1rem;
   padding: 0 16px;
