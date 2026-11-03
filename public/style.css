@@ -50,16 +50,13 @@
 
 /* The logo comes into focus once the loading screen fades. */
 .loading .intro-logo img, .loading .intro-logo .watch { opacity: 0; }
-/* The logo comes into focus with a soft, warm glow that blends it into the sky. */
-.revealing .intro-logo img, .loaded .intro-logo img { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
-.revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: fade-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+/* The logo (its soft glow is part of the image) and its button come into focus.
+   The filter is gone at the end: iPhone Safari can paint filtered images as white boxes. */
+.revealing .intro-logo img, .loaded .intro-logo img,
+.revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 @keyframes logo-in {
-  from { opacity: 0; filter: blur(18px) drop-shadow(0 0 0 rgba(255, 244, 228, 0)); }
-  to { opacity: 1; filter: blur(0) drop-shadow(0 0 22px rgba(255, 244, 228, 0.32)); }
-}
-@keyframes fade-in {
   from { opacity: 0; filter: blur(18px); }
-  to { opacity: 1; filter: blur(0); }
+  to { opacity: 1; filter: none; }
 }
 
 /* Festival laurels, top of the page beside the menu button (which is 68px tall at
@@ -101,7 +98,13 @@
   padding: 0 16px;
   background: #2b4255 url(sky.webp) center top / cover no-repeat;
 }
-.intro-logo img { width: min(78vw, 820px); height: auto; }
+/* The logo with its soft glow baked in (the glow adds 5.3% of the width around it). */
+.intro-logo img {
+  --logo-w: min(87.2vw, 917px);
+  width: var(--logo-w);
+  height: auto;
+  margin: calc(var(--logo-w) * -0.0527) 0;
+}
 
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 45% down the screen (the same
