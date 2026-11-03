@@ -98,14 +98,15 @@ function update() {
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
   // together), and stay to be read until the end of the page.
-  // Phones: they scroll up from below the screen instead, like the rest of a page, over
-  // the video, which stays put; they fade in as they come up.
+  // Phones: the same, with the poster a little below the middle of the screen; then
+  // scrolling on moves it all up, like the rest of a page, over the video, which stays put.
   const shown = ease(range(blur, 0.6, 1));
   if (phone.matches) {
-    const y = Math.max(-storyExtra, Math.min(stage.clientHeight, stage.clientHeight - (-t - STORY_FROM)));
-    filmStory.style.opacity = ease(range(blur, 0.2, 1));
-    filmStory.style.filter = "";
-    filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+    const y = Math.max(-storyExtra, storyStart - Math.max(0, -t - ZOOMED));
+    filmStory.style.opacity = shown;
+    filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
+    filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)` +
+      (shown < 1 ? ` scale(${0.88 + 0.12 * shown})` : "");
   } else {
     filmStory.style.opacity = shown;
     filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
@@ -199,18 +200,19 @@ setTimeout(reveal, 20000); // never keep people waiting forever on a slow connec
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
-// Phones: the laurels above the logo drift left to right for ever, one copy following
+// Phones: the laurels above the logo drift right to left for ever, one copy following
 // the other. A finger can drag them either way; let go, and they glide on with the
 // throw, easing back into the steady drift.
 const belt = document.querySelector(".logo-laurels");
 const track = belt.querySelector(".laurel-track");
-const DRIFT = 24; // px per second, to the right
+const DRIFT = -24; // px per second, to the left
+const BELT_GAP = 45; // the gap after each copy, as in style.css
 let beltX = 0, beltV = DRIFT, beltLast = 0, drag = null;
 function beltStep(now) {
   const dt = Math.min(0.05, (now - (beltLast || now)) / 1000);
   beltLast = now;
-  const w = track.firstElementChild.offsetWidth + 28; // one copy and its gap
-  if (w > 28 && belt.offsetParent) {
+  const w = track.firstElementChild.offsetWidth + BELT_GAP; // one copy and its gap
+  if (w > BELT_GAP && belt.offsetParent) {
     if (!drag) {
       beltV += (DRIFT - beltV) * Math.min(1, dt * 1.5);
       beltX += beltV * dt;
@@ -241,16 +243,21 @@ belt.addEventListener("pointercancel", letGo);
 // Phones: they stack and scroll instead, so the film section gets the extra length.
 const phone = window.matchMedia("(max-width: 767px)");
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
-let STORY_FROM = 0; // phones: how far past the video filling the screen it starts coming up
+let storyStart = 0; // phones: how far down it sits as it comes into focus
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
-    STORY_FROM = 0.2 * window.innerHeight; // as the blur begins
+    // the poster's middle at 58% of the screen; it zooms in around that middle
+    const poster = story.querySelector(".poster");
+    const middle = poster.offsetTop + poster.offsetHeight / 2;
+    storyStart = Math.max(0, 0.58 * stage.clientHeight - middle);
+    filmStory.style.transformOrigin = `50% ${middle}px`;
     storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
-    // room to scroll it all the way up from below the screen until its end is at the bottom
-    film.style.height = `${stage.clientHeight + STORY_FROM + stage.clientHeight + storyExtra}px`;
+    // room to bring it into focus, then scroll it up until its end is at the bottom
+    film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight + storyStart + storyExtra}px`;
     return;
   }
+  filmStory.style.transformOrigin = "";
   storyExtra = 0;
   film.style.height = "";
   const room = filmStory.clientHeight - parseFloat(getComputedStyle(filmStory).paddingTop) - parseFloat(getComputedStyle(filmStory).paddingBottom);

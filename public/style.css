@@ -96,8 +96,8 @@
     -webkit-user-select: none;
   }
   .laurel-track { display: flex; width: max-content; will-change: transform; }
-  /* 42px tall: the laurels 65% larger than in the three rows. */
-  .laurel-track img { display: block; width: auto; height: 42px; margin: 0 28px 0 0; pointer-events: none; }
+  /* 67px tall; the gap after each copy is BELT_GAP in main.js. */
+  .laurel-track img { display: block; width: auto; height: 67px; margin: 0 45px 0 0; pointer-events: none; }
   .loading .logo-laurels { opacity: 0; }
   .revealing .logo-laurels, .loaded .logo-laurels { animation: laurels-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 }
@@ -325,8 +325,8 @@
 .watch { background: rgba(20, 30, 40, 0.15); }
 /* Phones: stacked, taller than the screen: the poster full width, then the heading, the
    synopsis, the two buttons and the footer. It stays inside the pinned video's box (cut
-   off at its bottom edge, which is the screen's); main.js brings it up from below the
-   screen as you scroll on. */
+   off at its bottom edge, which is the screen's); main.js brings it into focus with the
+   poster a little below the middle, then moves it up as you scroll on. */
 @media (max-width: 767px) {
   .film-story {
     inset: 0 0 auto 0;
