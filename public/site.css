@@ -121,8 +121,9 @@ a { color: inherit; }
 }
 .menu a:hover, .menu a:focus-visible { color: var(--cream); font-weight: 600; outline: none; }
 
+/* Scrolls away with the page (only the menu button stays put), so text never runs under it. */
 .home-link {
-  position: fixed;
+  position: absolute;
   top: 20px;
   left: 20px;
   height: 68px;

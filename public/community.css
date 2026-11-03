@@ -1,0 +1,64 @@
+.intro-text { max-width: 40rem; margin-top: 1.6rem; }
+.intro-text p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 1.1rem;
+}
+
+/* The pile of prints. Each print is a photo with a white border, tilted a little. */
+.stack {
+  position: relative;
+  width: min(86vw, 860px);
+  aspect-ratio: 3 / 2;
+  margin: 12vh auto 0;
+  cursor: pointer;
+  touch-action: pan-y; /* vertical swipes still scroll the page */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.stack:focus-visible { outline: 2px solid var(--cream); outline-offset: 24px; }
+
+.print {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: clamp(8px, 1.4vw, 16px);
+  background: #f2eee4;
+  box-shadow: 0 2px 4px rgba(20, 20, 10, 0.25), 0 18px 40px rgba(20, 20, 10, 0.35);
+  transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg));
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.6s ease;
+}
+.print img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #ddd8cb;
+  -webkit-user-drag: none;
+}
+/* The top print slides off to the right and fades. */
+.print.leaving {
+  transform: translate(60vw, -2vh) rotate(14deg);
+  opacity: 0;
+  transition: transform 0.75s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.75s ease-in;
+}
+.print.no-transition { transition: none; }
+
+.stack-caption {
+  margin-top: 2.4rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .print, .print.leaving { transition: opacity 0.3s ease; }
+  .print.leaving { transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg)); }
+}
