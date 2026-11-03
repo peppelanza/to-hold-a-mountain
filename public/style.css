@@ -249,7 +249,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 88px 16px 32px;
+  padding: 88px 16px 72px; /* the footer sits under it */
   opacity: 0;
   pointer-events: none;
 }
@@ -301,7 +301,7 @@
 /* Phones: the poster small at the top left beside the heading and button, the
    synopsis below; main.js scales it all down if a short screen still can't fit it. */
 @media (max-width: 767px) {
-  .film-story { padding: 84px 16px 24px; }
+  .film-story { padding: 84px 16px 124px; }
   .story {
     grid-template-columns: 38% 1fr;
     grid-template-areas: "poster head" "poster btn" "text text";
