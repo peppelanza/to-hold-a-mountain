@@ -1,5 +1,5 @@
 // Site menu, shared by every page: a big round button that opens a full-screen
-// panel with a circular reveal; the links slide in one after another.
+// frosted panel (the page blurred behind it); the links slide in one after another.
 (function () {
   var items = [
     ["Homepage", "./"],

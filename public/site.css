@@ -1,16 +1,18 @@
 /* Shared by every page: colours, type, the menu, and the empty inner pages. */
 :root {
-  --slate: #1c2a36;
-  --slate-deep: #121c25;
+  --olive: #5b5b41;
+  --olive-deep: #46462e;
+  --olive-gradient: linear-gradient(160deg, var(--olive) 0%, var(--olive-deep) 100%);
   --ink: #f6efe6;
   --cream: #f3e3d3;
-  --muted: #b3c0cc;
+  --muted: #d6d0bb;
   --serif: "EB Garamond", Garamond, Georgia, serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { background: var(--slate); color: var(--ink); }
+html { background: var(--olive-deep); color: var(--ink); }
+body { background: var(--olive-gradient) fixed; color: var(--ink); }
 
 body {
   font-family: var(--serif);
@@ -40,13 +42,13 @@ a { color: inherit; }
   height: 68px;
   border-radius: 50%;
   border: 1px solid rgba(246, 239, 230, 0.45);
-  background: rgba(18, 28, 37, 0.35);
+  background: rgba(70, 70, 46, 0.35);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   cursor: pointer;
   transition: background 0.3s, border-color 0.3s, transform 0.3s;
 }
-.menu-button:hover { background: rgba(18, 28, 37, 0.6); transform: scale(1.05); }
+.menu-button:hover { background: rgba(70, 70, 46, 0.6); transform: scale(1.05); }
 .menu-button:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
 
 .menu-button span {
@@ -67,7 +69,8 @@ a { color: inherit; }
 .menu-open .menu-button span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .menu-open .menu-button span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* The panel grows as a circle from the button. */
+/* The panel fades in: the olive gradient, slightly see-through with the page blurred
+   behind it. */
 .menu {
   position: fixed;
   inset: 0;
@@ -75,18 +78,23 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   padding: 96px 16px 48px clamp(16px, 9vw, 160px);
-  background: linear-gradient(160deg, #2c4255 0%, var(--slate-deep) 100%);
-  -webkit-clip-path: circle(0 at calc(100% - 54px) 54px);
-  clip-path: circle(0 at calc(100% - 54px) 54px);
+  background: linear-gradient(160deg, #5b5b41 0%, #46462e 100%); /* browsers without the blur: solid */
+  opacity: 0;
   visibility: hidden;
-  transition: -webkit-clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), visibility 0s 0.7s;
+  transition: opacity 0.5s ease, visibility 0s 0.5s;
   overflow-y: auto;
 }
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .menu {
+    background: linear-gradient(160deg, rgba(91, 91, 65, 0.9) 0%, rgba(70, 70, 46, 0.94) 100%);
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
+  }
+}
 .menu-open .menu {
-  -webkit-clip-path: circle(150% at calc(100% - 54px) 54px);
-  clip-path: circle(150% at calc(100% - 54px) 54px);
+  opacity: 1;
   visibility: visible;
-  transition: -webkit-clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1), clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1), visibility 0s;
+  transition: opacity 0.6s ease, visibility 0s;
 }
 .menu-open, .menu-open body { overflow: hidden; }
 

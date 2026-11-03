@@ -104,7 +104,7 @@
   padding: 0 16px;
   text-align: center;
   color: var(--ink);
-  text-shadow: 0 1px 18px #121c2599;
+  text-shadow: 0 1px 18px rgba(46, 46, 30, 0.6);
 }
 .cloud-text .eyebrow { color: var(--cream); }
 .cloud-text p:last-child {
