@@ -6,7 +6,7 @@ const logo = document.querySelector(".intro-logo img");
 const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = textTrack.querySelector(".cloud-text");
 const quotes = [...cloudText.querySelectorAll(".quote")];
-const TEXT_HOLD = 0.9; // screens of scrolling the quotes stay in the centre
+const TEXT_HOLD = 1.35; // screens of scrolling the logline and quotes stay in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
@@ -40,12 +40,14 @@ function update() {
   const behind = u - (smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
   cloudText.style.transform = `translateY(${behind}px)`;
 
-  // Halfway through the pause the first quote fades out as the second fades in.
-  const swap = ease(Math.min(1, Math.max(0, (u - 0.35 * TEXT_HOLD * vh) / (0.3 * TEXT_HOLD * vh))));
-  quotes[0].style.opacity = 1 - swap;
-  quotes[0].style.transform = `translateY(${-12 * swap}px)`;
-  quotes[1].style.opacity = swap;
-  quotes[1].style.transform = `translateY(${12 * (1 - swap)}px)`;
+  // The pause is shared evenly: at each third, one text fades out as the next fades in.
+  const each = (TEXT_HOLD * vh) / quotes.length;
+  quotes.forEach((q, i) => {
+    const fadeIn = i === 0 ? 1 : ease(Math.min(1, Math.max(0, (u - (i - 0.2) * each) / (0.4 * each))));
+    const fadeOut = i === quotes.length - 1 ? 0 : ease(Math.min(1, Math.max(0, (u - (i + 0.8) * each) / (0.4 * each))));
+    q.style.opacity = fadeIn * (1 - fadeOut);
+    q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
+  });
 
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
   const scrollable = film.offsetHeight - window.innerHeight;

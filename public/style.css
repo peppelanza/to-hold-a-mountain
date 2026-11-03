@@ -130,7 +130,7 @@
   color: var(--ink);
   text-shadow: 0 1px 18px rgba(46, 46, 30, 0.6);
 }
-/* Both quotes sit in the same place; main.js cross-fades from the first to the second. */
+/* The logline and quotes sit in the same place; main.js cross-fades from one to the next. */
 .quote {
   grid-area: 1 / 1;
   margin: 0;
@@ -140,6 +140,13 @@
   will-change: opacity, transform;
 }
 .quote + .quote { opacity: 0; }
+.logline p {
+  max-width: 34rem;
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.25;
+}
 .quote blockquote {
   max-width: 22ch;
   font-size: clamp(1.7rem, 4.2vw, 3.2rem);
