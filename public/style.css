@@ -56,6 +56,28 @@
   to { opacity: 1; filter: blur(0); }
 }
 
+/* Festival laurels, top of the page beside the menu button (which is 68px tall at
+   20px from the top); plain page content, so they scroll away. */
+.laurels {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 108px;
+  height: 68px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+.laurels img { height: auto; }
+.laurels .laurels-wide { display: block; width: 100%; max-width: 1200px; }
+.laurels .laurels-row { display: none; }
+@media (max-width: 767px) {
+  .laurels { top: 104px; left: 16px; right: 16px; height: auto; flex-direction: column; gap: 10px; }
+  .laurels .laurels-wide { display: none; }
+  .laurels .laurels-row { display: block; width: 100%; }
+}
+
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
    until their thick part covers it (94vh of scrolling); then it moves on, hidden. */
 .intro-logo-hold { height: 194vh; }
