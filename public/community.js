@@ -78,12 +78,14 @@
     if (k === "ArrowRight" || k === "Enter" || k === " ") { next(); e.preventDefault(); }
   });
 
-  // Scrolling over the pile turns the photos (one per gesture), instead of the page.
+  // Scrolling down over the pile turns the photos (one per gesture) instead of moving
+  // the page; scrolling up scrolls the page as usual.
   var lastWheel = 0;
   stack.addEventListener("wheel", function (e) {
+    if (e.deltaY <= 0) return;
     e.preventDefault();
     var now = Date.now();
-    if (Math.abs(e.deltaY) + Math.abs(e.deltaX) < 4 || now - lastWheel < 900) return;
+    if (e.deltaY < 4 || now - lastWheel < 900) return;
     lastWheel = now;
     next();
   }, { passive: false });
