@@ -83,7 +83,8 @@ function update() {
   // fills the screen and the section below carries it on.
   const into = ease(range(play, 0, 0.39)); // starts as soon as the video fills the screen; fully blurred at 0.39
   video.style.transform = `scale(${1 + 1.8 * into})`;
-  video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
+  const blur = range(into, 0.5, 1); // the blur waits until the zoom is halfway in
+  video.style.filter = blur > 0 ? `blur(${30 * blur}px)` : "";
   wash.style.opacity = ease(range(play, 0.25, 0.39));
 
   // As the lake blurs out, the poster and synopsis come into focus in place, from a
