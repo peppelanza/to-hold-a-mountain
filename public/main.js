@@ -7,6 +7,7 @@ const rise = document.querySelector(".rise");
 const cloudLayers = [...document.querySelectorAll(".cloud-layer")];
 const cloudText = document.querySelector(".cloud-text");
 const fogBack = document.querySelector(".fog-back");
+const heroClouds = document.querySelector(".hero-clouds");
 const fogFront = document.querySelector(".fog-front");
 const video = document.querySelector("video");
 
@@ -34,6 +35,10 @@ function update() {
 
   // The sky photo drifts up slowly behind everything.
   sky.style.transform = `translateY(${-28 * ease(range(p, 0, 0.6))}vh)`;
+
+  // The clouds seen on arrival rise, then dissolve into the fog and the cloud bank.
+  heroClouds.style.transform = `translateY(${-38 * ease(range(p, 0, 0.32))}vh)`;
+  heroClouds.style.opacity = 1 - ease(range(p, 0.3, 0.48));
 
   // Video and its cloud bank rise together; each cloud layer lags or leads a little
   // (parallax) and drifts sideways, and the clip drifts inside its own frame.

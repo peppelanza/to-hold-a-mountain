@@ -82,6 +82,17 @@
   will-change: transform, opacity;
 }
 .fog-back { top: 25%; height: 75%; }
+
+.hero-clouds {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42vh;
+  height: 98vh;
+  background: url(hero-clouds.webp) center top / cover no-repeat;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
 /* Rides with the cloud bank; its thick lower part veils the top of the video. */
 .fog-front {
   top: -95vh;
