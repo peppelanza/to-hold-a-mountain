@@ -1,7 +1,7 @@
-// Photo stack: a pile of prints. Click, scroll down over it, swipe right or press the
-// right arrow and the top print slides away to the right, showing the one beneath; it
-// then goes back under the pile, so the photos loop. Scrolling up, swiping left or the
-// left arrow bring the previous print back in from the right. Plain older JavaScript.
+// Photo stack: a pile of prints. On a computer, click it; on a phone, tap or swipe it
+// (either way). The top print slides off (to the right, or the way it was swiped) and
+// fades, showing the one beneath; it then goes back under the pile, so the photos loop.
+// Scrolling over it just scrolls the page. Plain older JavaScript for older phones.
 (function () {
   var stack = document.querySelector(".stack");
   var countEl = document.querySelector(".stack-count");
@@ -40,9 +40,8 @@
       var el = order[p];
       el.style.zIndex = String(order.length - p);
       el.style.opacity = p < VISIBLE ? "1" : "0";
-      // Load photos just before they come near the top, either way: the next ones down
-      // the pile, and the last ones (which going back brings in).
-      if (p < VISIBLE + 2 || p >= order.length - 2) {
+      // Load photos just before they come near the top.
+      if (p < VISIBLE + 2) {
         var im = el.firstChild;
         if (!im.getAttribute("src")) im.setAttribute("src", im.getAttribute("data-src"));
       }
@@ -50,10 +49,12 @@
     countEl.textContent = pad(order[0].number) + " / " + pad(total);
   }
 
+  // Sends the top print away ("right" or "left") and shows the next one.
   var busy = false;
-  function next() {
+  function next(direction) {
     if (busy) return;
     busy = true;
+    var leaving = direction === "left" ? "leaving-left" : "leaving";
     var top = order.shift();
     order.push(top);
     render(); // the next photo is now on top
@@ -61,11 +62,11 @@
     // The old top stays above everything while it slides away and fades.
     top.style.zIndex = String(total + 1);
     top.style.opacity = "";
-    top.classList.add("leaving");
+    top.classList.add(leaving);
     setTimeout(function () {
       // Back under the pile, without animating the way there.
       top.classList.add("no-transition");
-      top.classList.remove("leaving");
+      top.classList.remove(leaving);
       tilt(top, false);
       render();
       top.offsetWidth; // apply before transitions return
@@ -74,49 +75,19 @@
     }, LEAVE_MS);
   }
 
-  // The print at the bottom of the pile comes back in from the right, onto the top.
-  function previous() {
-    if (busy) return;
-    busy = true;
-    var back = order.pop();
-    order.unshift(back);
-    // Start it where a leaving print ends (off to the right, faded), without animating.
-    back.classList.add("no-transition", "leaving");
-    back.style.zIndex = String(total + 1);
-    back.style.opacity = "";
-    tilt(back, true);
-    var im = back.firstChild;
-    if (!im.getAttribute("src")) im.setAttribute("src", im.getAttribute("data-src"));
-    back.offsetWidth;
-    back.classList.remove("no-transition");
-    back.classList.remove("leaving"); // slides in to the top of the pile
-    setTimeout(function () {
-      render();
-      busy = false;
-    }, LEAVE_MS);
-    countEl.textContent = pad(back.number) + " / " + pad(total);
-  }
-
-  stack.addEventListener("click", next);
+  // Click (computer) or tap (phone).
+  var swipedAt = 0;
+  stack.addEventListener("click", function () {
+    if (Date.now() - swipedAt < 600) return; // the click a phone adds after a swipe
+    next("right");
+  });
   stack.addEventListener("keydown", function (e) {
     var k = e.key || "";
-    if (k === "ArrowRight" || k === "Enter" || k === " ") { next(); e.preventDefault(); }
-    else if (k === "ArrowLeft") { previous(); e.preventDefault(); }
+    if (k === "ArrowRight" || k === "Enter" || k === " ") { next("right"); e.preventDefault(); }
+    else if (k === "ArrowLeft") { next("left"); e.preventDefault(); }
   });
 
-  // Scrolling over the pile turns the photos (one per gesture) instead of moving the
-  // page: down for the next, up for the previous.
-  var lastWheel = 0;
-  stack.addEventListener("wheel", function (e) {
-    e.preventDefault();
-    var now = Date.now();
-    if (Math.abs(e.deltaY) < 4 || now - lastWheel < 900) return;
-    lastWheel = now;
-    if (e.deltaY > 0) next();
-    else previous();
-  }, { passive: false });
-
-  // Swiping sideways on phones.
+  // Swipe either way on a phone: the photo goes the way it was swiped.
   var startX = null, startY = null;
   stack.addEventListener("touchstart", function (e) {
     startX = e.touches[0].clientX;
@@ -128,8 +99,8 @@
     var dy = e.changedTouches[0].clientY - startY;
     startX = null;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-      if (dx > 0) next();      // swipe right: the photo goes to the right
-      else previous();         // swipe left: the previous one comes back
+      swipedAt = Date.now();
+      next(dx > 0 ? "right" : "left");
     }
   });
 

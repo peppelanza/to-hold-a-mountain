@@ -9,6 +9,8 @@
 /* The pile of prints. Each print is a photo with a white border, tilted a little. */
 .stack {
   position: relative;
+  z-index: 0;
+  isolation: isolate; /* the prints' layering stays inside the pile, under the menu */
   width: min(86vw, 860px);
   aspect-ratio: 3 / 2;
   margin: 12vh auto 0;
@@ -39,13 +41,21 @@
   background: #ddd8cb;
   -webkit-user-drag: none;
 }
-/* The top print slides off to the right and fades. */
-.print.leaving {
-  transform: translate(60vw, -2vh) rotate(14deg);
+/* The top print slides off to the right (or left, if swiped that way) and fades. */
+.print.leaving, .print.leaving-left {
   opacity: 0;
   transition: transform 0.75s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.75s ease-in;
 }
+.print.leaving { transform: translate(60vw, -2vh) rotate(14deg); }
+.print.leaving-left { transform: translate(-60vw, -2vh) rotate(-14deg); }
 .print.no-transition { transition: none; }
+
+/* The hint: "click" on computers, "tap or swipe" on touch screens. */
+.hint-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .hint-click { display: none; }
+  .hint-touch { display: inline; }
+}
 
 .stack-caption {
   margin-top: 2.4rem;
@@ -59,6 +69,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .print, .print.leaving { transition: opacity 0.3s ease; }
-  .print.leaving { transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg)); }
+  .print, .print.leaving, .print.leaving-left { transition: opacity 0.3s ease; }
+  .print.leaving, .print.leaving-left { transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg)); }
 }
