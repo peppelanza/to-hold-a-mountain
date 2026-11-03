@@ -98,7 +98,14 @@
   padding: 0 16px;
   background: #2b4255 url(sky.webp) center top / cover no-repeat;
 }
-.intro-logo img { width: min(78vw, 820px); height: auto; }
+/* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
+   baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
+.intro-logo img {
+  --logo-w: min(87.2vw, 917px);
+  width: var(--logo-w);
+  height: auto;
+  margin: calc(var(--logo-w) * -0.0527) 0;
+}
 
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 45% down the screen (the same
