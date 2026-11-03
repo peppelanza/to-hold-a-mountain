@@ -6,6 +6,7 @@
     ["Screening & Awards", "screenings.html"],
     ["Press", "press.html"],
     ["About the film", "about.html"],
+    ["Community", "community.html"],
     ["Soundtrack", "soundtrack.html"]
   ];
   var here = location.pathname.split("/").pop() || "index.html";

@@ -75,6 +75,7 @@
 .intro-clouds {
   position: relative;
   z-index: 1;
+  will-change: transform, opacity;
   margin-top: -152vh;
   height: var(--cloud-h);
   overflow-x: clip;
@@ -82,13 +83,13 @@
 /* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
    copies side by side drift left by one copy, then start over, so the clouds move
    steadily with the wind and never stop or turn back. */
-.clouds, .film-clouds-strip {
+.clouds {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: calc(var(--cloud-h) * 0.401 * 3);
-  background: url(clouds.webp) left top / auto var(--cloud-h) repeat-x;
+  background: url(clouds.webp) left top / auto 100% repeat-x;
   animation: cloud-drift 80s linear infinite;
   will-change: transform;
 }
@@ -97,7 +98,7 @@
   to { transform: translateX(-33.3333%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .clouds, .film-clouds-strip { animation: none; transform: none; }
+  .clouds { animation: none; transform: none; }
 }
 
 /* Where the text rides with the clouds; main.js slows it gently into the centre of
@@ -166,22 +167,6 @@
   opacity: 0;
   pointer-events: none;
 }
-
-/* Clouds kept over the video: solid at the top edge, fading out by about a third of
-   the way down. Shows the thick middle of the cloud image, drifting with the rest. */
-.film-clouds {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 48%;
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
-  will-change: opacity;
-}
-.film-clouds-strip { height: 100%; background-position: left calc(var(--cloud-h) * -0.62); }
 
 .lake { background: var(--lake); }
 
