@@ -74,10 +74,17 @@ function update() {
   const play = Math.min(1, Math.max(0, -film.getBoundingClientRect().top / scrollable));
 
 
-  // Second half: zoom into the lake (bottom centre) and blur, until the lake's colour
-  // fills the screen and the section below carries it on.
-  const into = ease(range(play, 0, 0.39)); // starts as soon as the video fills the screen; fully blurred at 0.39
-  video.style.transform = `scale(${1 + 1.8 * into})`;
+  // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
+  // of the moment the video fills the screen) the video slows down into place instead
+  // of stopping dead, while the zoom into the lake (bottom centre) already begins. The
+  // zoom grows the video upward, so it always covers the space the slowing leaves.
+  // Then blur, until the lake's colour fills the screen and the section below carries it on.
+  const BLEND = 0.2 * window.innerHeight;
+  const t = filmBox.top; // where the video would be, scrolling with the page
+  const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
+  const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
+  const into = ease(range(BLEND - t, 0, BLEND + 0.39 * scrollable)); // fully zoomed at play 0.39
+  video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 1.8 * into})`;
   const blur = range(into, 0.5, 1); // the blur waits until the zoom is halfway in
   video.style.filter = blur > 0 ? `blur(${30 * blur}px)` : "";
   wash.style.opacity = ease(range(play, 0.25, 0.39));
