@@ -1,6 +1,8 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
-/* The logo holds still in the middle of the screen while the clouds scroll over it. */
+/* The logo holds still in the middle of the screen while the clouds scroll over it,
+   until their thick part covers it (100vh of scrolling); then it moves on, hidden. */
+.intro-logo-hold { height: 200vh; }
 .intro-logo {
   position: sticky;
   top: 0;
@@ -9,30 +11,41 @@
   display: grid;
   place-items: center;
   padding: 0 16px;
-  background: linear-gradient(180deg, #16222d 0%, #24384a 100%);
+  background: #2b4255 url(sky.webp) center top / cover no-repeat;
 }
 .intro-logo img { width: min(78vw, 820px); height: auto; }
 
-/* Starts just below the middle of the screen; the photo's empty sky is see-through. */
+/* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky photo. */
 .intro-clouds {
   position: relative;
   z-index: 1;
-  margin-top: -55vh;
+  margin-top: -158vh;
 }
 .clouds {
   display: block;
   width: 100%;
-  height: max(150vw, 220vh); /* tall enough on phones too; the sides are cropped there */
+  height: max(100vw, 200vh); /* tall enough on phones too; the sides are cropped there */
   object-fit: cover;
   object-position: center top;
 }
 
-.cloud-text {
+/* The text's stretch of the page: it sticks in the centre of the screen for as long
+   as this track is longer than the screen (here 40vh of scrolling), then moves on. */
+.cloud-text-track {
   position: absolute;
   left: 0;
   right: 0;
-  top: 56%;
+  top: 36%; /* the text arrives as the logo disappears, and holds over the clouds */
+  height: 140vh;
+  pointer-events: none;
+}
+.cloud-text {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   display: grid;
+  align-content: center;
   justify-items: center;
   gap: 1rem;
   padding: 0 16px;

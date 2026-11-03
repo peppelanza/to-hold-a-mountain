@@ -2,11 +2,10 @@
 
 Static website, served by Render from `public/` (no build step).
 
-- `public/index.html`, `style.css`, `main.js` — homepage: logo in the open sky, the clouds (`clouds.webp`) scroll up over it carrying the text and fade onto the film clip, which plays as you scroll
+- `public/index.html`, `style.css`, `main.js` — homepage: logo over the sky photo (`sky.webp`), the storm clouds (`storm-band.webp`: the cloudy part of the storm photo, top and bottom faded to transparent) scroll up over it carrying the text and fade onto the film clip, which plays as you scroll
 - `public/site.css`, `menu.js` — shared styles and the menu (its items are listed at the top of `menu.js`)
 - `public/screenings.html`, `press.html`, `about.html` — empty pages for now
 - `public/soundtrack.html`, `soundtrack.css`, `soundtrack.js` — one-track player with a soundwave
-- `tools/clouds_cutout.py` — makes `clouds.webp` from the storm cloud photo (its checkerboard "transparency" was printed in): cuts out the sky, cleans the edge, fades the bottom (needs numpy, scipy, Pillow)
 
 New track: replace `public/soundtrack.mp3`, then regenerate the soundwave:
 
