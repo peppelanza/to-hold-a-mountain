@@ -10,6 +10,8 @@ const TEXT_HOLD = 0.9; // screens of scrolling the quotes stay in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
+const filmStory = film.querySelector(".film-story");
+const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
 
 // 0 before a, 1 after b, linear in between.
@@ -61,6 +63,13 @@ function update() {
   video.style.transform = `scale(${1 + 1.8 * into})`;
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
   wash.style.opacity = ease(range(play, 0.65, 0.85));
+
+  // As the lake blurs out, the poster and synopsis come into focus in place, from a
+  // blur, and stay to be read until the end of the page.
+  const shown = ease(range(play, 0.7, 0.88));
+  filmStory.style.opacity = shown;
+  filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
+  filmStory.classList.toggle("shown", shown > 0.5);
 
   // The clouds over the top of the video (held there by CSS) lift up and away as the
   // video zooms into the lake.
@@ -154,6 +163,17 @@ Promise.all([
 setTimeout(reveal, 20000); // never keep people waiting forever on a slow connection
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
+// On short screens, scale the poster and synopsis down until they fit.
+function fitStory() {
+  story.style.transform = "";
+  const room = filmStory.clientHeight - parseFloat(getComputedStyle(filmStory).paddingTop) - parseFloat(getComputedStyle(filmStory).paddingBottom);
+  const need = story.offsetHeight;
+  if (need > room) story.style.transform = `scale(${room / need})`;
+}
+fitStory();
+window.addEventListener("resize", fitStory);
+document.fonts && document.fonts.ready.then(fitStory);
+
 window.addEventListener("resize", requestUpdate);
 video.addEventListener("loadedmetadata", requestUpdate);
 update();
