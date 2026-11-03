@@ -244,14 +244,10 @@
 }
 
 /* Poster and synopsis over the blurred video (still playing) at the end, in place:
-   main.js brings them into focus from a blur. Poster on the left, synopsis on the right.
-   Pinned like the video (sticky, laid over it). */
+   main.js brings them into focus from a blur. Poster on the left, synopsis on the right. */
 .film-story {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  height: 100vh;
-  margin-top: -100vh;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
   padding: 88px 16px 72px; /* the footer sits under it */
@@ -303,25 +299,19 @@
 .button:hover, .button:focus-visible { background: var(--ink); color: #46462e; outline: none; }
 .buttons { display: flex; flex-wrap: wrap; gap: 12px; }
 .watch { background: rgba(20, 30, 40, 0.15); }
-/* Phones: a page of its own that scrolls over the blurred video, which stays put behind
-   it: the poster full width, then the heading, the synopsis, the two buttons, the footer.
-   It rises into place as it comes into focus (at the top as the blur ends: 49vh in). */
+/* Phones: the poster small at the top left beside the heading and button, the
+   synopsis below; main.js scales it all down if a short screen still can't fit it. */
 @media (max-width: 767px) {
-  .film { height: auto; }
-  .film-story {
-    position: relative;
-    top: auto;
-    display: block;
-    height: auto;
-    min-height: 100vh;
-    margin-top: -51vh;
-    padding: 84px 16px 0;
-    transform-origin: 50% 0;
+  .film-story { padding: 84px 16px 124px; }
+  .story {
+    grid-template-columns: 38% 1fr;
+    grid-template-areas: "poster head" "poster btn" "text text";
+    gap: 14px 16px;
   }
-  .story { display: block; }
-  .poster { height: auto; width: 100%; }
-  .synopsis h2 { margin: 32px 0 16px; font-size: 2.4rem; }
-  .synopsis p { font-size: 1.1rem; line-height: 1.55; margin-bottom: 28px; }
-  .synopsis .button { padding: 0.8em 1.1em; font-size: 0.72rem; letter-spacing: 0.14em; }
-  .film-story .site-footer { position: static; margin-top: 56px; padding: 16px 0 24px; }
+  .synopsis { display: contents; }
+  .poster { grid-area: poster; height: auto; width: 100%; }
+  .synopsis h2 { grid-area: head; align-self: end; margin: 0; font-size: 2rem; }
+  .synopsis .buttons { grid-area: btn; align-self: start; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .synopsis .button { padding: 0.7em 1em; font-size: 0.7rem; letter-spacing: 0.14em; }
+  .synopsis p { grid-area: text; font-size: 1rem; line-height: 1.5; margin: 0; }
 }
