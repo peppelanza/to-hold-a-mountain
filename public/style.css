@@ -50,8 +50,14 @@
 
 /* The logo comes into focus once the loading screen fades. */
 .loading .intro-logo img, .loading .intro-logo .watch { opacity: 0; }
-.revealing .intro-logo img, .loaded .intro-logo img, .revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+/* The logo comes into focus with a soft, warm glow that blends it into the sky. */
+.revealing .intro-logo img, .loaded .intro-logo img { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+.revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: fade-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 @keyframes logo-in {
+  from { opacity: 0; filter: blur(18px) drop-shadow(0 0 0 rgba(255, 244, 228, 0)); }
+  to { opacity: 1; filter: blur(0) drop-shadow(0 0 22px rgba(255, 244, 228, 0.32)); }
+}
+@keyframes fade-in {
   from { opacity: 0; filter: blur(18px); }
   to { opacity: 1; filter: blur(0); }
 }
@@ -61,21 +67,22 @@
 .laurels {
   position: absolute;
   top: 20px;
-  left: 20px;
+  left: 108px;  /* the same room on both sides as the menu button takes, so it's centred */
   right: 108px;
   height: 68px;
   z-index: 5;
   display: flex;
   align-items: center;
+  justify-content: center;
   pointer-events: none;
 }
 .laurels img { height: auto; }
-.laurels .laurels-wide { display: block; width: 100%; max-width: 1200px; }
+.laurels .laurels-wide { display: block; width: 100%; max-width: 760px; }
 .laurels .laurels-row { display: none; }
 @media (max-width: 767px) {
-  .laurels { top: 104px; left: 16px; right: 16px; height: auto; flex-direction: column; gap: 10px; }
+  .laurels { top: 104px; left: 16px; right: 16px; height: auto; flex-direction: column; align-items: center; gap: 8px; }
   .laurels .laurels-wide { display: none; }
-  .laurels .laurels-row { display: block; width: 100%; }
+  .laurels .laurels-row { display: block; width: 84%; }
 }
 
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
