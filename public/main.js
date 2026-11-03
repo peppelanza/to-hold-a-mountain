@@ -69,9 +69,6 @@ function update() {
   if (onScreen && video.paused) video.play().catch(() => {});
   else if (!onScreen && !video.paused) video.pause();
 
-  // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
-  const scrollable = film.offsetHeight - window.innerHeight;
-  const play = Math.min(1, Math.max(0, -film.getBoundingClientRect().top / scrollable));
 
 
   // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
@@ -83,7 +80,7 @@ function update() {
   const t = filmBox.top; // where the video would be, scrolling with the page
   const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
-  const into = ease(range(BLEND - t, 0, BLEND + 0.39 * scrollable)); // fully zoomed at play 0.39
+  const into = ease(range(BLEND - t, 0, BLEND + 0.49 * window.innerHeight)); // fully zoomed 49vh in
   video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
   const blur = range(into, 0.5, 1);
   video.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
