@@ -75,11 +75,11 @@
 }
 .laurels img { height: auto; }
 .laurels .laurels-wide { display: block; width: 100%; max-width: 1000px; }
-.laurels .laurels-row { display: none; }
+.laurels .laurels-grid { display: none; }
 @media (max-width: 767px) {
-  .laurels { top: 104px; left: 16px; right: 16px; height: auto; flex-direction: column; align-items: center; gap: 8px; }
+  .laurels { left: 16px; right: 100px; height: auto; justify-content: flex-start; } /* top left, clear of the button */
   .laurels .laurels-wide { display: none; }
-  .laurels .laurels-row { display: block; width: 96%; }
+  .laurels .laurels-grid { display: block; width: 100%; }
 }
 
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
