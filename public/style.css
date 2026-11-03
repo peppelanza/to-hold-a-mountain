@@ -107,13 +107,20 @@
   margin: calc(var(--logo-w) * -0.0527) 0;
 }
 
+/* The block the clouds are held in. It ends 46vh below the video's top edge (its content,
+   the video section, carries on past it), so the clouds are let go, and scroll up and
+   away with the page, just as the zoom into the lake starts (14vh of scrolling after
+   the video fills the screen). Clouds top at 42vh + their height, video top 32vh above
+   their bottom: height = cloud height + 56vh. */
+.flow { height: calc(var(--cloud-h) + 56vh); }
+
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
-   photo. Sticky: once their soft bottom edge has risen to 45% down the screen (the same
+   photo. Sticky: once their soft bottom edge has risen to 32% down the screen (the same
    moment the video fills the screen), the browser keeps them there, over the top third
-   of the video, until the video section ends. */
+   of the video, until the zoom into the lake starts. */
 .intro-clouds {
   position: sticky;
-  top: calc(45vh - var(--cloud-h));
+  top: calc(32vh - var(--cloud-h));
   z-index: 1;
   margin-top: -152vh;
   height: var(--cloud-h);
@@ -207,7 +214,7 @@
   position: relative;
   z-index: 0;
   height: 240vh; /* scrolling on through it: zoom into the lake soon, then the synopsis */
-  margin-top: -45vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
+  margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
   position: sticky;

@@ -33,7 +33,7 @@ lum = c.mean(2) / 255
 # form; fully solid from 32% down. A short ramp at the very top avoids a line.
 form = smooth(0.86, 0.66, lum)
 alpha = np.maximum(form, smooth(0.14, 0.32, v)) * smooth(0.0, 0.05, v)
-alpha *= 1 - smooth(0.8, 1.0, v)  # soft fade, within the 45vh where the clouds lie over the video: solid above its top edge
+alpha *= 1 - smooth(0.86, 1.0, v)  # soft fade, within the 32vh where the clouds lie over the video: solid above its top edge
 
 rgb = c * np.array([0.84, 0.89, 0.93], np.float32)
 # Lower down, the film's overcast sky: light blue-grey, low contrast.

@@ -93,11 +93,6 @@ function update() {
   filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
   filmStory.classList.toggle("shown", shown > 0.5);
 
-  // The clouds over the top of the video (held there by CSS) lift up and away as the
-  // video zooms into the lake.
-  const away = ease(range(play, 0.25, 0.45)); // they stay on the video until the zoom is well under way
-  introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
-  introClouds.style.opacity = 1 - ease(range(play, 0.28, 0.45));
   ticking = false;
 }
 
