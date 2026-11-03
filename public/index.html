@@ -38,7 +38,11 @@
   <div class="flow">
     <div class="intro-logo-hold">
       <div class="intro-logo">
-        <img src="logo-glow.webp" width="1763" height="625" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
+        <!-- Phones: the title stacked, same width and glow. -->
+        <picture>
+          <source media="(max-width: 767px)" srcset="logo-mobile-glow.webp" width="1411" height="577">
+          <img src="logo-glow.webp" width="1763" height="625" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
+        </picture>
         <a class="button watch" href="https://www.youtube.com/watch?v=SKabqo5MiE8" data-trailer>Watch the trailer</a>
       </div>
     </div>

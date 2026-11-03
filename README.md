@@ -27,4 +27,4 @@ npx serve public
 
 Every push to `main` deploys automatically.
 
-- `tools/logo-plain.png` — the logo without glow (the homepage uses `logo-glow.webp`, with a very faint 14% glow baked in)
+- `tools/logo-plain.png` — the logo without glow (the homepage uses `logo-glow.webp`, with a very faint 14% glow baked in; on phones `logo-mobile-glow.webp`, the stacked title from `tools/logo-mobile-plain.png` with the same glow)

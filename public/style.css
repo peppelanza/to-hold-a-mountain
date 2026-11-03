@@ -99,6 +99,7 @@
 }
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
+.intro-logo picture { display: contents; } /* the image lays out as before */
 .intro-logo img {
   --logo-w: min(87.2vw, 917px);
   width: var(--logo-w);
