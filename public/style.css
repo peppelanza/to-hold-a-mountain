@@ -170,22 +170,50 @@
 
 .lake { background: var(--lake); }
 
+/* Poster on the left, synopsis on the right; stacked on phones. */
 .story {
-  max-width: 40rem;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  max-width: 72rem;
   margin: 0 auto;
   padding: 18vh 16px 22vh;
 }
-.story .eyebrow { color: var(--cream); margin-bottom: 1.2rem; }
-.story h2 {
+.poster {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 24px 60px rgba(30, 40, 50, 0.45);
+}
+.synopsis h2 {
   font-weight: 400;
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
   line-height: 1.05;
   margin-bottom: 1.6rem;
   color: var(--cream);
 }
-.story p:not(.eyebrow) {
+.synopsis p {
   font-size: 1.2rem;
   line-height: 1.6;
   color: var(--ink);
-  margin-bottom: 1.1rem;
+  margin-bottom: 2.2rem;
+}
+.button {
+  display: inline-block;
+  padding: 0.85em 1.8em;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.25s, color 0.25s;
+}
+.button:hover, .button:focus-visible { background: var(--ink); color: #46462e; outline: none; }
+@media (max-width: 767px) {
+  .story { grid-template-columns: 1fr; padding-top: 14vh; }
+  .poster { max-width: 360px; margin: 0 auto; }
 }
