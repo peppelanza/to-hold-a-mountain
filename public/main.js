@@ -76,23 +76,23 @@ function update() {
 
   // Second half: zoom into the lake (bottom centre) and blur, until the lake's colour
   // fills the screen and the section below carries it on.
-  const into = ease(range(play, 0.3, 0.62)); // fully blurred into the lake at 0.62
+  const into = ease(range(play, 0.1, 0.45)); // starts soon after the video is in place; fully blurred at 0.45
   video.style.transform = `scale(${1 + 1.8 * into})`;
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
-  wash.style.opacity = ease(range(play, 0.5, 0.62));
+  wash.style.opacity = ease(range(play, 0.33, 0.45));
 
   // As the lake blurs out, the poster and synopsis come into focus in place, from a
   // blur, and stay to be read until the end of the page.
-  const shown = ease(range(play, 0.55, 0.72));
+  const shown = ease(range(play, 0.38, 0.55));
   filmStory.style.opacity = shown;
   filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
   filmStory.classList.toggle("shown", shown > 0.5);
 
   // The clouds over the top of the video (held there by CSS) lift up and away as the
   // video zooms into the lake.
-  const away = ease(range(play, 0.25, 0.5));
+  const away = ease(range(play, 0.05, 0.3));
   introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
-  introClouds.style.opacity = 1 - ease(range(play, 0.3, 0.5));
+  introClouds.style.opacity = 1 - ease(range(play, 0.1, 0.3));
   ticking = false;
 }
 

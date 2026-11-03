@@ -206,7 +206,7 @@
 .film {
   position: relative;
   z-index: 0;
-  height: 280vh; /* scrolling on through it: zoom into the lake, then the synopsis */
+  height: 240vh; /* scrolling on through it: zoom into the lake soon, then the synopsis */
   margin-top: -45vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
