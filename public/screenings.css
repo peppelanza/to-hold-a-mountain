@@ -1,0 +1,38 @@
+.screenings { max-width: 72rem; padding-bottom: 18vh; }
+
+/* Same feel as the credits on About the film: small caps headings, thin lines. */
+.festivals {
+  width: 100%;
+  margin-top: 3rem;
+  border-collapse: collapse;
+}
+.festivals th {
+  padding: 0 1.5rem 0.9rem 0;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(246, 239, 230, 0.35);
+}
+.festivals td {
+  padding: 0.85rem 1.5rem 0.85rem 0;
+  vertical-align: top;
+  font-size: 1.1rem;
+  line-height: 1.45;
+  color: var(--ink);
+  border-bottom: 1px solid rgba(246, 239, 230, 0.2);
+}
+.festivals .date { width: 14%; }
+.festivals .location { width: 20%; }
+.festivals .type { width: 16%; }
+
+/* Phones: each festival is a block; empty cells are hidden. */
+@media (max-width: 767px) {
+  .festivals thead { display: none; }
+  .festivals, .festivals tbody, .festivals tr, .festivals td { display: block; width: auto; }
+  .festivals tr { padding: 0.9rem 0; border-bottom: 1px solid rgba(246, 239, 230, 0.2); }
+  .festivals td { padding: 0; border: 0; }
+  .festivals td:empty { display: none; }
+}

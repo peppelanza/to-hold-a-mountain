@@ -3,7 +3,7 @@
 (function () {
   var items = [
     ["Homepage", "./"],
-    ["Screening & Awards", "screenings.html"],
+    ["Screenings & Awards", "screenings.html"],
     ["Press", "press.html"],
     ["About the film", "about.html"],
     ["Community", "community.html"],
