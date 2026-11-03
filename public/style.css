@@ -49,8 +49,8 @@
 }
 
 /* The logo comes into focus once the loading screen fades. */
-.loading .intro-logo img { opacity: 0; }
-.revealing .intro-logo img, .loaded .intro-logo img { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+.loading .intro-logo img, .loading .intro-logo .watch { opacity: 0; }
+.revealing .intro-logo img, .loaded .intro-logo img, .revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 @keyframes logo-in {
   from { opacity: 0; filter: blur(18px); }
   to { opacity: 1; filter: blur(0); }
@@ -66,6 +66,8 @@
   height: 100svh;
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: clamp(28px, 5vh, 48px);
   padding: 0 16px;
   background: #2b4255 url(sky.webp) center top / cover no-repeat;
 }
@@ -82,6 +84,7 @@
   margin-top: -152vh;
   height: var(--cloud-h);
   overflow-x: clip;
+  pointer-events: none; /* clicks pass through to the logo's trailer button */
   will-change: transform, opacity;
 }
 /* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
@@ -242,10 +245,13 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
+  white-space: nowrap;
   color: var(--ink);
   transition: background 0.25s, color 0.25s;
 }
 .button:hover, .button:focus-visible { background: var(--ink); color: #46462e; outline: none; }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.watch { background: rgba(20, 30, 40, 0.15); }
 /* Phones: the poster small at the top left beside the heading and button, the
    synopsis below; main.js scales it all down if a short screen still can't fit it. */
 @media (max-width: 767px) {
@@ -258,6 +264,7 @@
   .synopsis { display: contents; }
   .poster { grid-area: poster; height: auto; width: 100%; }
   .synopsis h2 { grid-area: head; align-self: end; margin: 0; font-size: 2rem; }
-  .synopsis .button { grid-area: btn; align-self: start; justify-self: start; padding: 0.7em 1.2em; font-size: 0.75rem; }
+  .synopsis .buttons { grid-area: btn; align-self: start; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .synopsis .button { padding: 0.7em 1em; font-size: 0.7rem; letter-spacing: 0.14em; }
   .synopsis p { grid-area: text; font-size: 1rem; line-height: 1.5; margin: 0; }
 }
