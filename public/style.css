@@ -71,14 +71,17 @@
 }
 .intro-logo img { width: min(78vw, 820px); height: auto; }
 
-/* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky photo. */
+/* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
+   photo. Sticky: once their soft bottom edge has risen to halfway down the screen, the
+   browser keeps them there, over the top of the video, until the video section ends. */
 .intro-clouds {
-  position: relative;
+  position: sticky;
+  top: calc(50vh - var(--cloud-h));
   z-index: 1;
-  will-change: transform, opacity;
   margin-top: -152vh;
   height: var(--cloud-h);
   overflow-x: clip;
+  will-change: transform, opacity;
 }
 /* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
    copies side by side drift left by one copy, then start over, so the clouds move

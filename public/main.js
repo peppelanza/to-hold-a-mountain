@@ -10,9 +10,7 @@ const TEXT_HOLD = 0.9; // screens of scrolling the quotes stay in the centre
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
 const wash = film.querySelector(".film-wash");
-const stage = film.querySelector(".film-stage");
 const introClouds = document.querySelector(".intro-clouds");
-const CLOUDS_STOP = 0.65; // the clouds' soft bottom stays this far down the screen over the video
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -64,14 +62,11 @@ function update() {
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
   wash.style.opacity = ease(range(play, 0.65, 0.85));
 
-  // The clouds scroll up until their soft bottom is two thirds of the way down the
-  // screen, then stay over the top of the video while it plays (and leave with it).
-  // translateY undoes the scrolling past that point; they fade as the video zooms.
-  introClouds.style.transform = "";
-  const natural = introClouds.getBoundingClientRect().bottom;
-  const held = stage.getBoundingClientRect().top + CLOUDS_STOP * window.innerHeight;
-  introClouds.style.transform = held > natural ? `translateY(${held - natural}px)` : "";
-  introClouds.style.opacity = 1 - ease(range(play, 0.5, 0.8));
+  // The clouds over the top of the video (held there by CSS) lift up and away as the
+  // video zooms into the lake.
+  const away = ease(range(play, 0.45, 0.8));
+  introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
+  introClouds.style.opacity = 1 - ease(range(play, 0.55, 0.8));
   ticking = false;
 }
 

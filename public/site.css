@@ -122,8 +122,13 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   z-index: 30;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap; /* one line */
 }
-.home-link img { display: block; width: clamp(150px, 16vw, 220px); height: auto; }
 
 /* ---------- Inner pages (empty for now) ---------- */
 

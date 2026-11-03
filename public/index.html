@@ -24,8 +24,9 @@
   </div>
 
   <!-- The logo stays in the middle of the screen over the sky photo; the storm clouds
-       scroll up over it, carrying the text, and fade out onto the video below. -->
-  <section class="intro">
+       scroll up over it, carrying the text, onto the video below, and stay over its
+       top while it plays. One block, so the clouds can stay put (sticky) over the video. -->
+  <div class="flow">
     <div class="intro-logo-hold">
       <div class="intro-logo">
         <img src="logo.png" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
@@ -48,16 +49,16 @@
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- The video stays on screen while scrolling plays it; in the second half it zooms
-       into the lake at the bottom and blurs. -->
-  <section class="film">
-    <div class="film-stage">
-      <video src="bg2.mp4" muted playsinline preload="metadata" aria-hidden="true"></video>
-      <div class="film-wash"></div>
-    </div>
-  </section>
+    <!-- The video stays on screen while scrolling plays it; in the second half it zooms
+         into the lake at the bottom and blurs. -->
+    <section class="film">
+      <div class="film-stage">
+        <video src="bg2.mp4" muted playsinline preload="metadata" aria-hidden="true"></video>
+        <div class="film-wash"></div>
+      </div>
+    </section>
+  </div>
 
   <!-- The lake's colour: the video zooms into the lake and the page carries on in it. -->
   <section class="lake">
