@@ -63,7 +63,31 @@
   background-size: cover;
   background-position: center bottom;
   pointer-events: none;
-  will-change: transform;
+  /* Tops fade into the sky instead of ending in a hard edge. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 6%, #000 52%);
+  mask-image: linear-gradient(to bottom, transparent 6%, #000 52%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Twice the screen width, repeating sideways, so it can drift without an edge. */
+.fog {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.fog-back { top: 25%; height: 75%; }
+/* Rides with the cloud bank; its thick lower part veils the top of the video. */
+.fog-front {
+  top: -95vh;
+  height: 112vh;
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
 }
 
 .cloud-text {

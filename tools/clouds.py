@@ -116,6 +116,9 @@ def layer(name, seed, top, scale, light, shadow, haze, sky):
     relief = 1 - 0.65 * smooth(0.35, 0.75, v)
     lit = np.clip((0.42 + 0.58 * (0.7 + (lambert - 0.7) * relief)) * (1 - (1 - ao) * relief) * depth_dark + 0.2 * rim, 0, 1)
     lit = (lit * (1 + 0.12 * (n - 0.5) + 0.06 * (fine - 0.5))) ** 1.25
+    # The lower body is one soft mass: smooth away any streaks there.
+    soft = smooth(0.4, 0.7, v)
+    lit = lit * (1 - soft) + blur(lit, 14) * soft
 
     light, shadow, sky = (np.array(c, np.float32) for c in (light, shadow, sky))
     rgb = shadow + (light - shadow) * lit[..., None]
@@ -136,3 +139,26 @@ def layer(name, seed, top, scale, light, shadow, haze, sky):
 layer("cloud-1", 11, 0.16, 0.8, (214, 220, 225), (88, 104, 120), 0.35, (70, 92, 110))
 layer("cloud-2", 23, 0.27, 1.0, (232, 234, 236), (98, 112, 126), 0.15, (90, 110, 125))
 layer("cloud-3", 37, 0.38, 1.25, (244, 243, 241), (108, 120, 132), 0.0, (110, 128, 140))
+
+
+def fog(name, seed, colour):
+    """A wide, soft fog bank: thin at the top, thick lower down, wispy throughout.
+    Repeats seamlessly sideways so it can drift."""
+    rng = np.random.default_rng(seed)
+    n = fbm(rng, octaves=5, base=(2, 6), persistence=0.55)
+    wisps = fbm(rng, octaves=4, base=(3, 14), persistence=0.5)  # stretched sideways, like drifting fog
+    # Make the left and right edges meet: blend the texture with its mirror near the seam.
+    ramp = np.clip(np.abs(np.linspace(-1, 1, W)) * 4 - 3, 0, 1)[None, :]
+    n = n * (1 - ramp * 0.5) + n[:, ::-1] * ramp * 0.5
+    wisps = wisps * (1 - ramp * 0.5) + wisps[:, ::-1] * ramp * 0.5
+    v = np.linspace(0, 1, H)[:, None]
+    body = smooth(0.0, 0.75, v)
+    alpha = np.clip(body * (0.35 + 0.9 * n) * (0.7 + 0.5 * wisps), 0, 1) * smooth(0.0, 0.35, v)
+    rgb = np.broadcast_to(np.array(colour, np.float32), (H, W, 3))
+    rgb = rgb * (0.94 + 0.12 * n[..., None])
+    rgba = np.dstack([rgb, alpha * 255]).clip(0, 255).astype(np.uint8)
+    Image.fromarray(rgba, "RGBA").save(f"{out_dir}/{name}.png")
+
+
+fog("fog-1", 51, (168, 182, 192))
+fog("fog-2", 63, (186, 198, 206))

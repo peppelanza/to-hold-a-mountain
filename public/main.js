@@ -6,6 +6,8 @@ const logo = document.querySelector(".logo");
 const rise = document.querySelector(".rise");
 const cloudLayers = [...document.querySelectorAll(".cloud-layer")];
 const cloudText = document.querySelector(".cloud-text");
+const fogBack = document.querySelector(".fog-back");
+const fogFront = document.querySelector(".fog-front");
 const video = document.querySelector("video");
 
 // 0 before a, 1 after b, linear in between.
@@ -37,11 +39,20 @@ function update() {
   // (parallax) and drifts sideways, and the clip drifts inside its own frame.
   const top = videoTop(p);
   rise.style.transform = `translateY(${top}vh)`;
-  for (const layer of cloudLayers) {
+  cloudLayers.forEach((layer, i) => {
     const depth = parseFloat(layer.dataset.depth);
     const drift = parseFloat(layer.dataset.drift);
     layer.style.transform = `translate(${drift * p}vw, ${top * (depth - 1)}vh)`;
-  }
+    // Each layer condenses out of the fog a little after the one behind it.
+    layer.style.opacity = ease(range(p, 0.05 + i * 0.05, 0.27 + i * 0.05));
+  });
+
+  // Fog: thickens first, drifting sideways; the front layer thins a little once the
+  // video fills the screen, leaving a haze over its sky.
+  fogBack.style.opacity = ease(range(p, 0, 0.22));
+  fogBack.style.transform = `translate(${-p * 30}%, ${(1 - ease(range(p, 0, 0.3))) * 18}vh)`;
+  fogFront.style.opacity = 0.7 * ease(range(p, 0.08, 0.3)) * (1 - 0.4 * ease(range(p, 0.6, 0.9)));
+  fogFront.style.transform = `translateX(${-p * 18}%)`;
   video.style.transform = `translateY(${-0.07 * top}vh)`;
 
   // Text in the sky above the clouds.
