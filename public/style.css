@@ -25,7 +25,7 @@
   filter: blur(28px);
 }
 .revealing .loader { opacity: 0; pointer-events: none; }
-.loading, .loading body { overflow: hidden; }
+.loading { overflow: hidden; }
 
 .loader-box { position: relative; width: 140px; text-align: center; }
 .loader-bar { height: 1px; background: rgba(246, 239, 230, 0.25); overflow: hidden; }

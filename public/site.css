@@ -18,8 +18,9 @@ body {
   font-family: var(--serif);
   font-size: 1.125rem;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip; /* cuts off only sideways, so the locks below (on html) leave the page's length alone */
 }
+html { overflow-x: hidden; } /* no sideways scrolling */
 
 a { color: inherit; }
 
@@ -88,7 +89,7 @@ a { color: inherit; }
   visibility: visible;
   transition: opacity 0.6s ease, visibility 0s;
 }
-.menu-open, .menu-open body { overflow: hidden; }
+.menu-open { overflow: hidden; } /* the page stays where it was */
 
 .menu ul { list-style: none; }
 .menu li {
@@ -160,7 +161,7 @@ a { color: inherit; }
   transition: opacity 0.4s ease;
 }
 .trailer.open { opacity: 1; }
-.trailer-open, .trailer-open body { overflow: hidden; }
+.trailer-open { overflow: hidden; } /* the page stays where it was */
 .trailer-frame {
   /* As large as the screen allows: YouTube picks higher quality for bigger players. */
   width: min(100%, 1600px, calc((100vh - 104px) * 16 / 9));
@@ -197,7 +198,7 @@ a { color: inherit; }
 
 /* ---------- Password screen (gate.js) ---------- */
 
-.locked, .locked body { overflow: hidden; }
+.locked { overflow: hidden; } /* the page stays where it was */
 .locked body > :not(.gate) { visibility: hidden; }
 .gate {
   position: fixed;

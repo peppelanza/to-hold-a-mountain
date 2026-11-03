@@ -13,7 +13,7 @@
     el.classList.remove("open");
     document.documentElement.classList.remove("trailer-open");
     setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 400);
-    if (opener) opener.focus();
+    if (opener) opener.focus({ preventScroll: true });
   }
 
   function open(e) {
@@ -37,7 +37,7 @@
     var closeButton = overlay.querySelector(".trailer-close");
     closeButton.addEventListener("click", close);
     overlay.addEventListener("click", function (ev) { if (ev.target === overlay) close(); });
-    closeButton.focus();
+    closeButton.focus({ preventScroll: true });
   }
 
   var buttons = document.querySelectorAll("[data-trailer]");

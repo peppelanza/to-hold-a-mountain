@@ -90,11 +90,12 @@ function update() {
   wash.style.opacity = ease(blur);
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
-  // place, from a blur (a cross-blur: one goes soft as the other sharpens, ending
+  // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
   // together), and stay to be read until the end of the page.
   const shown = ease(range(blur, 0.6, 1));
   filmStory.style.opacity = shown;
   filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
+  filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
   filmStory.classList.toggle("shown", shown > 0.5);
 
   ticking = false;
