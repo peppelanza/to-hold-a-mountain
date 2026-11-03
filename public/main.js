@@ -6,6 +6,11 @@ const logo = document.querySelector(".intro-logo img");
 const clouds = document.querySelector(".clouds");
 const film = document.querySelector(".film");
 const video = film.querySelector("video");
+const wash = film.querySelector(".film-wash");
+
+// 0 before a, 1 after b, linear in between.
+const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+const ease = (t) => t * t * (3 - 2 * t);
 
 // Phones only: the video fills the screen's height (cropped at the sides) and pans
 // across while it plays. 0% = its left edge, 100% = its right edge.
@@ -27,6 +32,13 @@ function update() {
     if (Math.abs(video.currentTime - t) > 0.01) video.currentTime = t;
   }
   video.style.objectPosition = mobile.matches ? `${PAN_FROM + (PAN_TO - PAN_FROM) * play}% 50%` : "";
+
+  // Second half: zoom into the lake (bottom centre) and blur, until the lake's colour
+  // fills the screen and the section below carries it on.
+  const into = ease(range(play, 0.5, 1));
+  video.style.transform = `scale(${1 + 1.8 * into})`;
+  video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
+  wash.style.opacity = 0.95 * ease(range(play, 0.7, 1));
   ticking = false;
 }
 

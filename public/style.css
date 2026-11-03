@@ -1,5 +1,7 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
+:root { --lake: #6e8492; } /* the lake at the bottom of the film clip */
+
 /* Loading screen: the sky photo blurred, a small bar and percentage. Nothing scrolls
    until it is done; then it fades and the logo comes into focus. */
 .loader { display: none; }
@@ -133,14 +135,26 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: 50% 100%; /* zooms into the lake, bottom centre */
+  will-change: transform, filter;
 }
+/* The lake's colour, fading in over the end of the zoom so the page below continues it. */
+.film-wash {
+  position: absolute;
+  inset: 0;
+  background: var(--lake);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lake { background: var(--lake); }
 
 .story {
   max-width: 40rem;
   margin: 0 auto;
   padding: 18vh 16px 22vh;
 }
-.story .eyebrow { color: var(--muted); margin-bottom: 1.2rem; }
+.story .eyebrow { color: var(--cream); margin-bottom: 1.2rem; }
 .story h2 {
   font-weight: 400;
   font-size: clamp(2.2rem, 6vw, 3.6rem);
@@ -151,6 +165,6 @@
 .story p:not(.eyebrow) {
   font-size: 1.2rem;
   line-height: 1.6;
-  color: var(--muted);
+  color: var(--ink);
   margin-bottom: 1.1rem;
 }
