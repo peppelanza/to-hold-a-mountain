@@ -78,8 +78,9 @@
 .intro-logo .logo-laurels { display: none; }
 @media (max-width: 767px) {
   .laurels { display: none; }
-  /* Above the logo (first in the grid), 155px wide, close to the logo's glow. */
-  .intro-logo .logo-laurels { display: block; order: -1; width: 155px; margin: 0 0 -34px; opacity: 0.7; }
+  /* Above the logo (first in the grid), as wide as its "TO HOLD A" (73.3% of the logo
+     image, glow included), close to the logo's glow. */
+  .intro-logo .logo-laurels { display: block; order: -1; width: calc(var(--logo-w) * 0.733); margin: 0 0 -60px; opacity: 0.7; }
   .revealing .intro-logo .logo-laurels, .loaded .intro-logo .logo-laurels { animation-name: laurels-in; }
 }
 @keyframes laurels-in { /* as logo-in, ending at their 70% */
