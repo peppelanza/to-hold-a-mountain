@@ -71,7 +71,8 @@ function update() {
   // The video plays (looping) while it's on screen and pauses when it isn't.
   const filmBox = film.getBoundingClientRect();
   const onScreen = filmBox.top < window.innerHeight && filmBox.bottom > 0;
-  if (onScreen && video.paused && video.readyState >= 2) video.play().catch(() => {});
+  // (Not waiting for a frame first: iPhones load none until they're asked to play.)
+  if (onScreen && video.paused) video.play().catch(() => {});
   else if (!onScreen && !video.paused) video.pause();
 
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
@@ -131,31 +132,27 @@ function imageReady(img) {
   });
 }
 
-// The whole clip, read piece by piece to show progress, then kept in memory so every
-// frame is ready to seek to while scrolling.
+// The whole clip, read piece by piece to show progress, so it's in the browser's cache
+// when the page opens. The video keeps its normal address (iPhones don't reliably
+// play a copy held in memory).
 async function loadVideo() {
   try {
     const res = await fetch(video.getAttribute("src"));
     const total = Number(res.headers.get("content-length")) || 0;
-    let blob;
     if (res.body && total) {
       const reader = res.body.getReader();
-      const parts = [];
       let received = 0;
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
-        parts.push(value);
         received += value.length;
         videoShare = received / total;
         showProgress();
       }
-      blob = new Blob(parts, { type: "video/mp4" });
     } else {
-      blob = await res.blob();
+      await res.blob();
     }
-    video.src = URL.createObjectURL(blob);
-  } catch (err) { /* the video keeps its normal source */ }
+  } catch (err) { /* the video loads on its own */ }
   videoShare = 1;
   showProgress();
 }
