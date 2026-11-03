@@ -1,6 +1,6 @@
 // The journey section is tall and its stage is pinned; scroll progress p (0 → 1)
 // through it drives the sequence. Each step lists the slice of p it runs in:
-//   0    – 0.1   logo fades; storm clouds already low on the screen
+//   0.04 – 0.16  storm clouds (already low on the screen) rise over the logo
 //   0.02 – 0.48  rising through the storm photo layers, fog thickening, text in the sky
 //   0.34 – 0.58  passing through a close cloud; the cloud bank is there behind it
 //   0.62 – 0.9   the cloud bank carries the video up to fill the screen
@@ -41,10 +41,8 @@ function update() {
   const scrollable = journey.offsetHeight - window.innerHeight;
   const p = Math.min(1, Math.max(0, -journey.getBoundingClientRect().top / scrollable));
 
-  // Logo: rises and fades as soon as scrolling starts.
-  const logoOut = ease(range(p, 0, 0.1));
-  logo.style.opacity = 1 - logoOut;
-  logo.style.transform = `translateY(${-12 * logoOut}vh) scale(${1 - 0.05 * logoOut})`;
+  // Logo: stays centred while the storm clouds and fog rise over it, fading as they cover it.
+  logo.style.opacity = 1 - ease(range(p, 0.04, 0.16));
 
   // The sky photo drifts up slowly behind everything.
   sky.style.transform = `translateY(${-30 * ease(range(p, 0, 0.5))}vh)`;
@@ -81,8 +79,8 @@ function update() {
   fogFront.style.transform = `translateX(${-p * 18}%)`;
 
   // Text in the sky, above the storm clouds.
-  const textIn = ease(range(p, 0.12, 0.18));
-  const textOut = ease(range(p, 0.3, 0.36));
+  const textIn = ease(range(p, 0.17, 0.23));
+  const textOut = ease(range(p, 0.32, 0.37));
   cloudText.style.opacity = textIn * (1 - textOut);
   cloudText.style.transform = `translateY(${(1 - textIn) * 4 - textOut * 6}vh)`;
 
