@@ -83,7 +83,7 @@
   object-fit: cover;
   object-position: center top;
   /* A slow drift, as if the wind carried the clouds across and back. */
-  animation: cloud-drift 45s ease-in-out infinite alternate;
+  animation: cloud-drift 22.5s ease-in-out infinite alternate;
   will-change: transform;
 }
 .intro-clouds { overflow-x: clip; }
