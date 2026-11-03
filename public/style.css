@@ -50,7 +50,7 @@
 
 /* The logo comes into focus once the loading screen fades. */
 .loading .intro-logo img, .loading .intro-logo .watch { opacity: 0; }
-/* The logo (its soft glow is part of the image) and its button come into focus.
+/* The logo and its button come into focus.
    The filter is gone at the end: iPhone Safari can paint filtered images as white boxes. */
 .revealing .intro-logo img, .loaded .intro-logo img,
 .revealing .intro-logo .watch, .loaded .intro-logo .watch { animation: logo-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
@@ -98,13 +98,7 @@
   padding: 0 16px;
   background: #2b4255 url(sky.webp) center top / cover no-repeat;
 }
-/* The logo with its soft glow baked in (the glow adds 5.3% of the width around it). */
-.intro-logo img {
-  --logo-w: min(87.2vw, 917px);
-  width: var(--logo-w);
-  height: auto;
-  margin: calc(var(--logo-w) * -0.0527) 0;
-}
+.intro-logo img { width: min(78vw, 820px); height: auto; }
 
 /* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 45% down the screen (the same
@@ -205,7 +199,7 @@
 .film {
   position: relative;
   z-index: 0;
-  height: 340vh; /* the last part is for reading the synopsis */
+  height: 280vh; /* scrolling on through it: zoom into the lake, then the synopsis */
   margin-top: -45vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {

@@ -1,6 +1,7 @@
 // Homepage: everything scrolls naturally. This shows the loading screen until the
 // fonts, images and video are all in, shrinks the logo as the clouds come over it,
-// and plays the video with the scroll while it is on screen (and, on phones, pans it).
+// plays the video (looping) while it is on screen, and zooms it into the lake as you
+// scroll on (on phones it also pans across with the rider).
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
 const textTrack = document.querySelector(".cloud-text-track");
@@ -62,35 +63,36 @@ function update() {
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
 
+  // The video plays (looping) while it's on screen and pauses when it isn't.
+  const filmBox = film.getBoundingClientRect();
+  const onScreen = filmBox.top < window.innerHeight && filmBox.bottom > 0;
+  if (onScreen && video.paused && video.readyState >= 2) video.play().catch(() => {});
+  else if (!onScreen && !video.paused) video.pause();
+
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
   const scrollable = film.offsetHeight - window.innerHeight;
   const play = Math.min(1, Math.max(0, -film.getBoundingClientRect().top / scrollable));
 
-  if (video.duration) {
-    const t = play * (video.duration - 0.05);
-    if (Math.abs(video.currentTime - t) > 0.01) video.currentTime = t;
-  }
-  video.style.objectPosition = mobile.matches ? `${PAN_FROM + (PAN_TO - PAN_FROM) * play}% 50%` : "";
 
   // Second half: zoom into the lake (bottom centre) and blur, until the lake's colour
   // fills the screen and the section below carries it on.
-  const into = ease(range(play, 0.74, 0.94)); // only toward the end: fully blurred into the lake at 0.94
+  const into = ease(range(play, 0.3, 0.62)); // fully blurred into the lake at 0.62
   video.style.transform = `scale(${1 + 1.8 * into})`;
   video.style.filter = into > 0 ? `blur(${30 * into}px)` : "";
-  wash.style.opacity = ease(range(play, 0.84, 0.94));
+  wash.style.opacity = ease(range(play, 0.5, 0.62));
 
   // As the lake blurs out, the poster and synopsis come into focus in place, from a
   // blur, and stay to be read until the end of the page.
-  const shown = ease(range(play, 0.86, 0.98));
+  const shown = ease(range(play, 0.55, 0.72));
   filmStory.style.opacity = shown;
   filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
   filmStory.classList.toggle("shown", shown > 0.5);
 
   // The clouds over the top of the video (held there by CSS) lift up and away as the
   // video zooms into the lake.
-  const away = ease(range(play, 0.7, 0.9));
+  const away = ease(range(play, 0.25, 0.5));
   introClouds.style.transform = away > 0 ? `translateY(${-70 * away}vh)` : "";
-  introClouds.style.opacity = 1 - ease(range(play, 0.74, 0.9));
+  introClouds.style.opacity = 1 - ease(range(play, 0.3, 0.5));
   ticking = false;
 }
 
@@ -176,6 +178,16 @@ Promise.all([
   document.fonts ? document.fonts.ready : null,
 ]).then(reveal);
 setTimeout(reveal, 20000); // never keep people waiting forever on a slow connection
+
+
+// Phones: the crop pans across with the rider, following the clip's own time.
+function pan() {
+  video.style.objectPosition = mobile.matches && video.duration
+    ? `${PAN_FROM + (PAN_TO - PAN_FROM) * (video.currentTime / video.duration)}% 50%` : "";
+  if (!video.paused) requestAnimationFrame(pan);
+}
+video.addEventListener("play", () => requestAnimationFrame(pan));
+video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
 // On short screens, scale the poster and synopsis down until they fit.
