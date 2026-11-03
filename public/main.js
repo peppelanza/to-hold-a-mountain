@@ -14,9 +14,9 @@ const PAN_FROM = 0;
 const PAN_TO = 100;
 
 function update() {
-  // Logo: full size on arrival, 60% by the time the clouds cover it (94vh of scrolling).
+  // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
   const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
-  logo.style.transform = `scale(${1 - 0.4 * covered})`;
+  logo.style.transform = `scale(${1 - 0.1 * covered})`;
 
   // 0 when the film section reaches the top of the screen, 1 when it is about to leave.
   const scrollable = film.offsetHeight - window.innerHeight;
