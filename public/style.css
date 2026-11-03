@@ -1,107 +1,46 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
-/* Scroll length of the whole sequence: taller = slower. */
-.journey { position: relative; height: 1400vh; }
-
-.stage {
+/* The logo holds still in the middle of the screen while the clouds scroll over it. */
+.intro-logo {
   position: sticky;
   top: 0;
   height: 100vh;
   height: 100svh;
-  overflow: hidden;
-}
-
-/* Taller than the screen: it slides up slowly as the clouds come in. */
-.sky {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 140%;
-  background: #2b4255 url(sky.webp) center top / cover no-repeat;
-  will-change: transform;
-}
-
-.logo {
-  position: absolute;
-  inset: 0;
   display: grid;
   place-items: center;
   padding: 0 16px;
-  will-change: transform, opacity;
+  background: linear-gradient(180deg, #16222d 0%, #24384a 100%);
 }
-.logo img { width: min(78vw, 820px); height: auto; }
+.intro-logo img { width: min(78vw, 820px); height: auto; }
 
-/* Overscan above and below so its letterbox bars stay out of view. */
-.video-wrap { position: absolute; inset: 0; overflow: hidden; opacity: 0; will-change: transform, opacity; }
-.video-wrap video {
-  position: absolute;
-  left: 0;
-  top: -12.5%;
+/* Starts just below the middle of the screen; the photo's empty sky is see-through. */
+.intro-clouds {
+  position: relative;
+  z-index: 1;
+  margin-top: -55vh;
+}
+.clouds {
+  display: block;
   width: 100%;
-  height: 125%;
+  height: max(150vw, 220vh); /* tall enough on phones too; the sides are cropped there */
   object-fit: cover;
+  object-position: center top;
 }
-
-/* The storm cloud photo seen on arrival; its top fades into the sky photo. */
-.storm {
-  position: absolute;
-  left: -5%;
-  width: 110%;
-  top: 42vh;
-  height: 98vh;
-  background: url(storm-band.webp) center top / cover no-repeat;
-  transform-origin: 50% 20%;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-@media (min-aspect-ratio: 1/1) {
-  .storm { background-size: 100% 100%; } /* never crop away its soft bottom on wide screens */
-}
-
-/* Mist: a cloud-grey wash with drifting textures. Taller than the screen with a soft
-   lower edge, so at the end it can lift away like the base of a cloud. */
-.mist {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 175vh;
-  overflow: hidden;
-  background: linear-gradient(180deg, #8592a0 0%, #737f8c 55%, #66727e 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-/* Twice the screen width, repeating sideways, so it can drift without an edge. */
-.mist-tex {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 100%;
-  background-size: auto 120vh; /* sized by screen height, so it keeps its proportions on phones too */
-  background-repeat: repeat;
-  will-change: transform;
-}
-.mist-tex-2 { background-size: auto 90vh; background-position: 37% 41%; opacity: 0.8; } /* offset, so the two textures' joins never line up */
 
 .cloud-text {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 56%;
   display: grid;
-  align-content: center;
   justify-items: center;
   gap: 1rem;
   padding: 0 16px;
   text-align: center;
   color: var(--ink);
-  text-shadow: 0 1px 18px #121c2566;
-  opacity: 0;
-  will-change: opacity, transform;
+  text-shadow: 0 1px 18px #121c2599;
 }
+.cloud-text .eyebrow { color: var(--cream); }
 .cloud-text p:last-child {
   max-width: 34rem;
   font-size: clamp(1.5rem, 3.4vw, 2.4rem);
@@ -110,7 +49,29 @@
   line-height: 1.25;
 }
 
-.cloud-text .eyebrow { color: var(--cream); }
+/* Starts under the clouds' faded bottom, so they melt into it. */
+.film {
+  position: relative;
+  z-index: 0;
+  height: 300vh;
+  margin-top: -45vh;
+}
+.film-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+/* Overscan above and below so the clip's letterbox bars stay out of view. */
+.film-stage video {
+  position: absolute;
+  left: 0;
+  top: -12.5%;
+  width: 100%;
+  height: 125%;
+  object-fit: cover;
+}
 
 .story {
   max-width: 40rem;
