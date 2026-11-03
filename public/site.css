@@ -119,8 +119,7 @@ a { color: inherit; }
   color: var(--ink);
   transition: color 0.25s;
 }
-.menu a:hover, .menu a:focus-visible { color: var(--cream); font-style: italic; font-weight: 600; outline: none; }
-.menu a[aria-current="page"] { font-style: italic; font-weight: 600; color: var(--cream); }
+.menu a:hover, .menu a:focus-visible { color: var(--cream); font-weight: 600; outline: none; }
 
 .home-link {
   position: fixed;

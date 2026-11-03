@@ -10,10 +10,11 @@
   ];
   var here = location.pathname.split("/").pop() || "index.html";
 
-  var links = items.map(function (item, i) {
-    var page = item[1] === "./" ? "index.html" : item[1];
-    var current = page === here ? ' aria-current="page"' : "";
-    return '<li style="--i:' + i + '"><a href="' + item[1] + '"' + current + ">" + item[0] + "</a></li>";
+  // The page you are on is left out of the menu.
+  var links = items.filter(function (item) {
+    return (item[1] === "./" ? "index.html" : item[1]) !== here;
+  }).map(function (item, i) {
+    return '<li style="--i:' + i + '"><a href="' + item[1] + '">' + item[0] + "</a></li>";
   }).join("");
 
   var html =
