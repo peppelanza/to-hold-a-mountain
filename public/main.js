@@ -26,12 +26,11 @@ const cloudTile = document.querySelector(".clouds");
 // puffs behind the texts, with their top at the top of the screen when the bank's edge
 // (12% down it) reaches the middle of the screen; thin wisps in front of them, higher
 // (by this many screen heights), so they're already up in the sky over the logo when
-// the page opens and their shadows fall on it; the nearest, at the sides, fastest.
+// the page opens and their shadows fall on it.
 const cloudLayers = [
   [document.querySelector(".clouds-mid"), 1.3, 0],
-  [document.querySelector(".clouds-veil"), 1.7, -0.9],
-  [document.querySelector(".clouds-near"), 2.4, -0.4]
-];
+  [document.querySelector(".clouds-veil"), 1.7, -0.9]
+].filter(([layer]) => layer); // (a page from before a layer existed still works)
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
 const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
@@ -143,13 +142,13 @@ function update() {
   // half a screen lower, none behind a wisp), darkening the logo, the texts and the
   // press logos under it; following its drift (frame by frame while the wisps are on
   // screen).
-  const [veil] = cloudLayers[1];
-  const shades = veil.style.visibility === "visible";
-  const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
+  const veil = document.querySelector(".clouds-veil");
+  const shades = !!veil && veil.style.visibility === "visible";
+  const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
   const tileH = 7.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
-  logoShade.style.visibility = shades ? "visible" : "hidden";
-  if (shades) {
-    following = true;
+  if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";
+  if (shades) following = true;
+  if (shades && logoShade) {
     const r = logoShade.getBoundingClientRect();
     const k = logoShade.offsetWidth ? r.width / logoShade.offsetWidth : 1;
     const own = `${((shape.left - r.left) / k).toFixed(1)}px ${((shape.top - r.top) / k).toFixed(1)}px`;
@@ -285,9 +284,7 @@ const mask = new Image();
 mask.src = "clouds-mask.webp";
 const shade = new Image();
 shade.src = "clouds-shade.webp";
-const near = new Image();
-near.src = "clouds-near.webp";
-const images = [logo, sky, clouds, mid, veil, mask, shade, near];
+const images = [logo, sky, clouds, mid, veil, mask, shade];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);
