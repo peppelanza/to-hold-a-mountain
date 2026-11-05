@@ -21,7 +21,7 @@ sideways without a seam.
 """
 import sys
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image
 
 src, out = sys.argv[1], sys.argv[2]
 rng = np.random.default_rng(int(sys.argv[3]) if len(sys.argv) > 3 else 5)
@@ -44,15 +44,6 @@ def noise(h, w, scales):
     return (total - total.min()) / (total.max() - total.min())
 
 
-def blur_wrapped(x, r):
-    """Gaussian blur (x in 0..1) that wraps at the sides, so copies side by side still
-    join without a seam."""
-    p = 3 * r
-    wide = np.concatenate([x[:, -p:], x, x[:, :p]], 1)
-    out = np.asarray(Image.fromarray((wide * 255).clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r)))
-    return out[:, p:-p].astype(np.float32) / 255
-
-
 bank = Image.open(src).convert("RGBA")
 tex_src = np.asarray(bank.convert("RGB")).astype(np.float32)
 tex_src = tex_src[int(tex_src.shape[0] * 0.4):int(tex_src.shape[0] * 0.75)]
@@ -68,53 +59,38 @@ def texture(h, w):
 h, w = 2400, 1200
 y = np.linspace(0, 1, h)[:, None]
 n = noise(h, w, [(300, 0.7), (115, 0.24), (40, 0.06)])
-# the same share of cloud in every stretch (each row's own 70th percentile), so this
-# layer never thins out or runs out
-thr = np.quantile(n, 0.7, axis=1, keepdims=True)
-thr = np.convolve(np.pad(thr[:, 0], 60, mode="wrap"), np.ones(121) / 121, mode="valid")[:, None]
-a = smooth(thr - 0.07, thr + 0.12, n)  # (no fade at the ends: the page repeats it, one under the other)
+cover = noise(h, 1, [(300, 1.0)])
+thr = 1 - (0.18 + 0.3 * cover)
+a = smooth(thr - 0.07, thr + 0.12, n) * smooth(0.0, 0.06, y) * (1 - smooth(0.92, 1.0, y))
 lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[..., None]
-# lighter than the bank behind (bright tops, only a little darker underneath), so the
-# two read as separate layers
-tex = texture(h, w)
-# wrapping top to bottom too (the page repeats this strip): towards its ends the texture
-# hands over to itself half a strip on, which meets up again across the join
-k = (1 - np.sin(np.pi * np.arange(h) / h))[:, None, None]
-tex = tex * (1 - k) + np.roll(tex, h // 2, axis=0) * k
-rgb = tex * (0.88 + 0.42 * lit) * np.array([0.95, 0.99, 1.02])
-rgb = rgb * 0.75 + np.array([226, 231, 234], np.float32) * 0.25
+rgb = texture(h, w) * (0.6 + 0.8 * lit) * np.array([0.95, 0.99, 1.02])
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
-# Wisps in front of the texts: one long strip (17 screens, 333 px a screen), drifting
-# up the page; large (a third of the screen or so), soft, see-through (the words read through them), light on
-# top and greyer underneath; they pass over the texts.
+# Wisps in front of the texts: one long strip (7.6 screens, 333 px a screen), drifting
+# up the page; smallish (a fifth of the screen or so, so there's sky between a wisp and
+# its shadow), soft, see-through but clearly there, light on top and greyer underneath.
 # Where they are is planned against what passes under them (main.js places the strip):
-# - down to 2.2 screens: none, the sky above and around the logo while it shows;
-# - 11.3 to 14.5: a group above the last quote (Variety) and its logo, for their shadows;
+# - down to 1.5 screens: none, the sky above and around the logo as the page opens;
+# - 4.6 to 5.8: a group above the last quote (Variety) and its logo, for their shadows;
 # - elsewhere, scattered.
 PER = 333  # px a screen
-h, w = int(17 * PER), 800
+h, w = int(7.6 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
 at = np.arange(h)[:, None] / PER  # screens down the strip
-n = noise(h, w, [(120, 0.7), (44, 0.22), (14, 0.08)])  # large ones
-dense = smooth(11.2, 11.3, at) * (1 - smooth(14.5, 14.6, at))
-clear = 1 - smooth(2.15, 2.25, at)
+n = noise(h, w, [(60, 0.7), (22, 0.22), (8, 0.08)])
+dense = smooth(4.5, 4.6, at) * (1 - smooth(5.8, 5.9, at))
+clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
-a = smooth(0.66 + lift - edge, 0.66 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.66: a fair few)
-# softened: a little blurred (their shadows too, below, so they still match)
-a = blur_wrapped(a, 7)
+a = smooth(0.74 + lift - edge, 0.74 + lift + edge, n)  # (0.74: few of them) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
-# drawn well blurred: the nearest clouds, out of focus (their shadows keep the shape above)
-seen = blur_wrapped(a, 14)
-rgb = np.dstack([blur_wrapped(rgb[..., i] / 255, 14) for i in range(3)]) * 255
-Image.fromarray(np.dstack([rgb, seen[..., None] * 125]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
-# its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
+# its soft or crisp edge, cast 0.39 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
-shade = np.roll(a, int(0.2 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
+shade = np.roll(a, int(0.39 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
 Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
@@ -128,10 +104,7 @@ form = smooth(np.percentile(lit, 80), np.percentile(lit, 25), lum)  # 1 on the d
 H0, W0 = alpha.shape
 lumps = noise(H0, W0, [(W0 * 0.1, 0.65), (W0 * 0.035, 0.25), (W0 * 0.012, 0.1)])
 score = alpha + 0.55 * (form - 0.5) * (alpha > 0.02) + 0.9 * (lumps - 0.5)
-# a soft edge: letters melt into the cloud; and where the cloud is too thin to hide
-# anything is lumpy too (not the haze's even ramp, which would be a straight line)
-thin = noise(H0, W0, [(W0 * 0.07, 0.7), (W0 * 0.025, 0.3)])
-keep = 1 - smooth(0.22, 0.55, score) * smooth(0.06, 0.25, alpha + 0.4 * (thin - 0.5))
+keep = 1 - smooth(0.22, 0.55, score) * smooth(0.06, 0.25, alpha)  # a soft edge: letters melt into the cloud (thin haze hides nothing)
 m = np.zeros(alpha.shape + (4,), np.uint8)
 m[..., 3] = (keep * 255).astype(np.uint8)
 Image.fromarray(m).save(f"{out}/clouds-mask.png")

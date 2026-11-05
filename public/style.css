@@ -7,7 +7,7 @@
 html, body { background: var(--page, #939ca2); transition: background-color 0.4s ease; }
 
 :root {
-  --cloud-h: max(300vw, 620vh); /* height of the cloud image (thick from 28% to 84%) */
+  --cloud-h: max(194vw, 400vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
 /* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls
@@ -109,8 +109,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
-   until their thick part covers it (140vh of scrolling); then it moves on, hidden. */
-.intro-logo-hold { height: 240vh; }
+   until their thick part covers it (94vh of scrolling); then it moves on, hidden. */
+.intro-logo-hold { height: 194vh; }
 .intro-logo {
   position: sticky;
   top: 0;
@@ -155,29 +155,26 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   margin: calc(var(--logo-w) * -0.0527) 0;
 }
 
-/* The block the clouds are held in: main.js makes it end where the film does, so the
-   clouds stay over the top of the video, as it stays put, to the end of the page.
-   (Before that's measured: clouds top at 50vh + their height, video top 32vh above their
-   bottom: height = cloud height + 50vh.) */
+/* The block the clouds are held in. It ends 32vh below the video's top edge (its content,
+   the video section, carries on past it), so the clouds are let go, and scroll up and
+   away with the page, just as the blur starts (the moment the video fills
+   the screen). Clouds top at 50vh + their height, video top 32vh above their bottom:
+   height = cloud height + 50vh. */
 .flow { height: calc(var(--cloud-h) + 50vh); }
 
 /* Starts at the middle of the screen (50vh, under the logo); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 32% down the screen (the same
    moment the video fills the screen) they are over the top third of the video, and
-   stay there with it (main.js blurs them with it, and dissolves them as the synopsis
-   comes into focus). */
+   from there they scroll away as the blur starts. */
 .intro-clouds {
   position: sticky;
   top: calc(32vh - var(--cloud-h));
   z-index: 1;
-  margin-top: -190vh; /* (240vh of the logo's hold, less 50vh) */
+  margin-top: -144vh;
   height: var(--cloud-h);
   overflow-x: clip;
   pointer-events: none; /* clicks pass through to the logo's trailer button */
   will-change: transform, opacity;
-  /* blue sky behind the bank's thick part, like the sky photo's lower half: it shows
-     where the clouds thin out (tools/cloud_gaps.py) */
-  background: linear-gradient(to bottom, transparent 16%, #4b6274 24%, #576d7e 50%, #63798a 78%, transparent 88%);
 }
 /* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
    copies side by side drift left by one copy, then start over, so the clouds move
@@ -189,7 +186,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   height: 100%;
   width: calc(var(--cloud-h) * 0.401 * 3);
   background: url(clouds.webp) left top / auto 100% repeat-x;
-  animation: cloud-drift 400s linear infinite;
+  animation: cloud-drift 80s linear infinite;
   will-change: transform;
 }
 @keyframes cloud-drift {
@@ -218,21 +215,13 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   height: 100%;
   width: calc(var(--tile-w, calc(var(--layer-h) * 0.5)) * 3); /* three copies side by side */
   background: left top / auto 100% repeat-x;
-  animation: cloud-drift 65s linear infinite;
+  animation: cloud-drift 55s linear infinite;
   will-change: transform;
 }
-.clouds-mid {
-  z-index: 3;
-  --layer-h: 1080vh;
-  --tile-w: 180vh;
-  height: var(--layer-h);
-  /* softly in and out at its top and bottom (its strip repeats seamlessly in between) */
-  -webkit-mask-image: linear-gradient(transparent, #000 25vh, #000 calc(100% - 25vh), transparent);
-  mask-image: linear-gradient(transparent, #000 25vh, #000 calc(100% - 25vh), transparent);
-}
-.clouds-mid div { background-image: url(clouds-mid.webp); background-size: auto 360vh; background-repeat: repeat; } /* the strip three times, one under the other */
-.clouds-veil { z-index: 6; --layer-h: 1700vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
-.clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 20s; }
+.clouds-mid { z-index: 3; --layer-h: 360vh; height: var(--layer-h); }
+.clouds-mid div { background-image: url(clouds-mid.webp); }
+.clouds-veil { z-index: 6; --layer-h: 760vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
+.clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
 }
@@ -243,7 +232,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   position: absolute;
   left: 0;
   right: 0;
-  top: 22%; /* arrives as the logo goes, and is done before the video comes up */
+  top: 29%; /* arrives just after the logo is gone, and is done before the video comes up */
   height: 150vh;
   pointer-events: none;
 }

@@ -9,13 +9,9 @@ const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
-// The texts' rhythm, in screens of scrolling: the first's middle moment, then one every
-// TEXT_EVERY; through the middle they slow to (1 - TEXT_EASE) of the scrolling, over
-// about TEXT_SLOW either side.
-const TEXT_FIRST = -0.18;
-const TEXT_EVERY = 1;
-const TEXT_EASE = 0.8;
-const TEXT_SLOW = 0.2;
+// Where (in screens of scrolling into the pause) each text gives way to the next.
+const TEXT_SWAPS = [0.5, 1.0, 1.5];
+const FADE = 0.14;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
 let video = film.querySelector("video"); // the light clip first, then the full-quality one
@@ -23,7 +19,6 @@ const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
 const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
-const flow = document.querySelector(".flow");
 const introLogo = document.querySelector(".intro-logo");
 const cloudTile = document.querySelector(".clouds");
 // Clouds nearer than the bank, how much faster than it they move, and where they start:
@@ -32,9 +27,9 @@ const cloudTile = document.querySelector(".clouds");
 // (by this many screen heights), so they're already up in the sky over the logo when
 // the page opens and their shadows fall on it.
 const cloudLayers = [
-  [document.querySelector(".clouds-mid"), 1.7, 0],
-  [document.querySelector(".clouds-veil"), 2.7, -1.05]
-].filter(([layer]) => layer); // (a page from before a layer existed still works)
+  [document.querySelector(".clouds-mid"), 1.3, 0],
+  [document.querySelector(".clouds-veil"), 1.7, -0.9]
+];
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
 const shadedWords = [...document.querySelectorAll(".honours p, .logline p, .quote blockquote")];
@@ -62,33 +57,32 @@ function measure() {
 }
 
 function update() {
-  // Logo: full size on arrival, 90% by the time the clouds cover it (the end of its hold).
-  const covered = Math.min(1, window.scrollY / (logoHold.offsetHeight - window.innerHeight));
+  // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
+  const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
   logo.style.transform = `scale(${1 - 0.1 * covered})`;
 
-  // The texts, one after another, each the same: it rises in from below, fading in,
-  // slows softly through the middle of the screen (a brief, gentle pause, never a
-  // stop), then rises on, fading out, as the next rises in; the last stays in the
-  // middle and goes behind the cumulus near the bank's bottom (below). u is how far the track has
-  // scrolled past the top of the screen, in screens; each text's middle moment is
-  // TEXT_FIRST + its place × TEXT_EVERY. They're fixed to the screen and only this moves
-  // them (no fight with the page's own scrolling, so they don't tremble).
+  // Text: rides up with the clouds, slows to a stop in the centre of the screen and
+  // stays there: the bank keeps rising, and the last quote goes behind the cumulus near
+  // its bottom. u is how far the track has scrolled past the top of the screen; the
+  // text stays back by an amount that shrinks smoothly (no sudden stop).
+  // The text is fixed to the screen and only this moves it (no fight with the page's
+  // own scrolling, so it doesn't tremble).
   following = false;
   const vh = window.innerHeight;
-  const u = (window.scrollY - trackTop) / vh;
-  let anyShown = false;
+  const u = window.scrollY - trackTop;
+  const soft = 0.12 * vh; // how gently it slows down
+  const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
+  const y = smoothStep(-u);
+  cloudText.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+
+  // Each text fades out as the next fades in; the last stays.
+  const at = (screens) => ease(range(u / vh, screens - FADE / 2, screens + FADE / 2));
   quotes.forEach((q, i) => {
-    const s = TEXT_FIRST + i * TEXT_EVERY - u; // screens of scrolling until its middle moment
-    let y = s - TEXT_EASE * TEXT_SLOW * Math.tanh(s / TEXT_SLOW); // where it is: slower near the middle
-    // the last (Variety) stays in the middle once there, until the clouds take it
-    if (i === quotes.length - 1 && s < 0) y = 0;
-    const shown = 1 - ease(range(Math.abs(y), 0.15, 0.3));
-    q.style.opacity = shown.toFixed(3);
-    q.style.transform = `translate3d(0, ${(y * vh).toFixed(1)}px, 0)`;
-    if (shown > 0) anyShown = true;
+    const fadeIn = i === 0 ? 1 : at(TEXT_SWAPS[i - 1]);
+    const fadeOut = i < TEXT_SWAPS.length ? at(TEXT_SWAPS[i]) : 0;
+    q.style.opacity = fadeIn * (1 - fadeOut);
+    q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
-  cloudText.style.transform = "";
-  const y = anyShown ? 0 : vh; // (for the visibility below)
 
   // ...behind those clouds: masked with clouds-below-mask.webp (opaque down to the
   // cumulus near the bank's bottom), kept on the bank's place and its drift, once the
@@ -107,8 +101,8 @@ function update() {
     if (bank.top + 0.92 * bank.height > textBox.top && bank.top + 0.8 * bank.height < textBox.bottom) following = true;
   }
 
-  // The sky behind the logo moves up, at a quarter of the scrolling (it's far away).
-  introLogo.style.setProperty("--sky-y", `${(-0.25 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
+  // The sky behind the logo moves up, at a third of the scrolling (it's far away).
+  introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
 
   // The nearer clouds; they fade away as the video comes up (gone before its top reaches
   // the middle of the screen).
@@ -117,8 +111,7 @@ function update() {
   const nearGone = range(filmUp, 0.95, 0.55);
   for (const [layer, speed, lead] of cloudLayers) {
     const ly = speed * (bank.top - edgeAtMiddle) + lead * vh;
-    layer.dataset.over = ly < vh && ly + layer.offsetHeight > 0 ? "1" : ""; // its strip is over the screen
-    layer.style.visibility = nearGone < 1 && layer.dataset.over ? "visible" : "hidden";
+    layer.style.visibility = nearGone < 1 && ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
     layer.style.opacity = (1 - nearGone).toFixed(3);
     layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
   }
@@ -148,15 +141,13 @@ function update() {
   // half a screen lower, none behind a wisp), darkening the logo, the texts and the
   // press logos under it; following its drift (frame by frame while the wisps are on
   // screen).
-  const veil = document.querySelector(".clouds-veil");
-  // (while the strip is over the screen, even once the wisps have faded: their shadows
-  // stay until the words go behind the clouds)
-  const shades = !!veil && !!veil.dataset.over;
-  const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
-  const tileH = 17 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
-  if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";
-  if (shades) following = true;
-  if (shades && logoShade) {
+  const [veil] = cloudLayers[1];
+  const shades = veil.style.visibility === "visible";
+  const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
+  const tileH = 7.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
+  logoShade.style.visibility = shades ? "visible" : "hidden";
+  if (shades) {
+    following = true;
     const r = logoShade.getBoundingClientRect();
     const k = logoShade.offsetWidth ? r.width / logoShade.offsetWidth : 1;
     const own = `${((shape.left - r.left) / k).toFixed(1)}px ${((shape.top - r.top) / k).toFixed(1)}px`;
@@ -216,13 +207,9 @@ function update() {
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
   const ZOOMED = 0.49 * window.innerHeight; // fully blurred this far past the video filling the screen
   const moved = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
-  // it starts to blur a little after it has settled (a tenth of a screen), done at the
-  // same point as before
+  // (no zoom) it starts to blur a little after it has settled (a tenth of a screen)
   const blur = ease(range(-t, 0.1 * window.innerHeight, ZOOMED));
   // (both clips, while the full-quality one fades in over the light one)
-  // The clouds over the video's top slow down with it, so they settle together (they
-  // reach their place, 32vh down, at the same moment it fills the screen).
-  introClouds.style.transform = lag ? `translate3d(0, ${lag.toFixed(1)}px, 0)` : "";
   for (const v of stage.querySelectorAll("video")) {
     v.style.transform = moved;
     v.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
@@ -248,10 +235,6 @@ function update() {
     filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
   }
   filmStory.classList.toggle("shown", shown > 0.5);
-
-  // The clouds over the video blur with it, and dissolve as the synopsis comes into focus.
-  introClouds.style.filter = blur > 0 ? `blur(${(16 * blur).toFixed(1)}px)` : "";
-  introClouds.style.opacity = (1 - shown).toFixed(3);
 
   // Safari's bands around its address bar (iPhone) take the page's colour; it follows
   // what's at the top of the screen: the sky, the clouds (their thick part, until they
@@ -394,7 +377,6 @@ setTimeout(reveal, 20000); // never keep people waiting forever on a slow connec
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
-
 // Phones: the laurels above the logo drift right to left for ever, one copy following
 // the other. A finger can drag them either way; let go, and they glide on with the
 // throw, easing back into the steady drift.
@@ -449,19 +431,12 @@ if (phone.matches) {
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
 let storyStart = 0; // phones: how far down it sits as it starts to show
 // Phones: the synopsis starts to show (the video's blur at 60%) this far past the
-// video filling the screen, × the screen height (with the blur from 0.1 to 0.49).
+// video filling the screen, × the screen height.
 const STORY_FROM = 0.32;
 // A little scrolling room at the very end (× the screen height), with everything in
 // place, so the page doesn't stop dead on the last step.
 const END_ROOM = 0.25;
 function fitStory() {
-  fitFilm();
-  // The clouds stay over the video to the end (they're let go where the film ends, as
-  // the page does), as it stays put.
-  const flowBox = flow.getBoundingClientRect();
-  flow.style.height = `${(film.getBoundingClientRect().bottom - flowBox.top).toFixed(1)}px`;
-}
-function fitFilm() {
   story.style.transform = "";
   if (phone.matches) {
     // the poster's middle at 68% of the screen as it starts to show; it zooms in around
