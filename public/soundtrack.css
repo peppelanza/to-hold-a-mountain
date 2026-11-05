@@ -2,12 +2,12 @@
    html and body, so iPhone Safari's bands keep one colour from the start), laid over
    the video and its shade; then that cover fades away (soundtrack.js adds .video-ready).
    The video itself is never faded: iPhones can flash it at full strength as it starts. */
-html, body { background: #7d6f4c; }
+html, body { background: #615738; } /* the shaded video's average colour, so it blends straight in */
 .bg-cover {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: #7d6f4c;
+  background: #615738;
   pointer-events: none;
   transition: opacity 0.6s ease;
 }
