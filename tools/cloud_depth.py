@@ -44,6 +44,15 @@ def noise(h, w, scales):
     return (total - total.min()) / (total.max() - total.min())
 
 
+def blur_wrapped(x, r):
+    """Gaussian blur (x in 0..1) that wraps at the sides, so copies side by side still
+    join without a seam."""
+    p = 3 * r
+    wide = np.concatenate([x[:, -p:], x, x[:, :p]], 1)
+    out = np.asarray(Image.fromarray((wide * 255).clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r)))
+    return out[:, p:-p].astype(np.float32) / 255
+
+
 bank = Image.open(src).convert("RGBA")
 tex_src = np.asarray(bank.convert("RGB")).astype(np.float32)
 tex_src = tex_src[int(tex_src.shape[0] * 0.4):int(tex_src.shape[0] * 0.75)]
@@ -87,12 +96,12 @@ lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
 a = smooth(0.71 + lift - edge, 0.71 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.71: not many)
 # softened: a little blurred (their shadows too, below, so they still match)
-a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(7))).astype(np.float32) / 255
+a = blur_wrapped(a, 7)
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 # drawn well blurred: the nearest clouds, out of focus (their shadows keep the shape above)
-seen = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(20))).astype(np.float32) / 255
-rgb = np.asarray(Image.fromarray(rgb.clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(14))).astype(np.float32)
+seen = blur_wrapped(a, 20)
+rgb = np.dstack([blur_wrapped(rgb[..., i] / 255, 14) for i in range(3)]) * 255
 Image.fromarray(np.dstack([rgb, seen[..., None] * 200]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
 # its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
