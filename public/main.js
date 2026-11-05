@@ -28,8 +28,8 @@ const cloudTile = document.querySelector(".clouds");
 // (by this many screen heights), so they're already up in the sky over the logo when
 // the page opens and their shadows fall on it.
 const cloudLayers = [
-  [document.querySelector(".clouds-mid"), 1.3, 0],
-  [document.querySelector(".clouds-veil"), 1.7, -0.9]
+  [document.querySelector(".clouds-mid"), 1.5, 0],
+  [document.querySelector(".clouds-veil"), 2.3, -0.75]
 ].filter(([layer]) => layer); // (a page from before a layer existed still works)
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
@@ -102,8 +102,8 @@ function update() {
     if (bank.top + 0.92 * bank.height > textBox.top && bank.top + 0.8 * bank.height < textBox.bottom) following = true;
   }
 
-  // The sky behind the logo moves up, at a third of the scrolling (it's far away).
-  introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
+  // The sky behind the logo moves up, at a quarter of the scrolling (it's far away).
+  introLogo.style.setProperty("--sky-y", `${(-0.25 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
 
   // The nearer clouds; they fade away as the video comes up (gone before its top reaches
   // the middle of the screen).
@@ -210,9 +210,10 @@ function update() {
   const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
   const ZOOMED = 0.49 * window.innerHeight; // fully blurred this far past the video filling the screen
-  const into = ease(range(BLEND - t, 0, BLEND + ZOOMED));
   const moved = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
-  const blur = into; // (no zoom: it blurs from the moment it fills the screen)
+  // it starts to blur a little after it has settled (a tenth of a screen), done at the
+  // same point as before
+  const blur = ease(range(-t, 0.1 * window.innerHeight, ZOOMED));
   // (both clips, while the full-quality one fades in over the light one)
   // The clouds over the video's top slow down with it, so they settle together (they
   // reach their place, 32vh down, at the same moment it fills the screen).
@@ -443,8 +444,8 @@ if (phone.matches) {
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
 let storyStart = 0; // phones: how far down it sits as it starts to show
 // Phones: the synopsis starts to show (the video's blur at 60%) this far past the
-// video filling the screen, × the screen height.
-const STORY_FROM = 0.19;
+// video filling the screen, × the screen height (with the blur from 0.1 to 0.49).
+const STORY_FROM = 0.32;
 // A little scrolling room at the very end (× the screen height), with everything in
 // place, so the page doesn't stop dead on the last step.
 const END_ROOM = 0.25;

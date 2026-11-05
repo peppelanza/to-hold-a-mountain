@@ -85,14 +85,14 @@ Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint
 # top and greyer underneath; they pass over the texts.
 # Where they are is planned against what passes under them (main.js places the strip):
 # - down to 1.5 screens: none, the sky above and around the logo as the page opens;
-# - 4.6 to 5.8: a group above the last quote (Variety) and its logo, for their shadows;
+# - 5.7 to 7.2: a group above the last quote (Variety) and its logo, for their shadows;
 # - elsewhere, scattered.
 PER = 333  # px a screen
 h, w = int(7.6 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
 at = np.arange(h)[:, None] / PER  # screens down the strip
 n = noise(h, w, [(120, 0.7), (44, 0.22), (14, 0.08)])  # large ones
-dense = smooth(4.5, 4.6, at) * (1 - smooth(5.8, 5.9, at))
+dense = smooth(5.7, 5.8, at) * (1 - smooth(7.2, 7.3, at))
 clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
@@ -123,7 +123,10 @@ form = smooth(np.percentile(lit, 80), np.percentile(lit, 25), lum)  # 1 on the d
 H0, W0 = alpha.shape
 lumps = noise(H0, W0, [(W0 * 0.1, 0.65), (W0 * 0.035, 0.25), (W0 * 0.012, 0.1)])
 score = alpha + 0.55 * (form - 0.5) * (alpha > 0.02) + 0.9 * (lumps - 0.5)
-keep = 1 - smooth(0.22, 0.55, score) * smooth(0.06, 0.25, alpha)  # a soft edge: letters melt into the cloud (thin haze hides nothing)
+# a soft edge: letters melt into the cloud; and where the cloud is too thin to hide
+# anything is lumpy too (not the haze's even ramp, which would be a straight line)
+thin = noise(H0, W0, [(W0 * 0.07, 0.7), (W0 * 0.025, 0.3)])
+keep = 1 - smooth(0.22, 0.55, score) * smooth(0.06, 0.25, alpha + 0.4 * (thin - 0.5))
 m = np.zeros(alpha.shape + (4,), np.uint8)
 m[..., 3] = (keep * 255).astype(np.uint8)
 Image.fromarray(m).save(f"{out}/clouds-mask.png")
