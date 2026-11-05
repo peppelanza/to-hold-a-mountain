@@ -26,10 +26,11 @@ const cloudTile = document.querySelector(".clouds");
 // puffs behind the texts, with their top at the top of the screen when the bank's edge
 // (12% down it) reaches the middle of the screen; thin wisps in front of them, higher
 // (by this many screen heights), so they're already up in the sky over the logo when
-// the page opens and their shadows fall on it.
+// the page opens and their shadows fall on it; the nearest, at the sides, fastest.
 const cloudLayers = [
   [document.querySelector(".clouds-mid"), 1.3, 0],
-  [document.querySelector(".clouds-veil"), 1.7, -0.9]
+  [document.querySelector(".clouds-veil"), 1.7, -0.9],
+  [document.querySelector(".clouds-near"), 2.4, -0.4]
 ];
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
@@ -284,7 +285,9 @@ const mask = new Image();
 mask.src = "clouds-mask.webp";
 const shade = new Image();
 shade.src = "clouds-shade.webp";
-const images = [logo, sky, clouds, mid, veil, mask, shade];
+const near = new Image();
+near.src = "clouds-near.webp";
+const images = [logo, sky, clouds, mid, veil, mask, shade, near];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);

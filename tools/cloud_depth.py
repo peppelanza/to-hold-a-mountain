@@ -4,6 +4,7 @@
     cwebp -q 70 -alpha_q 80 -resize 900 0 <out dir>/clouds-mid.png -o public/clouds-mid.webp
     cwebp -q 70 -alpha_q 80 <out dir>/clouds-veil.png -o public/clouds-veil.webp
     cwebp -q 70 -alpha_q 70 <out dir>/clouds-shade.png -o public/clouds-shade.webp
+    cwebp -q 60 -alpha_q 60 <out dir>/clouds-near.png -o public/clouds-near.webp
     cwebp -lossless <out dir>/clouds-mask.png -o public/clouds-mask.webp
     cwebp -lossless <out dir>/clouds-below-mask.png -o public/clouds-below-mask.webp
 
@@ -11,6 +12,8 @@
   darker undersides), scattered down a tall strip; behind the texts, in front of the bank
 - clouds-veil: large see-through wisps, lit from above; in front of the texts
 - clouds-shade: the wisps' shapes, dark: their shadows on the logo and the texts
+- clouds-near: the nearest clouds, occasional and very blurred, shown only at the
+  sides of the screen
 - clouds-mask: where the bank (clouds.webp) has any cloud, even thin haze, this is
   transparent; the logo is masked with it, so it goes behind the clouds instead of
   showing through them
@@ -59,9 +62,11 @@ def texture(h, w):
 h, w = 2400, 1200
 y = np.linspace(0, 1, h)[:, None]
 n = noise(h, w, [(300, 0.7), (115, 0.24), (40, 0.06)])
-cover = noise(h, 1, [(300, 1.0)])
-thr = 1 - (0.18 + 0.3 * cover)
-a = smooth(thr - 0.07, thr + 0.12, n) * smooth(0.0, 0.06, y) * (1 - smooth(0.92, 1.0, y))
+# the same share of cloud in every stretch (each row's own 70th percentile), so this
+# layer never thins out or runs out
+thr = np.quantile(n, 0.7, axis=1, keepdims=True)
+thr = np.convolve(np.pad(thr[:, 0], 60, mode="edge"), np.ones(121) / 121, mode="valid")[:, None]
+a = smooth(thr - 0.07, thr + 0.12, n) * smooth(0.0, 0.03, y) * (1 - smooth(0.95, 1.0, y))
 lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[..., None]
 rgb = texture(h, w) * (0.6 + 0.8 * lit) * np.array([0.95, 0.99, 1.02])
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
@@ -83,17 +88,31 @@ clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
-a = smooth(0.74 + lift - edge, 0.74 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.74: few of them)
+a = smooth(0.71 + lift - edge, 0.71 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.71: not many)
 # softened: a little blurred (their shadows too, below, so they still match)
 a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(7))).astype(np.float32) / 255
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
-Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+# drawn well blurred: the nearest clouds, out of focus (their shadows keep the shape above)
+seen = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(20))).astype(np.float32) / 255
+rgb = np.asarray(Image.fromarray(rgb.clip(0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(14))).astype(np.float32)
+Image.fromarray(np.dstack([rgb, seen[..., None] * 200]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
 # its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
 shade = np.roll(a, int(0.2 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
 Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
+
+# The nearest clouds: occasional big soft shapes, very blurred (right by the camera);
+# the page shows them only at the left and right edges of the screen (style.css). A
+# long strip, 9 screens at 333 px a screen, stored at half size.
+h, w = 9 * PER // 2, 400
+y = np.linspace(0, 1, h)[:, None]
+n = noise(h, w, [(70, 0.8), (22, 0.2)])
+a = smooth(0.62, 0.78, n) * smooth(0.0, 0.03, y) * (1 - smooth(0.96, 1.0, y))
+a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(22))).astype(np.float32) / 255
+rgb = np.full((h, w, 3), [214, 219, 222], np.float32)
+Image.fromarray(np.dstack([rgb, a[..., None] * 230]).astype(np.uint8)).save(f"{out}/clouds-near.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
 # Not from the bank's see-through-ness alone: at its top that thickens evenly downward,

@@ -222,6 +222,18 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .clouds-mid div { background-image: url(clouds-mid.webp); }
 .clouds-veil { z-index: 6; --layer-h: 760vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
+/* The nearest clouds, right by the camera: occasional, very blurred, the fastest, and
+   only at the left and right edges of the screen, so they don't cover the logo and the
+   texts. */
+.clouds-near {
+  z-index: 7;
+  --layer-h: 900vh;
+  --tile-w: 240vh;
+  height: var(--layer-h);
+  -webkit-mask-image: linear-gradient(90deg, #000, #000 12%, transparent 30%, transparent 70%, #000 88%, #000);
+  mask-image: linear-gradient(90deg, #000, #000 12%, transparent 30%, transparent 70%, #000 88%, #000);
+}
+.clouds-near div { background-image: url(clouds-near.webp); animation-duration: 26s; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
 }
