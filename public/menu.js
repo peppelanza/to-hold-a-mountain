@@ -11,7 +11,7 @@
     ["Screenings & Awards", "screenings.html"],
     ["Press", "press.html"],
     ["Soundtrack", "soundtrack.html"],
-    ["Community", "community.html"],
+    // ["Community", "community.html"], (hidden for now; the page is still there)
     ["Contact", "contact.html"]
   ];
   var file = function (path) { return path.split("/").pop() || "index.html"; };
