@@ -46,7 +46,7 @@
     };
     close.addEventListener("click", back);
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") back(); });
-    // The lines turn into an X, the panel fades in and the links slide in, just after it opens.
+    // The panel fades in and the links slide in, just after it opens.
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
         document.documentElement.classList.add("menu-open");
