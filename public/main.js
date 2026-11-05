@@ -24,7 +24,13 @@ const cloudTile = document.querySelector(".clouds");
 // Clouds nearer than the bank, and how much faster than it they move: puffs behind the
 // texts, thin wisps in front of them. Their tops are at the top of the screen when the
 // bank's edge (12% down it) reaches the middle of the screen.
-const cloudLayers = [[document.querySelector(".clouds-mid"), 1.3], [document.querySelector(".clouds-veil"), 1.7]];
+// Each also casts a shadow, a little lower and to the left (in screen heights).
+const cloudLayers = [
+  [document.querySelector(".clouds-mid:not(.shadow)"), 1.3, 0, 0],
+  [document.querySelector(".clouds-mid.shadow"), 1.3, 0.07, -0.03],
+  [document.querySelector(".clouds-veil:not(.shadow)"), 1.7, 0, 0],
+  [document.querySelector(".clouds-veil.shadow"), 1.7, 0.05, -0.02]
+];
 const watch = document.querySelector(".intro-logo .watch");
 
 // 0 before a, 1 after b, linear in between.
@@ -95,20 +101,25 @@ function update() {
 
   // The sky behind the logo moves up, at a third of the scrolling (it's far away).
   introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
+  // The sun breaks through as you scroll (brightest as the clouds come over the logo),
+  // its rays turning slowly.
+  const sunUp = Math.min(1, window.scrollY / (0.6 * vh));
+  introLogo.style.setProperty("--sun", (0.35 + 0.65 * ease(sunUp)).toFixed(3));
+  introLogo.style.setProperty("--sun-turn", `${(window.scrollY * 0.01).toFixed(2)}deg`);
 
   // The nearer clouds.
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
-  for (const [layer, speed] of cloudLayers) {
-    const ly = speed * (bank.top - edgeAtMiddle);
+  for (const [layer, speed, down, side] of cloudLayers) {
+    const ly = speed * (bank.top - edgeAtMiddle) + down * vh;
     layer.style.visibility = ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
-    layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
+    layer.style.transform = `translate3d(${(side * vh).toFixed(1)}px, ${ly.toFixed(1)}px, 0)`;
   }
 
-  // The logo and its button go behind the bank: masked with clouds-mask.webp (clear
+  // The logo goes behind the bank (not its button, which stays readable): masked with clouds-mask.webp (clear
   // where the bank has any cloud, even haze), kept on the bank's place and its drift,
   // and in full above the bank's top. Followed frame by frame while the bank's edge is
   // over them (the bank keeps drifting when the page doesn't scroll).
-  for (const el of [logo, watch]) {
+  for (const el of [logo]) {
     const r = el.getBoundingClientRect();
     const k = el.offsetWidth ? r.width / el.offsetWidth : 1; // the logo's own shrinking
     const my = (bank.top - r.top) / k;

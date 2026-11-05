@@ -135,6 +135,32 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   transform: translate3d(0, var(--sky-y, 0px), 0);
   will-change: transform;
 }
+/* The sun behind the clouds, up and to the right: a warm glow with soft rays, over the
+   sky photo and behind the logo and the cloud bank. main.js sets --sun (0 to 1): it
+   breaks through as you scroll, and sinks a little with the sky. */
+.intro-logo::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 6%;
+  width: 150vmax;
+  height: 150vmax;
+  margin-left: -45vmax;
+  margin-top: -75vmax;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side, rgba(255, 244, 222, 0.85), rgba(255, 236, 205, 0.35) 18%, rgba(255, 230, 200, 0.08) 45%, transparent 70%),
+    repeating-conic-gradient(from 0deg, rgba(255, 240, 215, 0.07) 0deg, transparent 4deg 13deg, rgba(255, 240, 215, 0.07) 17deg),
+    repeating-conic-gradient(from 7deg, rgba(255, 240, 215, 0.05) 0deg, transparent 3deg 6deg, rgba(255, 240, 215, 0.05) 9deg);
+  -webkit-mask: radial-gradient(closest-side, #000 10%, rgba(0, 0, 0, 0.5) 40%, transparent 72%);
+  mask: radial-gradient(closest-side, #000 10%, rgba(0, 0, 0, 0.5) 40%, transparent 72%);
+  mix-blend-mode: screen;
+  filter: blur(3px);
+  opacity: var(--sun, 0.4);
+  transform: translate3d(0, calc(var(--sky-y, 0px) * 0.8), 0) rotate(var(--sun-turn, 0deg));
+  will-change: transform, opacity;
+}
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
 .intro-logo picture { display: contents; } /* the image lays out as before */
@@ -208,10 +234,16 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   animation: cloud-drift 55s linear infinite;
   will-change: transform;
 }
-.clouds-mid { z-index: 2; --layer-h: 360vh; height: var(--layer-h); }
+.clouds-mid { z-index: 3; --layer-h: 360vh; height: var(--layer-h); }
 .clouds-mid div { background-image: url(clouds-mid.webp); }
-.clouds-veil { z-index: 4; --layer-h: 480vh; height: var(--layer-h); }
+.clouds-veil { z-index: 6; --layer-h: 480vh; height: var(--layer-h); }
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
+/* Their shadows, cast down and to the left (the sun is up on the right): the same
+   puffs, dark and blurred, a little lower, just under them (the puffs' on the bank,
+   the wisps' on the texts), drifting with them. */
+.cloud-layer.shadow div { filter: brightness(0) blur(18px); }
+.clouds-mid.shadow { z-index: 2; opacity: 0.2; }
+.clouds-veil.shadow { z-index: 5; opacity: 0.16; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
 }
@@ -231,7 +263,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   top: 0;
   left: 0;
   right: 0;
-  z-index: 3; /* above the clouds and the puffs behind it, below the thin wisps and the menu */
+  z-index: 4; /* above the clouds and the puffs behind it, below the wisps (and their shadows) and the menu */
   height: 100vh;
   height: 100svh;
   pointer-events: none;
