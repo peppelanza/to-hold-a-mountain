@@ -98,7 +98,7 @@ a { color: inherit; }
 }
 @media (max-width: 370px) { .home-link { font-size: 0.78rem; } } /* narrow phones: room for both */
 
-/* The panel: a solid olive, darker than the pages', that covers the whole page. */
+/* The panel fades in: a solid olive, darker than the pages', that covers the whole page. */
 .menu {
   position: fixed;
   inset: 0;
@@ -112,13 +112,10 @@ a { color: inherit; }
   transition: opacity 0.5s ease, visibility 0s 0.5s;
   overflow-y: auto;
 }
-/* It appears at once, at full strength (the items still come in one by one): iPhone
-   Safari colours the bands around its address bar from a panel like this as it appears,
-   and would see it still transparent if it faded in. Closing, it fades out. */
 .menu-open .menu {
   opacity: 1;
   visibility: visible;
-  transition: none;
+  transition: opacity 0.6s ease, visibility 0s;
 }
 .menu-open { overflow: hidden; } /* the page stays where it was */
 
