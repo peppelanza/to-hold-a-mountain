@@ -1,11 +1,17 @@
 /* Until the background video shows a frame: a plain colour, the whole page's (both
-   html and body, so iPhone Safari's bands keep one colour from the start); then the
-   video and its shade fade in (soundtrack.js adds .video-ready). The video carries the
-   same colour, for the moment before its first frame. */
+   html and body, so iPhone Safari's bands keep one colour from the start), laid over
+   the video and its shade; then that cover fades away (soundtrack.js adds .video-ready).
+   The video itself is never faded: iPhones can flash it at full strength as it starts. */
 html, body { background: #7d6f4c; }
-.bg-video, .bg-shade { opacity: 0; transition: opacity 0.6s ease; will-change: opacity; }
-.bg-video { background: #7d6f4c; }
-.video-ready .bg-video, .video-ready .bg-shade { opacity: 1; }
+.bg-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #7d6f4c;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.video-ready .bg-cover { opacity: 0; }
 .bg-video {
   position: fixed;
   top: 0;
