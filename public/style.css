@@ -7,7 +7,7 @@
 html, body { background: var(--page, #939ca2); transition: background-color 0.4s ease; }
 
 :root {
-  --cloud-h: max(300vw, 565vh); /* height of the cloud image (thick from 28% to 84%) */
+  --cloud-h: max(300vw, 620vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
 /* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls
@@ -114,18 +114,13 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .intro-logo {
   position: sticky;
   top: 0;
-  box-sizing: border-box;
   height: 100vh;
-  /* as tall as the screen with the browser's bars hidden (else, as Chrome on iPhone
-     slides its bar away, a solid strip of page colour shows under the sky), the logo
-     still centred in what shows with them */
-  height: 100lvh;
+  height: 100svh;
   /* the logo in the very middle of the screen, the trailer button below it */
   display: grid;
   grid-template-rows: 1fr auto 1fr;
   justify-items: center;
   padding: 0 16px;
-  padding-bottom: calc(100lvh - 100svh);
   overflow: hidden;
 }
 /* The sky photo, a little taller than the screen: main.js moves it up slowly as you
@@ -162,7 +157,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 
 /* The block the clouds are held in: main.js makes it end where the film does, so the
    clouds stay over the top of the video, as it stays put, to the end of the page.
-   (Before that's measured: clouds top at 50vh + their height, video top 36vh above their
+   (Before that's measured: clouds top at 50vh + their height, video top 32vh above their
    bottom: height = cloud height + 50vh.) */
 .flow { height: calc(var(--cloud-h) + 50vh); }
 
@@ -173,7 +168,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
    comes into focus). */
 .intro-clouds {
   position: sticky;
-  top: calc(36vh - var(--cloud-h));
+  top: calc(32vh - var(--cloud-h));
   z-index: 1;
   margin-top: -190vh; /* (240vh of the logo's hold, less 50vh) */
   height: var(--cloud-h);
@@ -282,12 +277,12 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 .quote + .quote { opacity: 0; }
 /* The words take the wisps' shadows as they pass over them: the text's colour is a
-   background clipped to the letters, with the shadows' shapes (clouds-shade-*.webp)
+   background clipped to the letters, with the shadows' shapes (clouds-shade.webp)
    over it, placed by main.js. (Its glow is a drop shadow then: a text shadow would be
    painted over the letters.) */
 .honours p, .logline p, .quote blockquote {
   color: transparent;
-  background-image: url(clouds-shade-0.webp), linear-gradient(var(--ink), var(--ink)); /* (main.js picks the piece) */
+  background-image: url(clouds-shade.webp), linear-gradient(var(--ink), var(--ink));
   background-repeat: repeat-x, no-repeat;
   background-size: 0 0, 100% 100%;
   -webkit-background-clip: text;
@@ -348,7 +343,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   position: relative;
   z-index: 0;
   height: 149vh; /* scrolling on through it: the blur straight away, then the synopsis (main.js sets it exactly) */
-  margin-top: -36vh; /* the clouds' soft bottom lies over its top (thick a little way down, then thinning out over its sky), so they arrive and stop together */
+  margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
   position: sticky;

@@ -3,14 +3,14 @@
     python tools/cloud_depth.py public/clouds.webp <out dir> 5   (5: the seed in use)
     cwebp -q 70 -alpha_q 80 -resize 900 0 <out dir>/clouds-mid.png -o public/clouds-mid.webp
     cwebp -q 70 -alpha_q 80 <out dir>/clouds-veil.png -o public/clouds-veil.webp
-    for i in 0 1 2 3 4; do cwebp -q 70 -alpha_q 70 <out dir>/clouds-shade-$i.png -o public/clouds-shade-$i.webp; done
+    cwebp -q 70 -alpha_q 70 <out dir>/clouds-shade.png -o public/clouds-shade.webp
     cwebp -lossless <out dir>/clouds-mask.png -o public/clouds-mask.webp
     cwebp -lossless <out dir>/clouds-below-mask.png -o public/clouds-below-mask.webp
 
 - clouds-mid: soft puffs with the bank's own texture, lit from above (lighter tops,
   darker undersides), scattered down a tall strip; behind the texts, in front of the bank
 - clouds-veil: large see-through wisps, lit from above; in front of the texts
-- clouds-shade-0 to -4: the wisps' shapes, dark: their shadows on the logo and the texts
+- clouds-shade: the wisps' shapes, dark: their shadows on the logo and the texts
 - clouds-mask: where the bank (clouds.webp) has any cloud, even thin haze, this is
   transparent; the logo is masked with it, so it goes behind the clouds instead of
   showing through them
@@ -90,18 +90,16 @@ Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint
 # top and greyer underneath; they pass over the texts.
 # Where they are is planned against what passes under them (main.js places the strip):
 # - down to 2.2 screens: none, the sky above and around the logo while it shows;
-# - 11.3 to 11.9: a group above the last quote (Variety) and its logo, for their shadows;
-# - from 12: none, from when Variety starts going behind the cumulus (they thin out
-#   to nothing, no edge);
+# - 11.3 to 14.5: a group above the last quote (Variety) and its logo, for their shadows;
 # - elsewhere, scattered.
 PER = 333  # px a screen
 h, w = int(17 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
 at = np.arange(h)[:, None] / PER  # screens down the strip
 n = noise(h, w, [(120, 0.7), (44, 0.22), (14, 0.08)])  # large ones
-dense = smooth(11.2, 11.3, at) * (1 - smooth(11.75, 11.9, at))
-clear = 1 - smooth(2.15, 2.25, at) + smooth(11.75, 12.05, at)
-lift = 0.6 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
+dense = smooth(11.2, 11.3, at) * (1 - smooth(14.5, 14.6, at))
+clear = 1 - smooth(2.15, 2.25, at)
+lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
 a = smooth(0.66 + lift - edge, 0.66 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.66: a fair few)
@@ -112,17 +110,12 @@ rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32)
 # drawn well blurred: the nearest clouds, out of focus (their shadows keep the shape above)
 seen = blur_wrapped(a, 14)
 rgb = np.dstack([blur_wrapped(rgb[..., i] / 255, 14) for i in range(3)]) * 255
-Image.fromarray(np.dstack([rgb, seen[..., None] * 165]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+Image.fromarray(np.dstack([rgb, seen[..., None] * 125]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
 # its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
 shade = np.roll(a, int(0.2 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
-shade = np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)
-# In pieces 5 screens tall, every 3 screens (each overlapping the next by 2), as
-# clouds-shade-0.webp to -4: drawn whole, 17 screens tall, it was too large for iPhones,
-# which then showed the shadow everywhere. main.js uses the piece over each text.
-for i in range(5):
-    Image.fromarray(shade[3 * i * PER:min(h, (3 * i + 5) * PER)]).save(f"{out}/clouds-shade-{i}.png")
+Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
 # Not from the bank's see-through-ness alone: at its top that thickens evenly downward,
@@ -151,7 +144,6 @@ pts = [(0, 520), (30, 490), (60, 480), (110, 465), (170, 470), (220, 455), (270,
        (300, 440), (340, 436), (380, 445), (420, 460), (470, 470), (520, 490), (560, 505),
        (600, 520), (640, 535), (680, 530), (717, 520)]
 edge = 1072 + np.interp(np.arange(W), [p[0] for p in pts], [p[1] for p in pts])
-edge = np.interp(edge / (H - 1), [0, 0.8, 0.93, 1], [0, 0.8, 0.95, 1]) * (H - 1)  # cloud_gaps.py's SQUEEZE
 edge = edge + 10 * (noise(1, W, [(W * 0.03, 0.7), (W * 0.012, 0.3)])[0] - 0.5)
 ys = np.arange(H)[:, None]
 keep = 1 - smooth(-6, 6, ys - edge[None, :])
