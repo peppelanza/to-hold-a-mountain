@@ -112,7 +112,8 @@ function update() {
   const nearGone = range(filmUp, 0.95, 0.55);
   for (const [layer, speed, lead] of cloudLayers) {
     const ly = speed * (bank.top - edgeAtMiddle) + lead * vh;
-    layer.style.visibility = nearGone < 1 && ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
+    layer.dataset.over = ly < vh && ly + layer.offsetHeight > 0 ? "1" : ""; // its strip is over the screen
+    layer.style.visibility = nearGone < 1 && layer.dataset.over ? "visible" : "hidden";
     layer.style.opacity = (1 - nearGone).toFixed(3);
     layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
   }
@@ -143,7 +144,9 @@ function update() {
   // press logos under it; following its drift (frame by frame while the wisps are on
   // screen).
   const veil = document.querySelector(".clouds-veil");
-  const shades = !!veil && veil.style.visibility === "visible";
+  // (while the strip is over the screen, even once the wisps have faded: their shadows
+  // stay until the words go behind the clouds)
+  const shades = !!veil && !!veil.dataset.over;
   const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
   const tileH = 7.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
   if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";

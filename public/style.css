@@ -175,6 +175,9 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   overflow-x: clip;
   pointer-events: none; /* clicks pass through to the logo's trailer button */
   will-change: transform, opacity;
+  /* blue sky behind the bank's thick part, like the sky photo's lower half: it shows
+     where the clouds thin out (tools/cloud_gaps.py) */
+  background: linear-gradient(to bottom, transparent 16%, #4b6274 24%, #576d7e 50%, #63798a 78%, transparent 88%);
 }
 /* The cloud image repeats seamlessly sideways (its width is 0.401 × its height); three
    copies side by side drift left by one copy, then start over, so the clouds move
