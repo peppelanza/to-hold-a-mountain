@@ -106,7 +106,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   }
   .laurel-track { display: flex; width: max-content; will-change: transform; }
   /* 67px tall; the gap after each copy is BELT_GAP in main.js. */
-  .laurel-track img { display: block; width: auto; height: 67px; margin: 0 45px 0 0; pointer-events: none; }
+  .laurel-track img { display: block; width: auto; height: 67px; margin: 0 30px 0 0; pointer-events: none; }
   .loading .logo-laurels { opacity: 0; }
   .revealing .logo-laurels, .loaded .logo-laurels { animation: laurels-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 }
