@@ -59,11 +59,11 @@ loose *= 1 - smooth(-0.6, 0.6, (v - 0.12) / 0.012 + 2.4 * (noise(H, W, [((30, 60
 im[..., 3] = 255 * (top * a0 + (1 - top) * loose)
 im[..., 3] *= smooth(0.02, 0.035, v)  # (no specks along the very top)
 
-# The bottom squeezed down: the source's fade (93% to the end) into the last 3.5%, so the
-# bank is still thick where the video's top lies under it (24vh above the bank's bottom,
-# style.css) and its edge doesn't show; below that it thins out over the video's sky.
+# The bottom squeezed down: the source's fade (93% to the end) into the last 5%, so the
+# bank is still thick where the video's top lies under it (36vh above the bank's bottom,
+# style.css) and its edge doesn't show, and a little below it; then it thins out over the video's sky.
 # (tools/cloud_depth.py moves its hand-traced cumulus line the same way: SQUEEZE.)
-SQUEEZE = ([0, 0.8, 0.965, 1], [0, 0.8, 0.93, 1])  # rows out, rows of the source
+SQUEEZE = ([0, 0.8, 0.95, 1], [0, 0.8, 0.93, 1])  # rows out, rows of the source
 rows = np.interp(np.linspace(0, 1, H), *SQUEEZE) * (H - 1)
 lo = np.floor(rows).astype(int); hi = np.minimum(lo + 1, H - 1); f = (rows - lo)[:, None, None]
 im = im[lo] * (1 - f) + im[hi] * f
