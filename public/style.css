@@ -221,7 +221,15 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   animation: cloud-drift 65s linear infinite;
   will-change: transform;
 }
-.clouds-mid { z-index: 3; --layer-h: 720vh; --tile-w: 180vh; height: var(--layer-h); }
+.clouds-mid {
+  z-index: 3;
+  --layer-h: 720vh;
+  --tile-w: 180vh;
+  height: var(--layer-h);
+  /* softly in and out at its top and bottom (its strip repeats seamlessly in between) */
+  -webkit-mask-image: linear-gradient(transparent, #000 25vh, #000 calc(100% - 25vh), transparent);
+  mask-image: linear-gradient(transparent, #000 25vh, #000 calc(100% - 25vh), transparent);
+}
 .clouds-mid div { background-image: url(clouds-mid.webp); background-size: auto 50%; background-repeat: repeat; } /* the strip twice, one under the other */
 .clouds-veil { z-index: 6; --layer-h: 1060vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 20s; }
