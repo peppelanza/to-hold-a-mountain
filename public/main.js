@@ -143,7 +143,7 @@ function update() {
   const [veil] = cloudLayers[1];
   const shades = veil.style.visibility === "visible";
   const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
-  const tileH = 4.8 * vh, tileW = 0.5 * tileH; // the strip's size (style.css)
+  const tileH = 7.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
   logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) {
     following = true;
@@ -156,14 +156,14 @@ function update() {
       logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp), " + logo.style.maskImage;
       logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize + ", " + logo.style.maskSize;
       logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own + ", " + logo.style.maskPosition;
-      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat, " + logo.style.maskRepeat;
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x, " + logo.style.maskRepeat;
       logoShade.style.webkitMaskComposite = "source-in, source-over";
       logoShade.style.maskComposite = "intersect, add";
     } else {
       logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp)";
       logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize;
       logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own;
-      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat";
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x";
       logoShade.style.webkitMaskComposite = logoShade.style.maskComposite = "";
     }
     logoShade.style.transform = logo.style.transform;
@@ -173,7 +173,7 @@ function update() {
     if (!shades) continue;
     const r = el.getBoundingClientRect();
     el.style.webkitMaskImage = el.style.maskImage = "url(clouds-shade.webp)";
-    el.style.webkitMaskRepeat = el.style.maskRepeat = "repeat";
+    el.style.webkitMaskRepeat = el.style.maskRepeat = "repeat-x";
     el.style.webkitMaskSize = el.style.maskSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px`;
     el.style.webkitMaskPosition = el.style.maskPosition =
       `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px`;
@@ -394,7 +394,7 @@ document.querySelectorAll(".review").forEach((r) => reviewsSeen.observe(r));
 const belt = document.querySelector(".logo-laurels");
 const track = belt.querySelector(".laurel-track");
 const DRIFT = -24; // px per second, to the left
-const BELT_GAP = 18; // the gap after each copy, as in style.css
+const BELT_GAP = 27; // the gap after each copy, as in style.css
 let beltX = 0, beltV = DRIFT, beltLast = 0, drag = null;
 function beltStep(now) {
   const dt = Math.min(0.05, (now - (beltLast || now)) / 1000);

@@ -66,26 +66,34 @@ lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[
 rgb = texture(h, w) * (0.6 + 0.8 * lit) * np.array([0.95, 0.99, 1.02])
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
-# Wisps in front of the texts: smallish (a fifth of the screen or so, so there's sky
-# between a wisp and its shadow), soft, see-through but clearly there, light on top and
-# greyer underneath.
-h, w = 1600, 800
+# Wisps in front of the texts: one long strip (7.6 screens, 333 px a screen), drifting
+# up the page; smallish (a fifth of the screen or so, so there's sky between a wisp and
+# its shadow), soft, see-through but clearly there, light on top and greyer underneath.
+# Where they are is planned against what passes under them (main.js places the strip):
+# - 0.15 to 0.6 screens down the strip: a group, high above the logo as the page opens,
+#   whose shadows sweep across it; 0.6 to 1.5: none, the logo's own stretch, so it's
+#   never covered;
+# - 4.6 to 5.8: a group above the last quote (Variety) and its logo, for their shadows;
+# - elsewhere, scattered.
+PER = 333  # px a screen
+h, w = int(7.6 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
+at = np.arange(h)[:, None] / PER  # screens down the strip
 n = noise(h, w, [(60, 0.7), (22, 0.22), (8, 0.08)])
-# Sparse over the first stretch (0.05 to 0.4: over the logo, as the page opens), so a
-# few wisps drift high above it and their shadows fall on it without hiding it.
-sparse = 0.1 * smooth(0.0, 0.05, y) * (1 - smooth(0.36, 0.44, y))
-a = smooth(0.56 + sparse, 0.8 + sparse, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
+dense = smooth(0.1, 0.2, at) * (1 - smooth(0.55, 0.62, at)) + smooth(4.5, 4.6, at) * (1 - smooth(5.8, 5.9, at))
+clear = smooth(0.58, 0.64, at) * (1 - smooth(1.45, 1.55, at))
+lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
+# Some wisps soft, almost a gradient, others with a crisper edge.
+edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
+a = smooth(0.68 + lift - edge, 0.68 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
-# Their shadows on the letters, as from a high sun: the same shapes, dark, cast DROP
-# lower (here 0.45 of a screen: the strip is 4.8 screens tall), and none where a wisp
-# is in front: a cloud, sky, then the letters darkened in its shape.
-DROP = int(h * 0.45 / 4.8)
-shade = smooth(0.6 + sparse, 0.75 + sparse, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
-shade = np.roll(shade, DROP, axis=0) * (1 - smooth(0.05, 0.4, a))
-Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 150]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
+# Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
+# its soft or crisp edge, cast 0.6 of a screen lower, gently dark, and none where a
+# wisp is in front: a cloud, sky, then the letters darkened in its shape.
+shade = np.roll(a, int(0.6 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
+Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
 # Not from the bank's see-through-ness alone: at its top that thickens evenly downward,
