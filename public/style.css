@@ -313,7 +313,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .film {
   position: relative;
   z-index: 0;
-  height: 226vh; /* scrolling on through it: zoom in straight away, then the synopsis */
+  height: 149vh; /* scrolling on through it: zoom in straight away, then the synopsis (main.js sets it exactly) */
   margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {

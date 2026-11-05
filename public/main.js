@@ -452,11 +452,12 @@ function fitStory() {
     film.style.height = `${stage.clientHeight + travel}px`;
     return;
   }
-  // Larger screens: on short ones, the poster and synopsis are scaled down until they
-  // fit their screen.
+  // Larger screens: the page ends as the synopsis comes fully into focus (the zoom done,
+  // 0.49 of a screen past the video filling it); on short screens, the poster and
+  // synopsis are scaled down until they fit their screen.
   filmStory.style.transformOrigin = "";
   storyExtra = 0;
-  film.style.height = "";
+  film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight}px`;
   const screen = story.parentElement;
   const room = screen.clientHeight - parseFloat(getComputedStyle(screen).paddingTop) - parseFloat(getComputedStyle(screen).paddingBottom);
   const need = story.offsetHeight;
