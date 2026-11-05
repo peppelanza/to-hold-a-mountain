@@ -3,7 +3,6 @@
 
 /* Same feel as the credits on About the film: small caps headings, thin lines. */
 .listing {
-  animation: listing-in 0.5s ease both;
   width: 100%;
   margin-top: 3rem;
   border-collapse: collapse;
@@ -36,6 +35,22 @@
 .listing .title a { color: inherit; text-decoration: none; }
 .listing .title a:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 
+/* Until the Sheet's rows arrive: a bar in each cell, gently pulsing; then the rows fade in. */
+.listing .skeleton span {
+  display: block;
+  height: 0.9em;
+  margin: 0.3em 0;
+  width: 70%;
+  border-radius: 3px;
+  background: rgba(246, 239, 230, 0.12);
+  animation: skeleton-pulse 1.4s ease-in-out infinite alternate;
+}
+.listing .skeleton .selection span, .listing .skeleton .title span { width: 85%; }
+.listing .skeleton:nth-child(3n+2) .selection span, .listing .skeleton:nth-child(3n+2) .title span { width: 60%; }
+.listing .skeleton:nth-child(3n) .selection span, .listing .skeleton:nth-child(3n) .title span { width: 72%; }
+.listing .filled td { animation: listing-in 0.5s ease both; }
+@keyframes skeleton-pulse { to { opacity: 0.45; } }
+
 /* Phones: each row is a block; empty cells are hidden. */
 @media (max-width: 767px) {
   .listing thead { display: none; }
@@ -43,5 +58,7 @@
   .listing tr { padding: 0.9rem 0; border-bottom: 1px solid rgba(246, 239, 230, 0.2); }
   .listing td { padding: 0; border: 0; }
   .listing td:empty { display: none; }
+  .listing .skeleton span { width: 40%; }
+  .listing .skeleton .selection span, .listing .skeleton .title span { width: 85%; }
 }
 @keyframes listing-in { from { opacity: 0; } }

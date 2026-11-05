@@ -3,7 +3,8 @@
 // its tab as CSV when it opens and fills its table, one row per line of the tab, in
 // the tab's order. Columns are found by their heading (any case), so new ones can be
 // added; lines above the headings (a note) and empty lines are skipped. Google passes
-// edits on within a few minutes. The table is hidden until then, and fades in.
+// edits on within a few minutes. The headings are in the page; until the rows arrive,
+// grey bars stand in for them (a skeleton), then the rows fade in.
 (function () {
   var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
   var TABS = {
@@ -14,6 +15,17 @@
   var table = document.querySelector("[data-sheet]");
   if (!table) return;
   var tab = TABS[table.getAttribute("data-sheet")];
+
+  // The skeleton: a few rows of bars, one per column.
+  for (var i = 0; i < 8; i++) {
+    var tr = table.tBodies[0].insertRow();
+    tr.className = "skeleton";
+    tab.columns.forEach(function (name) {
+      var td = tr.insertCell();
+      td.className = name;
+      td.appendChild(document.createElement("span"));
+    });
+  }
 
   // CSV as Google writes it: commas, quotes around cells with commas, quotes or line breaks.
   function parse(text) {
@@ -80,8 +92,8 @@
         }
         body.appendChild(tr);
       });
+      body.className = "filled";
       table.replaceChild(body, table.tBodies[0]);
-      table.hidden = false;
     })
-    .catch(function () {});
+    .catch(function () { table.tBodies[0].textContent = ""; });
 })();
