@@ -6,24 +6,6 @@
    the sky photo's top first, never the other pages' olive. */
 html, body { background: var(--page, #233b4e); transition: background-color 0.4s ease; }
 
-/* iPhone Safari colours the band at the bottom (around its address bar) from a block
-   pinned to the bottom edge, as the page opens: there, the lower sky's colour. Touch
-   screens only, above everything (the loading screen too), under that band. */
-.safari-chin { display: none; }
-@media (hover: none) and (pointer: coarse) {
-  .safari-chin {
-    display: block;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 51;
-    height: calc(env(safe-area-inset-bottom, 0px) + 2px);
-    background: #939ca2;
-    pointer-events: none;
-  }
-}
-
 :root {
   --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */
 }
