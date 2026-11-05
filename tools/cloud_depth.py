@@ -88,9 +88,9 @@ lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
-# its soft or crisp edge, cast 0.39 of a screen lower, gently dark, and none where a
+# its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
-shade = np.roll(a, int(0.39 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
+shade = np.roll(a, int(0.2 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
 Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
