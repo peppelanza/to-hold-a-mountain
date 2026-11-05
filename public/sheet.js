@@ -2,8 +2,9 @@
 // (File → Share → Publish to web, entire document): one tab per page. Each page reads
 // its tab as CSV when it opens and fills its table, one row per line of the tab, in
 // the tab's order. Columns are found by their heading (any case), so new ones can be
-// added; empty lines are skipped. Google passes edits on within about 5 minutes.
-// If the Sheet can't be read, the rows already in the page stay.
+// added; lines above the headings (a note) and empty lines are skipped. Google passes
+// edits on within about 5 minutes. If the Sheet can't be read, the rows already in the
+// page stay.
 (function () {
   var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
   var TABS = {
@@ -39,7 +40,11 @@
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then(function (text) {
       var rows = parse(text);
-      var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
+      // The headings are the first line that has one of the page's columns.
+      var lower = function (h) { return h.trim().toLowerCase(); };
+      while (rows.length && !rows[0].map(lower).some(function (h) { return tab.columns.indexOf(h) !== -1; })) rows.shift();
+      if (!rows.length) return;
+      var head = rows.shift().map(lower);
       var at = {};
       head.forEach(function (h, i) { at[h] = i; });
       // A LINK (or URL) column makes the title a link to the article.
@@ -53,7 +58,8 @@
           td.className = name;
           var text = at[name] !== undefined ? (row[at[name]] || "").trim() : "";
           var href = name === tab.link && link !== undefined ? (row[link] || "").trim() : "";
-          if (text && /^https?:\/\//.test(href)) {
+          if (/^[^\s\/:]+\.[^\s]+$/.test(href)) href = "https://" + href; // "www.variety.com/…"
+          if (text && /^https?:\/\/\S+$/.test(href)) {
             var a = document.createElement("a");
             a.href = href;
             a.target = "_blank";
