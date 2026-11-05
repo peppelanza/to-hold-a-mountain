@@ -29,6 +29,8 @@ body {
   overflow-x: clip; /* cuts off only sideways, so the locks below (on html) leave the page's length alone */
 }
 html { overflow-x: hidden; } /* no sideways scrolling */
+/* no pulling down to refresh (nor the bounce at the ends that comes with it) */
+html, body { overscroll-behavior-y: none; }
 
 a { color: inherit; }
 
