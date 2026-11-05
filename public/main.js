@@ -211,6 +211,9 @@ function update() {
   const moved = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
   const blur = into; // (no zoom: it blurs from the moment it fills the screen)
   // (both clips, while the full-quality one fades in over the light one)
+  // The clouds over the video's top slow down with it, so they settle together (they
+  // reach their place, 32vh down, at the same moment it fills the screen).
+  introClouds.style.transform = lag ? `translate3d(0, ${lag.toFixed(1)}px, 0)` : "";
   for (const v of stage.querySelectorAll("video")) {
     v.style.transform = moved;
     v.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
