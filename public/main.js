@@ -12,7 +12,7 @@ const quotes = [...cloudText.querySelectorAll(".quote")];
 // The texts' rhythm, in screens of scrolling: the first's middle moment, then one every
 // TEXT_EVERY; through the middle they slow to (1 - TEXT_EASE) of the scrolling, over
 // about TEXT_SLOW either side.
-const TEXT_FIRST = -0.18;
+const TEXT_FIRST = -0.55;
 const TEXT_EVERY = 0.75;
 const TEXT_EASE = 0.8;
 const TEXT_SLOW = 0.2;
