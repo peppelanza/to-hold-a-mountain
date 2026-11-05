@@ -83,7 +83,7 @@ clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
-a = smooth(0.68 + lift - edge, 0.68 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))
+a = smooth(0.74 + lift - edge, 0.74 + lift + edge, n)  # (0.74: few of them) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
