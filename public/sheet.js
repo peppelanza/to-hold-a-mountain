@@ -1,0 +1,72 @@
+// Screenings & Awards and Press come from one Google Sheet, published to the web
+// (File → Share → Publish to web, entire document): one tab per page. Each page reads
+// its tab as CSV when it opens and fills its table, one row per line of the tab, in
+// the tab's order. Columns are found by their heading (any case), so new ones can be
+// added; empty lines are skipped. Google passes edits on within about 5 minutes.
+// If the Sheet can't be read, the rows already in the page stay.
+(function () {
+  var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
+  var TABS = {
+    screenings: { gid: "0", columns: ["date", "location", "selection", "type"] },
+    press: { gid: "459324254", columns: ["date", "publisher", "title", "type"], link: "title" }
+  };
+
+  var table = document.querySelector("[data-sheet]");
+  if (!table) return;
+  var tab = TABS[table.getAttribute("data-sheet")];
+
+  // CSV as Google writes it: commas, quotes around cells with commas, quotes or line breaks.
+  function parse(text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (quoted) {
+        if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+        else if (c === '"') quoted = false;
+        else cell += c;
+      } else if (c === '"') quoted = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cell); rows.push(row); row = []; cell = "";
+      } else cell += c;
+    }
+    row.push(cell); rows.push(row);
+    return rows;
+  }
+
+  fetch(SHEET + "?gid=" + tab.gid + "&single=true&output=csv")
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (text) {
+      var rows = parse(text);
+      var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
+      var at = {};
+      head.forEach(function (h, i) { at[h] = i; });
+      // A LINK (or URL) column makes the title a link to the article.
+      var link = at.link !== undefined ? at.link : at.url;
+      var body = document.createElement("tbody");
+      rows.forEach(function (row) {
+        if (!row.some(function (cell) { return cell.trim(); })) return;
+        var tr = document.createElement("tr");
+        tab.columns.forEach(function (name) {
+          var td = document.createElement("td");
+          td.className = name;
+          var text = at[name] !== undefined ? (row[at[name]] || "").trim() : "";
+          var href = name === tab.link && link !== undefined ? (row[link] || "").trim() : "";
+          if (text && /^https?:\/\//.test(href)) {
+            var a = document.createElement("a");
+            a.href = href;
+            a.target = "_blank";
+            a.rel = "noopener";
+            a.textContent = text;
+            td.appendChild(a);
+          } else td.textContent = text;
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+      table.replaceChild(body, table.tBodies[0]);
+      table.hidden = false;
+    })
+    .catch(function () {});
+})();

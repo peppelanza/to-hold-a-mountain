@@ -10,15 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
   <script src="gate.js"></script>
-  <link rel="stylesheet" href="screenings.css">
+  <link rel="stylesheet" href="listings.css">
 </head>
 <body>
-  <main class="page-main screenings">
+  <main class="page-main listing-page">
     <h1>Screenings &amp; Awards</h1>
 
-    <!-- One row per festival. Date, Location and Type are still to fill in; on phones,
-         empty cells are hidden. -->
-    <table class="festivals">
+    <!-- One row per festival, from the "Screenings & Awards" tab of the Google Sheet
+         (sheet.js); these rows show if the Sheet can't be read. On phones, empty cells
+         are hidden. -->
+    <table class="listing" data-sheet="screenings">
       <thead>
         <tr><th scope="col">Date</th><th scope="col">Location</th><th scope="col">Selection</th><th scope="col">Type</th></tr>
       </thead>
@@ -74,5 +75,6 @@
     </table>
   </main>
   <script src="menu.js"></script>
+  <script src="sheet.js"></script>
 </body>
 </html>
