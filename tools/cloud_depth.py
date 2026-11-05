@@ -85,20 +85,20 @@ rgb = tex * (0.88 + 0.42 * lit) * np.array([0.95, 0.99, 1.02])
 rgb = rgb * 0.75 + np.array([226, 231, 234], np.float32) * 0.25
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
-# Wisps in front of the texts: one long strip (13 screens, 333 px a screen), drifting
+# Wisps in front of the texts: one long strip (17 screens, 333 px a screen), drifting
 # up the page; large (a third of the screen or so), soft, see-through (the words read through them), light on
 # top and greyer underneath; they pass over the texts.
 # Where they are is planned against what passes under them (main.js places the strip):
-# - down to 1.5 screens: none, the sky above and around the logo as the page opens;
-# - 8.6 to 11.8: a group above the last quote (Variety) and its logo, for their shadows;
+# - down to 2.2 screens: none, the sky above and around the logo while it shows;
+# - 11.3 to 14.5: a group above the last quote (Variety) and its logo, for their shadows;
 # - elsewhere, scattered.
 PER = 333  # px a screen
-h, w = int(13 * PER), 800
+h, w = int(17 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
 at = np.arange(h)[:, None] / PER  # screens down the strip
 n = noise(h, w, [(120, 0.7), (44, 0.22), (14, 0.08)])  # large ones
-dense = smooth(8.5, 8.6, at) * (1 - smooth(11.8, 11.9, at))
-clear = 1 - smooth(1.45, 1.55, at)
+dense = smooth(11.2, 11.3, at) * (1 - smooth(14.5, 14.6, at))
+clear = 1 - smooth(2.15, 2.25, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])

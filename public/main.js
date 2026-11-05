@@ -13,7 +13,7 @@ const quotes = [...cloudText.querySelectorAll(".quote")];
 // TEXT_EVERY; through the middle they slow to (1 - TEXT_EASE) of the scrolling, over
 // about TEXT_SLOW either side.
 const TEXT_FIRST = -0.18;
-const TEXT_EVERY = 0.75;
+const TEXT_EVERY = 1;
 const TEXT_EASE = 0.8;
 const TEXT_SLOW = 0.2;
 const film = document.querySelector(".film");
@@ -153,7 +153,7 @@ function update() {
   // stay until the words go behind the clouds)
   const shades = !!veil && !!veil.dataset.over;
   const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
-  const tileH = 13 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
+  const tileH = 17 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
   if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) following = true;
   if (shades && logoShade) {
