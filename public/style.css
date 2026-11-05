@@ -116,10 +116,10 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   top: 0;
   height: 100vh;
   height: 100svh;
+  /* the logo in the very middle of the screen, the trailer button below it */
   display: grid;
-  place-items: center;
-  align-content: center;
-  gap: clamp(28px, 5vh, 48px);
+  grid-template-rows: 1fr auto 1fr;
+  justify-items: center;
   padding: 0 16px;
   overflow: hidden;
 }
@@ -138,8 +138,9 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
 .intro-logo picture { display: contents; } /* the image lays out as before */
-.intro-logo img { grid-area: 1 / 1; } /* the logo and its shaded copy, one over the other */
-.intro-logo .watch { grid-area: 2 / 1; }
+.intro-logo source { display: none; } /* (they'd take rows of the grid otherwise) */
+.intro-logo img { grid-area: 2 / 1; } /* the logo and its shaded copy, one over the other */
+.intro-logo .watch { grid-area: 3 / 1; align-self: start; margin-top: clamp(28px, 5vh, 48px); }
 /* The shaded copy: darker, seen only through the wisps' shadows (main.js masks it). */
 .intro-logo .logo-shade img {
   filter: brightness(0.3);
@@ -157,11 +158,11 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 /* The block the clouds are held in. It ends 32vh below the video's top edge (its content,
    the video section, carries on past it), so the clouds are let go, and scroll up and
    away with the page, just as the zoom starts (the moment the video fills
-   the screen). Clouds top at 42vh + their height, video top 32vh above their bottom:
-   height = cloud height + 42vh. */
-.flow { height: calc(var(--cloud-h) + 42vh); }
+   the screen). Clouds top at 50vh + their height, video top 32vh above their bottom:
+   height = cloud height + 50vh. */
+.flow { height: calc(var(--cloud-h) + 50vh); }
 
-/* Starts just below the middle of the screen (42vh); the clouds' top fades into the sky
+/* Starts at the middle of the screen (50vh, under the logo); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 32% down the screen (the same
    moment the video fills the screen) they are over the top third of the video, and
    from there they scroll away as the zoom starts. */
@@ -169,7 +170,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   position: sticky;
   top: calc(32vh - var(--cloud-h));
   z-index: 1;
-  margin-top: -152vh;
+  margin-top: -144vh;
   height: var(--cloud-h);
   overflow-x: clip;
   pointer-events: none; /* clicks pass through to the logo's trailer button */

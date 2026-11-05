@@ -34,8 +34,6 @@ const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
 const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
 const pressShades = [...document.querySelectorAll(".quote .shade")];
-// How far below a wisp its shadow falls (× the screen height): the sun is high up.
-const SHADOW_DROP = 0.3;
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -138,18 +136,20 @@ function update() {
   }
 
   // The wisps' shadows on the letters: the sun is high up, so each wisp casts its shape
-  // well below itself on the screen, darkening the logo, the texts and the press logos
-  // under it; following its drift (frame by frame while the wisps are on screen).
+  // well below itself on the screen (clouds-shade.webp has them there already: almost
+  // half a screen lower, none behind a wisp), darkening the logo, the texts and the
+  // press logos under it; following its drift (frame by frame while the wisps are on
+  // screen).
   const [veil] = cloudLayers[1];
   const shades = veil.style.visibility === "visible";
   const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
-  const tileH = 4.8 * vh, tileW = 0.5 * tileH, drop = SHADOW_DROP * vh; // the strip's size (style.css)
+  const tileH = 4.8 * vh, tileW = 0.5 * tileH; // the strip's size (style.css)
   logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) {
     following = true;
     const r = logoShade.getBoundingClientRect();
     const k = logoShade.offsetWidth ? r.width / logoShade.offsetWidth : 1;
-    const own = `${((shape.left - r.left) / k).toFixed(1)}px ${((shape.top + drop - r.top) / k).toFixed(1)}px`;
+    const own = `${((shape.left - r.left) / k).toFixed(1)}px ${((shape.top - r.top) / k).toFixed(1)}px`;
     const ownSize = `${(tileW / k).toFixed(1)}px ${(tileH / k).toFixed(1)}px`;
     if (logo.style.maskImage) {
       // and only where the logo itself isn't behind the bank
@@ -176,13 +176,13 @@ function update() {
     el.style.webkitMaskRepeat = el.style.maskRepeat = "repeat";
     el.style.webkitMaskSize = el.style.maskSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px`;
     el.style.webkitMaskPosition = el.style.maskPosition =
-      `${(shape.left - r.left).toFixed(1)}px ${(shape.top + drop - r.top).toFixed(1)}px`;
+      `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px`;
   }
   for (const el of shadedWords) {
     if (!shades) { el.style.backgroundSize = "0 0, 100% 100%"; continue; }
     const r = el.getBoundingClientRect();
     el.style.backgroundSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px, 100% 100%`;
-    el.style.backgroundPosition = `${(shape.left - r.left).toFixed(1)}px ${(shape.top + drop - r.top).toFixed(1)}px, 0 0`;
+    el.style.backgroundPosition = `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px, 0 0`;
   }
 
   // The video plays (looping) while it's on screen and pauses when it isn't.
