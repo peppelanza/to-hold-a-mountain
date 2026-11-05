@@ -271,13 +271,9 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
    painted over the letters.) */
 .logline p, .quote blockquote {
   color: transparent;
-  /* the shadows; a band of sunlight sweeping across now and then (placed by main.js,
-     under the shadows, so it's never in them); the text's colour */
-  background-image: url(clouds-shade.webp),
-    linear-gradient(100deg, transparent 0%, rgba(255, 253, 246, 0.95) 50%, transparent 100%),
-    linear-gradient(var(--ink), var(--ink));
-  background-repeat: repeat-x, no-repeat, no-repeat;
-  background-size: 0 0, 0 0, 100% 100%;
+  background-image: url(clouds-shade.webp), linear-gradient(var(--ink), var(--ink));
+  background-repeat: repeat-x, no-repeat;
+  background-size: 0 0, 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   text-shadow: none;
@@ -428,32 +424,4 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   .synopsis p { font-size: 1.1rem; line-height: 1.55; margin-bottom: 28px; }
   .synopsis .button { padding: 0.8em 1.1em; font-size: 0.72rem; letter-spacing: 0.14em; }
   .film-story .site-footer { position: static; margin-top: 56px; padding: 16px 0 24px; }
-}
-
-/* Glints: now and then a tiny star of light flashes on a letter of the logo or the texts
-   where they're in the sun (main.js places them; never in a shadow). */
-.glint {
-  position: fixed;
-  z-index: 5;
-  left: 0;
-  top: 0;
-  width: 28px;
-  height: 28px;
-  margin: -14px 0 0 -14px;
-  pointer-events: none;
-  opacity: 0;
-  mix-blend-mode: screen;
-  background:
-    radial-gradient(circle, #fff 0 1.4px, rgba(255, 249, 234, 0.85) 2.4px, rgba(255, 244, 222, 0) 8px),
-    linear-gradient(90deg, transparent, rgba(255, 252, 242, 0.95), transparent) center / 100% 1.6px no-repeat,
-    linear-gradient(0deg, transparent, rgba(255, 252, 242, 0.95), transparent) center / 1.6px 100% no-repeat;
-}
-.glint.on { animation: glint 0.9s ease-in-out; }
-@keyframes glint {
-  0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
-  40% { opacity: 1; transform: scale(1) rotate(20deg); }
-  100% { opacity: 0; transform: scale(0.3) rotate(45deg); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .glint { display: none; }
 }

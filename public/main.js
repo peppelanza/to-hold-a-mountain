@@ -34,7 +34,6 @@ const cloudLayers = [
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
 const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const pressShades = [...document.querySelectorAll(".quote .shade")];
 
 // 0 before a, 1 after b, linear in between.
@@ -181,24 +180,11 @@ function update() {
     el.style.webkitMaskPosition = el.style.maskPosition =
       `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px`;
   }
-  // ...and a band of sunlight sweeping across the words now and then (from left to
-  // right in 5 s, every 11 s), under their shadows.
-  const sweep = (performance.now() % 11000) / 5000;
-  const sheenW = 0.5 * window.innerWidth;
-  const sheenX = -sheenW + sweep * (window.innerWidth + 2 * sheenW);
-  const sheenOn = sweep < 1 && !reduceMotion;
-  if (!reduceMotion && cloudText.style.visibility === "visible") following = true; // (to sweep while the words show)
   for (const el of shadedWords) {
+    if (!shades) { el.style.backgroundSize = "0 0, 100% 100%"; continue; }
     const r = el.getBoundingClientRect();
-    const sheen = sheenOn ? `${sheenW.toFixed(1)}px 100%` : "0 0";
-    const sheenAt = `${(sheenX - r.left).toFixed(1)}px 0`;
-    if (!shades) {
-      el.style.backgroundSize = `0 0, ${sheen}, 100% 100%`;
-      el.style.backgroundPosition = `0 0, ${sheenAt}, 0 0`;
-      continue;
-    }
-    el.style.backgroundSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px, ${sheen}, 100% 100%`;
-    el.style.backgroundPosition = `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px, ${sheenAt}, 0 0`;
+    el.style.backgroundSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px, 100% 100%`;
+    el.style.backgroundPosition = `${(shape.left - r.left).toFixed(1)}px ${(shape.top - r.top).toFixed(1)}px, 0 0`;
   }
 
   // The video plays (looping) while it's on screen and pauses when it isn't.
@@ -397,83 +383,6 @@ video.addEventListener("loadeddata", requestUpdate); // start it if it's already
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
 
-// Glints: every second or so, a tiny star of light flashes on a letter of the logo or
-// of the text on screen, where it's in the sun: not in a wisp's shadow, not behind the
-// clouds (the logo only while the bank hasn't reached it).
-const glints = [0, 1, 2].map(() => {
-  const g = document.createElement("span");
-  g.className = "glint";
-  g.setAttribute("aria-hidden", "true");
-  g.addEventListener("animationend", () => g.classList.remove("on"));
-  document.body.appendChild(g);
-  return g;
-});
-let logoPoints = null; // spots on the logo's letters (as shares of its box)
-let shadeData = null; // the wisps' shadows, to keep glints out of them
-function readImage(img, w) {
-  const c = document.createElement("canvas");
-  c.width = w;
-  c.height = Math.round(w * img.naturalHeight / img.naturalWidth);
-  const g = c.getContext("2d");
-  g.drawImage(img, 0, 0, c.width, c.height);
-  return { w: c.width, h: c.height, a: g.getImageData(0, 0, c.width, c.height).data };
-}
-function inShadow(x, y) {
-  const [veil] = cloudLayers[1];
-  if (veil.style.visibility !== "visible" || !shadeData) return false;
-  const shape = veil.firstElementChild.getBoundingClientRect();
-  const tileW = 2.4 * window.innerHeight, tileH = 7.6 * window.innerHeight;
-  const u = Math.floor((((x - shape.left) % tileW + tileW) % tileW) / tileW * shadeData.w);
-  const v = Math.floor((y - shape.top) / tileH * shadeData.h);
-  return v >= 0 && v < shadeData.h && shadeData.a[(v * shadeData.w + u) * 4 + 3] > 20;
-}
-function glintSpot() {
-  const spots = [];
-  const vh = window.innerHeight;
-  // the logo, while it's clear of the bank
-  const lr = logo.getBoundingClientRect();
-  if (logoPoints && !logo.style.maskImage && lr.bottom > 0 && lr.top < vh) {
-    const p = logoPoints[Math.floor(Math.random() * logoPoints.length)];
-    spots.push([lr.left + p[0] * lr.width, lr.top + p[1] * lr.height]);
-  }
-  // a letter of the text showing in the middle
-  if (cloudText.style.visibility === "visible") {
-    const showing = quotes.find((q) => +q.style.opacity > 0.9);
-    const words = showing && showing.querySelector("p, blockquote");
-    if (words && words.firstChild) {
-      const text = words.firstChild;
-      const i = Math.floor(Math.random() * text.length);
-      if (text.data[i] && text.data[i].trim()) {
-        const range = document.createRange();
-        range.setStart(text, i);
-        range.setEnd(text, i + 1);
-        const r = range.getBoundingClientRect();
-        if (r.width) spots.push([r.left + r.width * (0.3 + 0.4 * Math.random()), r.top + r.height * (0.3 + 0.3 * Math.random())]);
-      }
-    }
-  }
-  return spots[Math.floor(Math.random() * spots.length)];
-}
-function glintNow() {
-  setTimeout(glintNow, 700 + Math.random() * 1300);
-  if (reduceMotion || !root.classList.contains("loaded") || document.hidden) return;
-  if (!logoPoints && logo.complete && logo.naturalWidth) {
-    const d = readImage(logo, 240);
-    logoPoints = [];
-    for (let y = 0; y < d.h; y++) for (let x = 0; x < d.w; x++) {
-      if (d.a[(y * d.w + x) * 4 + 3] > 220) logoPoints.push([x / d.w, y / d.h]);
-    }
-  }
-  if (!shadeData && shade.complete && shade.naturalWidth) shadeData = readImage(shade, 400);
-  const spot = glintSpot();
-  if (!spot || inShadow(spot[0], spot[1])) return;
-  const g = glints.find((x) => !x.classList.contains("on"));
-  if (!g) return;
-  g.style.left = `${spot[0].toFixed(1)}px`;
-  g.style.top = `${spot[1].toFixed(1)}px`;
-  g.classList.add("on");
-}
-setTimeout(glintNow, 1500);
 // Phones: the laurels above the logo drift right to left for ever, one copy following
 // the other. A finger can drag them either way; let go, and they glide on with the
 // throw, easing back into the steady drift.
@@ -530,6 +439,9 @@ let storyStart = 0; // phones: how far down it sits as it starts to show
 // Phones: the synopsis starts to show (the video's blur at 60%) this far past the
 // video filling the screen, × the screen height.
 const STORY_FROM = 0.19;
+// A little scrolling room at the very end (× the screen height), with everything in
+// place, so the page doesn't stop dead on the last step.
+const END_ROOM = 0.25;
 function fitStory() {
   fitFilm();
   // The clouds stay over the video to the end (they're let go where the film ends, as
@@ -551,16 +463,18 @@ function fitFilm() {
     storyExtra = Math.max(0, filmStory.offsetHeight - view);
     // room to scroll it up from there until its end is at the bottom (and for the blur
     // to finish, if that's longer)
-    const travel = Math.max(STORY_FROM * window.innerHeight + storyStart + storyExtra, 0.49 * window.innerHeight);
+    const travel = Math.max(STORY_FROM * window.innerHeight + storyStart + storyExtra, 0.49 * window.innerHeight) +
+      END_ROOM * window.innerHeight;
     film.style.height = `${stage.clientHeight + travel}px`;
     return;
   }
-  // Larger screens: the page ends as the synopsis comes fully into focus (the blur done,
-  // 0.49 of a screen past the video filling it); on short screens, the poster and
-  // synopsis are scaled down until they fit their screen.
+  // Larger screens: the page ends a little after the synopsis comes fully into focus
+  // (the blur done, 0.49 of a screen past the video filling it; then END_ROOM, so it
+  // doesn't stop dead); on short screens, the poster and synopsis are scaled down until
+  // they fit their screen.
   filmStory.style.transformOrigin = "";
   storyExtra = 0;
-  film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight}px`;
+  film.style.height = `${stage.clientHeight + (0.49 + END_ROOM) * window.innerHeight}px`;
   const screen = story.parentElement;
   const room = screen.clientHeight - parseFloat(getComputedStyle(screen).paddingTop) - parseFloat(getComputedStyle(screen).paddingBottom);
   const need = story.offsetHeight;
