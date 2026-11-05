@@ -1,5 +1,8 @@
-// Site menu and footer, shared by every page: a big round button that opens a full-screen
-// panel; the links slide in one after another. Then the footer.
+// Site menu and footer, shared by every page. The menu is a page of its own (menu.html),
+// so it has its own colour from the moment it opens (iPhone Safari colours the bands
+// around its address bar once, as a page opens). MENU opens it; there, the links slide
+// in one after another, and the X (or Escape) goes back to the page you came from.
+// Then the footer.
 (function () {
   var items = [
     ["Home", "./"],
@@ -9,22 +12,49 @@
     ["Soundtrack", "soundtrack.html"],
     ["Community", "community.html"]
   ];
-  var here = location.pathname.split("/").pop() || "index.html";
+  var file = function (path) { return path.split("/").pop() || "index.html"; };
+  var here = file(location.pathname);
+  var onMenu = here === "menu.html";
+  var icon = '<span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>' +
+    '<span class="menu-label" aria-hidden="true">Menu</span>';
 
-  // The page you are on stays in the list, marked as the current one.
-  var links = items.map(function (item, i) {
-    var current = (item[1] === "./" ? "index.html" : item[1]) === here;
-    return '<li style="--i:' + i + '"><a href="' + item[1] + '"' +
-      (current ? ' aria-current="page"' : "") + ">" + item[0] + "</a></li>";
-  }).join("");
-
-  var html =
-    (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
-    '<button class="menu-button" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">' +
-    '<span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>' +
-    '<span class="menu-label" aria-hidden="true">Menu</span></button>' +
-    '<nav class="menu" id="site-menu" aria-label="Site"><ul>' + links + "</ul></nav>";
-  document.body.insertAdjacentHTML("afterbegin", html);
+  if (!onMenu) {
+    document.body.insertAdjacentHTML("afterbegin",
+      (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
+      '<a class="menu-button" href="menu.html" aria-label="Menu">' + icon + "</a>");
+  } else {
+    // The page you came from (this site's), marked as the current one; back to it on close.
+    var from = "";
+    try {
+      var ref = new URL(document.referrer);
+      if (ref.origin === location.origin && file(ref.pathname) !== "menu.html") from = file(ref.pathname);
+    } catch (e) {}
+    var links = items.map(function (item, i) {
+      var current = (item[1] === "./" ? "index.html" : item[1]) === from;
+      return '<li style="--i:' + i + '"><a href="' + item[1] + '"' +
+        (current ? ' aria-current="page"' : "") + ">" + item[0] + "</a></li>";
+    }).join("");
+    document.body.insertAdjacentHTML("afterbegin",
+      '<a class="home-link" href="./">To Hold a Mountain</a>' +
+      '<a class="menu-button" href="' + (from === "index.html" || !from ? "./" : from) + '" aria-label="Close menu">' + icon + "</a>" +
+      '<nav class="menu" aria-label="Site"><ul>' + links + "</ul></nav>");
+    var close = document.querySelector(".menu-button");
+    var back = function (e) {
+      // Back in history when we came from a page here, so it's where it was (scrolled).
+      if (from && history.length > 1) { if (e) e.preventDefault(); history.back(); }
+      else if (!e) location.href = close.getAttribute("href");
+    };
+    close.addEventListener("click", back);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") back(); });
+    // The lines turn into an X, the panel fades in and the links slide in, just after it opens.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        document.documentElement.classList.add("menu-open");
+        document.querySelector(".menu a").focus({ preventScroll: true });
+      });
+    });
+    return; // no footer here
+  }
 
   // Footer, on every page: credits on the left, the film's pages on the right. On the
   // homepage it sits at the bottom of the synopsis screen (the page ends there).
@@ -50,23 +80,4 @@
     }).join("") + "</ul>";
   (document.querySelector(".film-story") || document.body).appendChild(footer);
 
-  var button = document.querySelector(".menu-button");
-  var menu = document.getElementById("site-menu");
-
-  function setOpen(open) {
-    document.documentElement.classList.toggle("menu-open", open);
-    button.setAttribute("aria-expanded", String(open));
-    button.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-    if (open) menu.querySelector("a").focus({ preventScroll: true });
-  }
-
-  button.addEventListener("click", function () {
-    setOpen(button.getAttribute("aria-expanded") !== "true");
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
-      setOpen(false);
-      button.focus();
-    }
-  });
 })();
