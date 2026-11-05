@@ -115,9 +115,21 @@ function update() {
   }
   filmStory.classList.toggle("shown", shown > 0.5);
 
+  // Safari's bands around its address bar (iPhone) take the page's colour; it follows
+  // what's at the top of the screen: the sky, the clouds (their thick part, until they
+  // have scrolled away), the video, then the blurred video behind the synopsis.
+  const cloudsBox = introClouds.getBoundingClientRect();
+  const cloudsAtTop = cloudsBox.top + 0.28 * cloudsBox.height <= 0 && cloudsBox.top + 0.84 * cloudsBox.height > 0;
+  const tone = shown > 0.5 ? "#454941"
+    : cloudsAtTop ? "#9ea9ae"
+    : cloudsBox.top + 0.28 * cloudsBox.height > 0 ? "#233b4e"
+    : "#8f9ea5";
+  if (tone !== pageTone) root.style.setProperty("--page", (pageTone = tone));
+
   ticking = false;
 }
 
+let pageTone = "";
 let ticking = false;
 const requestUpdate = () => {
   if (!ticking) {
@@ -264,9 +276,11 @@ function fitStory() {
     // that middle
     const poster = story.querySelector(".poster");
     const middle = poster.offsetTop + poster.offsetHeight / 2;
-    storyStart = Math.max(0, 0.68 * stage.clientHeight - middle);
+    // (measured against the screen above Safari's bars; the stage reaches under them)
+    const view = document.documentElement.clientHeight;
+    storyStart = Math.max(0, 0.68 * view - middle);
     filmStory.style.transformOrigin = `50% ${middle}px`;
-    storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
+    storyExtra = Math.max(0, filmStory.offsetHeight - view);
     // room to scroll it up from there until its end is at the bottom (and for the zoom
     // to finish, if that's longer)
     const travel = Math.max(STORY_FROM * window.innerHeight + storyStart + storyExtra, 0.49 * window.innerHeight);

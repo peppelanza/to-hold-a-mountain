@@ -14,6 +14,11 @@
 /* The page's own colour is its gradient's colour at the top of a phone screen: iPhone
    Safari fills the band around its address bar with it. (Home: the sky's, in style.css.) */
 html { background: #5a5a40; color: var(--ink); }
+/* While the menu, the trailer or the password screen covers the page, the page's colour
+   is theirs, so Safari's bands match them. */
+html.menu-open, .menu-open body { background-color: #3c3c27; }
+html.trailer-open, .trailer-open body { background-color: #0c0c08; }
+html.locked, .locked body { background-color: #5a5a40; }
 body { background: var(--olive-gradient) fixed; color: var(--ink); }
 
 body {
