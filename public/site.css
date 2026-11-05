@@ -1,8 +1,6 @@
 /* Shared by every page: colours, type, the menu, and the empty inner pages. */
 :root {
-  --olive: #5b5b41;
   --olive-deep: #46462e;
-  --olive-gradient: linear-gradient(160deg, var(--olive) 0%, var(--olive-deep) 100%);
   --ink: #f6efe6;
   --cream: #f3e3d3;
   --muted: #d6d0bb;
@@ -11,15 +9,15 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* The page's own colour is its gradient's colour at the top of a phone screen: iPhone
-   Safari fills the band around its address bar with it. (Home: the sky's, in style.css.) */
-html { background: #5a5a40; color: var(--ink); }
+/* One solid colour, no gradient: iPhone Safari fills the bands around its address bar
+   (top and bottom) with the page's colour, so they match it. (Home: style.css.) */
+html { background: var(--olive-deep); color: var(--ink); }
 /* While the menu, the trailer or the password screen covers the page, the page's colour
    is theirs, so Safari's bands match them. */
-html.menu-open, .menu-open body { background-color: #3c3c27; }
+html.menu-open, .menu-open body { background-color: #2c2c1c; }
 html.trailer-open, .trailer-open body { background-color: #0c0c08; }
-html.locked, .locked body { background-color: #5a5a40; }
-body { background: var(--olive-gradient) fixed; color: var(--ink); }
+html.locked, .locked body { background-color: var(--olive-deep); }
+body { background: var(--olive-deep); color: var(--ink); }
 
 body {
   font-family: var(--serif);
@@ -77,7 +75,7 @@ a { color: inherit; }
 .menu-open .menu-button span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .menu-open .menu-button span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* The panel fades in: a solid olive gradient, darker than the pages', that covers the whole page. */
+/* The panel fades in: a solid olive, darker than the pages', that covers the whole page. */
 .menu {
   position: fixed;
   inset: 0;
@@ -85,7 +83,7 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   padding: 96px 16px 48px clamp(16px, 9vw, 160px);
-  background: #3c3c27 linear-gradient(160deg, #3d3d28 0%, #2c2c1c 100%); /* the colour: its top, for Safari's band */
+  background: #2c2c1c;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.5s ease, visibility 0s 0.5s;
@@ -122,6 +120,7 @@ a { color: inherit; }
 /* Hover: the same weight, just lighter. The page you are on: italic, at full light. */
 .menu a:hover, .menu a:focus-visible { color: #fff; outline: none; }
 .menu a[aria-current="page"] { font-style: italic; color: var(--ink); }
+@media (max-width: 767px) { .menu li + li { margin-top: 0.9rem; } } /* phones: more room between items */
 
 /* Scrolls away with the page (only the menu button stays put), so text never runs under it. */
 .home-link {
@@ -244,7 +243,7 @@ a { color: inherit; }
   justify-items: center;
   gap: 14px;
   padding: 16px;
-  background: #5a5a40 var(--olive-gradient); /* the colour: its top, for Safari's band */
+  background: var(--olive-deep);
   text-align: center;
   transition: opacity 0.5s ease;
 }
