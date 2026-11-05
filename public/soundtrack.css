@@ -22,16 +22,25 @@ body { background: #7d6f4c; }
   background: linear-gradient(180deg, rgba(91, 91, 65, 0.3) 0%, rgba(70, 70, 46, 0.6) 100%);
 }
 
+/* One screen, footer included: the player in the middle of the screen (the same room
+   above and below it), the footer laid over the bottom of that room. The screen is
+   measured without Safari's bars (svh), so the footer is never under them. */
 .player-page {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   max-width: 56rem;
   margin: 0 auto;
-  padding: 120px 16px 64px;
+  padding: 104px 16px;
+}
+body { position: relative; }
+.player-page ~ .site-footer { position: absolute; left: 0; right: 0; bottom: 0; }
+@media (max-width: 767px) {
+  .player-page { padding: 124px 16px; } /* the footer is taller here */
 }
 .player-page .eyebrow { color: var(--muted); margin-bottom: 1rem; }
 .player-page h1 {
