@@ -242,6 +242,17 @@ belt.addEventListener("pointercancel", letGo);
 // Larger screens: on short ones, scale the poster and synopsis down until they fit.
 // Phones: they stack and scroll instead, so the film section gets the extra length.
 const phone = window.matchMedia("(max-width: 767px)");
+// Phones: the video starts 2 seconds in and loops back to there (the poster is that
+// frame too).
+const PHONE_START = 2;
+if (phone.matches) {
+  video.poster = "bg2-poster-mobile.webp";
+  video.loop = false;
+  const toStart = () => { if (video.currentTime < PHONE_START) video.currentTime = PHONE_START; };
+  video.addEventListener("loadedmetadata", toStart);
+  if (video.readyState >= 1) toStart();
+  video.addEventListener("ended", () => { video.currentTime = PHONE_START; video.play().catch(() => {}); });
+}
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
 let storyStart = 0; // phones: how far down it sits as it comes into focus
 function fitStory() {
