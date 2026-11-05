@@ -14,7 +14,8 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  background: #2b4255;
+  /* no background colour: iPhone Safari paints the colour of a fixed or sticky block
+     at the screen's edge around its address bar; the photo alone covers the page */
   transition: opacity 0.9s ease;
 }
 .loader::before {
@@ -119,7 +120,7 @@
   align-content: center;
   gap: clamp(28px, 5vh, 48px);
   padding: 0 16px;
-  background: #2b4255 url(sky.webp) center top / cover no-repeat;
+  background: url(sky.webp) center top / cover no-repeat; /* no colour: see .loader */
 }
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
