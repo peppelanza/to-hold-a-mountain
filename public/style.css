@@ -4,8 +4,7 @@
    (it does so whenever a pinned block touches the screen's edge, and the home page has
    several). main.js sets it to what's at the top of the screen as you scroll (--page):
    the sky photo's top first, never the other pages' olive. */
-:root { --page: #233b4e; } /* also the edge strips' colour (site.css) */
-html, body { background: var(--page); transition: background-color 0.4s ease; }
+html, body { background: var(--page, #233b4e); transition: background-color 0.4s ease; }
 
 :root {
   --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */

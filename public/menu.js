@@ -49,16 +49,6 @@
     }).join("") + "</ul>";
   (document.querySelector(".film-story") || document.body).appendChild(footer);
 
-  // Two thin strips pinned to the top and bottom edges, in the page's colour (site.css):
-  // iPhone Safari colours the bands around its address bar from what's pinned there,
-  // and follows it when it changes (it reads the page's own colour only once).
-  ["edge-top", "edge-bottom"].forEach(function (name) {
-    var edge = document.createElement("div");
-    edge.className = "edge " + name;
-    edge.setAttribute("aria-hidden", "true");
-    document.body.appendChild(edge);
-  });
-
   var button = document.querySelector(".menu-button");
   var menu = document.getElementById("site-menu");
 
