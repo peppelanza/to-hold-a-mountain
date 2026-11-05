@@ -1,5 +1,5 @@
-"""Shapes the cloud bank: an uneven top edge, two clouds on their own above it, and soft
-gaps where the blue behind it shows (style.css puts a blue sky behind the bank's thick
+"""Shapes the cloud bank: two more clouds on their own above it (copies of its own),
+and soft gaps where the blue behind it shows (style.css puts a blue sky behind the bank's thick
 part). Needs numpy and Pillow.
 
     python tools/cloud_gaps.py tools/clouds-solid.webp <out dir>
@@ -14,7 +14,7 @@ then run tools/cloud_depth.py again (its masks and textures are made from the ba
 """
 import sys
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image
 
 src, out = sys.argv[1], sys.argv[2]
 rng = np.random.default_rng(3)
@@ -40,34 +40,34 @@ im = np.asarray(Image.open(src).convert("RGBA")).astype(np.float32)
 H, W = im.shape[:2]
 v = np.linspace(0, 1, H)[:, None]
 
-# The top edge: not level. The bank's outline (not its texture) is moved up or down
-# column by column (by up to 5% of the height, smoothly, a few rises and dips across
-# the width); where it now reaches higher, it's filled with cloud from further down.
-low = im[np.clip(np.arange(H) + int(0.18 * H), 0, H - 1)][..., :3]
-rise = noise(1, W, [((1, W * 0.18), 0.75), ((1, W * 0.07), 0.25)])[0]
-rise = (rise - 0.5) * 2 * 0.05 * H
-rows = np.clip(np.arange(H)[:, None] + rise[None, :] * (1 - smooth(0.25, 0.4, v)), 0, H - 1)
-cols = np.arange(W)[None, :]
-a0 = im[..., 3].copy()
-a1 = a0[np.round(rows).astype(int), cols]
-more = np.clip((a1 - a0) / 255, 0, 1)[..., None]
-im[..., :3] = im[..., :3] * (1 - more) + low * more
-im[..., 3] = a1
+# A couple more clouds on their own, higher up: copies (mirrored) of the bank's own two
+# floating clouds, placed elsewhere along the width and higher, at about the logo's
+# height as the bank comes. Only the cloud itself is copied (not the thin haze around
+# it), its edges feathered.
+def patch(r0, r1, c0, c1):
+    p = im[int(r0 * H):int(r1 * H), int(c0 * W):int(c1 * W)].copy()
+    h, w = p.shape[:2]
+    fy = smooth(0, 25, np.arange(h)) * smooth(0, 25, h - 1 - np.arange(h))
+    fx = smooth(0, 25, np.arange(w)) * smooth(0, 25, w - 1 - np.arange(w))
+    a = p[..., 3] / 255
+    p[..., 3] = 255 * a * smooth(0.12, 0.45, a) * fy[:, None] * fx[None, :]  # the cloud, not the haze around it
+    return p[:, ::-1]
 
-# Two clouds on their own, higher up, at about the logo's height as the bank comes:
-# lumpy, lit from above, with the bank's own cloud in them.
-yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-lumpy = noise(H, W, [((28, 34), 0.7), ((10, 12), 0.3)])
-for cx, cy, rx, ry in ((0.22, 0.06, 0.15, 0.03), (0.69, 0.045, 0.12, 0.024)):
-    dx = np.abs(xx / W - cx)
-    dx = np.minimum(dx, 1 - dx) / rx
-    d = np.sqrt(dx ** 2 + ((yy / H - cy) / ry) ** 2)
-    blob = smooth(0.36, 0.7, lumpy * 0.55 + (1 - d) * 0.6)
-    blob = np.asarray(Image.fromarray((blob * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(4))).astype(np.float32) / 255
-    lit = np.clip(0.92 + 0.9 * (blob - np.roll(blob, 18, axis=0)), 0.8, 1.06)[..., None]
-    new = blob * 235 > im[..., 3]
-    im[..., :3] = np.where(new[..., None], np.clip(low * lit, 0, 255), im[..., :3])
-    im[..., 3] = np.maximum(im[..., 3], blob * 235)
+
+def place(p, r, c):
+    h, w = p.shape[:2]
+    y0, x0 = int(r * H), int(c * W)
+    for dx in range(w):  # (wrapping at the sides)
+        x = (x0 + dx) % W
+        a = p[:, dx, 3:4] / 255
+        im[y0:y0 + h, x, :3] = p[:, dx, :3] * a + im[y0:y0 + h, x, :3] * (1 - a)
+        im[y0:y0 + h, x, 3] = np.maximum(im[y0:y0 + h, x, 3], p[:, dx, 3])
+
+
+big = patch(0.062, 0.111, 0.36, 0.68)
+small = patch(0.05, 0.092, 0.82, 0.99)
+place(big, 0.028, 0.86)
+place(small, 0.02, 0.2)
 
 n = noise(H, W, [((45, 110), 0.75), ((16, 34), 0.25)])  # blobs wider than tall
 band = smooth(0.2, 0.26, v) * (1 - smooth(0.74, 0.8, v))
