@@ -212,14 +212,14 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 .cloud-layer div {
   height: 100%;
-  width: calc(var(--layer-h) * 0.5 * 3); /* three copies side by side (each half as wide as tall) */
-  background: left top / auto 100% repeat-x;
+  width: calc(var(--tile-h, var(--layer-h)) * 0.5 * 3); /* three copies side by side (each half as wide as tall) */
+  background: left top / auto var(--tile-h, 100%) repeat;
   animation: cloud-drift 55s linear infinite;
   will-change: transform;
 }
 .clouds-mid { z-index: 3; --layer-h: 360vh; height: var(--layer-h); }
 .clouds-mid div { background-image: url(clouds-mid.webp); }
-.clouds-veil { z-index: 6; --layer-h: 480vh; height: var(--layer-h); }
+.clouds-veil { z-index: 6; --tile-h: 480vh; --layer-h: 760vh; height: var(--layer-h); } /* the strip one and a half times */
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
@@ -271,7 +271,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .logline p, .quote blockquote {
   color: transparent;
   background-image: url(clouds-shade.webp), linear-gradient(var(--ink), var(--ink));
-  background-repeat: repeat-x, no-repeat;
+  background-repeat: repeat, no-repeat;
   background-size: 0 0, 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -297,6 +297,15 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   display: block;
   height: auto;
   filter: drop-shadow(0 1px 10px rgba(46, 46, 30, 0.5));
+}
+/* The press logos take the wisps' shadows too: a darkened copy over each, seen only
+   through the shadows' shapes (main.js). */
+.quote .shaded { position: relative; }
+.quote .shaded .shade {
+  position: absolute;
+  inset: 0;
+  filter: brightness(0.3);
+  visibility: hidden;
 }
 
 /* Starts under the clouds' faded bottom, so they melt into it. */
@@ -455,7 +464,6 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   color: var(--cream);
 }
 .review .stars { margin-top: 0.5rem; font-size: 0.95rem; letter-spacing: 0.2em; color: var(--cream); }
-.review .stars .off { opacity: 0.28; }
 .review blockquote {
   margin-top: 1rem;
   font-style: italic;

@@ -71,13 +71,16 @@ Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint
 h, w = 1600, 800
 y = np.linspace(0, 1, h)[:, None]
 n = noise(h, w, [(150, 0.7), (55, 0.22), (18, 0.08)])
-a = smooth(0.5, 0.78, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
+# Sparse over the first stretch (0.05 to 0.4: over the logo, as the page opens), so a
+# few wisps drift high above it and their shadows fall on it without hiding it.
+sparse = 0.13 * smooth(0.0, 0.05, y) * (1 - smooth(0.36, 0.44, y))
+a = smooth(0.5 + sparse, 0.78 + sparse, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
 lit = np.clip(0.5 + 4.0 * (n - np.roll(n, 30, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters: the same shapes, dark (sharpened a little, as a shadow
 # cast close by is crisper than the wisp).
-shade = smooth(0.55, 0.72, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
+shade = smooth(0.55 + sparse, 0.72 + sparse, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
 Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 150]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.

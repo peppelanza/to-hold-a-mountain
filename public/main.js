@@ -21,16 +21,21 @@ const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
 const introLogo = document.querySelector(".intro-logo");
 const cloudTile = document.querySelector(".clouds");
-// Clouds nearer than the bank, and how much faster than it they move: puffs behind the
-// texts, thin wisps in front of them. Their tops are at the top of the screen when the
-// bank's edge (12% down it) reaches the middle of the screen.
+// Clouds nearer than the bank, how much faster than it they move, and where they start:
+// puffs behind the texts, with their top at the top of the screen when the bank's edge
+// (12% down it) reaches the middle of the screen; thin wisps in front of them, higher
+// (by this many screen heights), so they're already up in the sky over the logo when
+// the page opens and their shadows fall on it.
 const cloudLayers = [
-  [document.querySelector(".clouds-mid"), 1.3],
-  [document.querySelector(".clouds-veil"), 1.7]
+  [document.querySelector(".clouds-mid"), 1.3, 0],
+  [document.querySelector(".clouds-veil"), 1.7, -0.9]
 ];
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
 const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
+const pressShades = [...document.querySelectorAll(".quote .shade")];
+// How far below a wisp its shadow falls (× the screen height): the sun is high up.
+const SHADOW_DROP = 0.3;
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -103,8 +108,8 @@ function update() {
 
   // The nearer clouds.
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
-  for (const [layer, speed] of cloudLayers) {
-    const ly = speed * (bank.top - edgeAtMiddle);
+  for (const [layer, speed, lead] of cloudLayers) {
+    const ly = speed * (bank.top - edgeAtMiddle) + lead * vh;
     layer.style.visibility = ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
     layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
   }
@@ -129,13 +134,13 @@ function update() {
       `0 0, ${((cloudTile.getBoundingClientRect().left - r.left) / k).toFixed(1)}px ${my.toFixed(1)}px`;
   }
 
-  // The wisps' shadows on the letters: the sun is high, so each wisp passing in front
-  // of the logo or the texts darkens them in its own shape, a little lower, following
-  // its drift (frame by frame while the wisps are on screen).
+  // The wisps' shadows on the letters: the sun is high up, so each wisp casts its shape
+  // well below itself on the screen, darkening the logo, the texts and the press logos
+  // under it; following its drift (frame by frame while the wisps are on screen).
   const [veil] = cloudLayers[1];
   const shades = veil.style.visibility === "visible";
   const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
-  const tileH = veil.offsetHeight, tileW = 0.5 * tileH, drop = 0.05 * vh;
+  const tileH = 4.8 * vh, tileW = 0.5 * tileH, drop = SHADOW_DROP * vh; // the strip's size (style.css)
   logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) {
     following = true;
@@ -148,17 +153,27 @@ function update() {
       logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp), " + logo.style.maskImage;
       logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize + ", " + logo.style.maskSize;
       logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own + ", " + logo.style.maskPosition;
-      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x, " + logo.style.maskRepeat;
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat, " + logo.style.maskRepeat;
       logoShade.style.webkitMaskComposite = "source-in, source-over";
       logoShade.style.maskComposite = "intersect, add";
     } else {
       logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp)";
       logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize;
       logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own;
-      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x";
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat";
       logoShade.style.webkitMaskComposite = logoShade.style.maskComposite = "";
     }
     logoShade.style.transform = logo.style.transform;
+  }
+  for (const el of pressShades) {
+    el.style.visibility = shades ? "visible" : "hidden";
+    if (!shades) continue;
+    const r = el.getBoundingClientRect();
+    el.style.webkitMaskImage = el.style.maskImage = "url(clouds-shade.webp)";
+    el.style.webkitMaskRepeat = el.style.maskRepeat = "repeat";
+    el.style.webkitMaskSize = el.style.maskSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px`;
+    el.style.webkitMaskPosition = el.style.maskPosition =
+      `${(shape.left - r.left).toFixed(1)}px ${(shape.top + drop - r.top).toFixed(1)}px`;
   }
   for (const el of shadedWords) {
     if (!shades) { el.style.backgroundSize = "0 0, 100% 100%"; continue; }
