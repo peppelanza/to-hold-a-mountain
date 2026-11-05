@@ -7,7 +7,7 @@
 html, body { background: var(--page, #939ca2); transition: background-color 0.4s ease; }
 
 :root {
-  --cloud-h: max(194vw, 400vh); /* height of the cloud image (thick from 28% to 84%) */
+  --cloud-h: max(213vw, 440vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
 /* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls

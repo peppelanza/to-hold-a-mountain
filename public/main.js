@@ -68,7 +68,8 @@ function update() {
 
   // The texts, one after another, each the same: it rises in from below, fading in,
   // slows softly through the middle of the screen (a brief, gentle pause, never a
-  // stop), then rises on, fading out, as the next rises in. u is how far the track has
+  // stop), then rises on, fading out, as the next rises in; the last stays in the
+  // middle and goes behind the cumulus near the bank's bottom (below). u is how far the track has
   // scrolled past the top of the screen, in screens; each text's middle moment is
   // TEXT_FIRST + its place × TEXT_EVERY. They're fixed to the screen and only this moves
   // them (no fight with the page's own scrolling, so they don't tremble).
@@ -78,7 +79,9 @@ function update() {
   let anyShown = false;
   quotes.forEach((q, i) => {
     const s = TEXT_FIRST + i * TEXT_EVERY - u; // screens of scrolling until its middle moment
-    const y = s - TEXT_EASE * TEXT_SLOW * Math.tanh(s / TEXT_SLOW); // where it is: slower near the middle
+    let y = s - TEXT_EASE * TEXT_SLOW * Math.tanh(s / TEXT_SLOW); // where it is: slower near the middle
+    // the last (Variety) stays in the middle once there, until the clouds take it
+    if (i === quotes.length - 1 && s < 0) y = 0;
     const shown = 1 - ease(range(Math.abs(y), 0.15, 0.3));
     q.style.opacity = shown.toFixed(3);
     q.style.transform = `translate3d(0, ${(y * vh).toFixed(1)}px, 0)`;
