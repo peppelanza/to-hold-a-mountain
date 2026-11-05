@@ -21,7 +21,7 @@ sideways without a seam.
 """
 import sys
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 src, out = sys.argv[1], sys.argv[2]
 rng = np.random.default_rng(int(sys.argv[3]) if len(sys.argv) > 3 else 5)
@@ -83,14 +83,16 @@ clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.
 edge = 0.03 + 0.17 * noise(h, w, [(220, 1.0)])
-a = smooth(0.74 + lift - edge, 0.74 + lift + edge, n)  # (0.74: few of them) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))
+a = smooth(0.74 + lift - edge, 0.74 + lift + edge, n) * smooth(0.0, 0.02, y) * (1 - smooth(0.97, 1.0, y))  # (0.74: few of them)
+# softened: a little blurred (their shadows too, below, so they still match)
+a = np.asarray(Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(7))).astype(np.float32) / 255
 lit = np.clip(0.5 + 6.0 * (n - np.roll(n, 14, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
-# its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
+# its soft or crisp edge, cast 0.1 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
-shade = np.roll(a, int(0.2 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
+shade = np.roll(a, int(0.1 * PER), axis=0) * (1 - smooth(0.05, 0.4, a))
 Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 105]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
