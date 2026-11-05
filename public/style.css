@@ -138,6 +138,15 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
 .intro-logo picture { display: contents; } /* the image lays out as before */
+.intro-logo img { grid-area: 1 / 1; } /* the logo and its shaded copy, one over the other */
+.intro-logo .watch { grid-area: 2 / 1; }
+/* The shaded copy: darker, seen only through the wisps' shadows (main.js masks it). */
+.intro-logo .logo-shade img {
+  filter: brightness(0.3);
+  animation: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
 .intro-logo img {
   --logo-w: min(87.2vw, 917px);
   width: var(--logo-w);
@@ -212,12 +221,6 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .clouds-mid div { background-image: url(clouds-mid.webp); }
 .clouds-veil { z-index: 6; --layer-h: 480vh; height: var(--layer-h); }
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
-/* Cloud shadows sweeping over the logo and the texts (and the clouds under them): the
-   puffs and the wisps again, dark and blurred, drifting with them, above the texts and
-   below the wisps. */
-.cloud-layer.shadow div { filter: brightness(0) blur(22px); }
-.clouds-mid.shadow { z-index: 5; opacity: 0.32; }
-.clouds-veil.shadow { z-index: 5; opacity: 0.2; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
 }
@@ -237,7 +240,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   top: 0;
   left: 0;
   right: 0;
-  z-index: 4; /* above the clouds and the puffs behind it, below the wisps (and their shadows) and the menu */
+  z-index: 4; /* above the clouds and the puffs behind it, below the wisps and the menu */
   height: 100vh;
   height: 100svh;
   pointer-events: none;
@@ -261,6 +264,20 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   will-change: opacity, transform;
 }
 .quote + .quote { opacity: 0; }
+/* The words take the wisps' shadows as they pass over them: the text's colour is a
+   background clipped to the letters, with the shadows' shapes (clouds-shade.webp)
+   over it, placed by main.js. (Its glow is a drop shadow then: a text shadow would be
+   painted over the letters.) */
+.logline p, .quote blockquote {
+  color: transparent;
+  background-image: url(clouds-shade.webp), linear-gradient(var(--ink), var(--ink));
+  background-repeat: repeat-x, no-repeat;
+  background-size: 0 0, 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 9px rgba(46, 46, 30, 0.55));
+}
 .logline p {
   max-width: 34rem;
   font-size: clamp(1.5rem, 3.4vw, 2.4rem);

@@ -24,15 +24,13 @@ const cloudTile = document.querySelector(".clouds");
 // Clouds nearer than the bank, and how much faster than it they move: puffs behind the
 // texts, thin wisps in front of them. Their tops are at the top of the screen when the
 // bank's edge (12% down it) reaches the middle of the screen.
-// Each also has a shadow, a little to the left (in screen heights); the puffs' runs
-// well ahead of them, so their shadows reach the logo as the clouds come.
 const cloudLayers = [
-  [document.querySelector(".clouds-mid:not(.shadow)"), 1.3, 0, 0],
-  [document.querySelector(".clouds-mid.shadow"), 1.3, -0.35, -0.03],
-  [document.querySelector(".clouds-veil:not(.shadow)"), 1.7, 0, 0],
-  [document.querySelector(".clouds-veil.shadow"), 1.7, 0.05, -0.02]
+  [document.querySelector(".clouds-mid"), 1.3],
+  [document.querySelector(".clouds-veil"), 1.7]
 ];
 const watch = document.querySelector(".intro-logo .watch");
+const logoShade = document.querySelector(".logo-shade img");
+const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
 
 // 0 before a, 1 after b, linear in between.
 const range = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
@@ -105,10 +103,10 @@ function update() {
 
   // The nearer clouds.
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
-  for (const [layer, speed, down, side] of cloudLayers) {
-    const ly = speed * (bank.top - edgeAtMiddle) + down * vh;
+  for (const [layer, speed] of cloudLayers) {
+    const ly = speed * (bank.top - edgeAtMiddle);
     layer.style.visibility = ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
-    layer.style.transform = `translate3d(${(side * vh).toFixed(1)}px, ${ly.toFixed(1)}px, 0)`;
+    layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
   }
 
   // The logo goes behind the bank (not its button, which stays readable): masked with clouds-mask.webp (clear
@@ -129,6 +127,44 @@ function update() {
     el.style.webkitMaskSize = el.style.maskSize = `100% ${Math.max(0, my).toFixed(1)}px, auto ${(bank.height / k).toFixed(1)}px`;
     el.style.webkitMaskPosition = el.style.maskPosition =
       `0 0, ${((cloudTile.getBoundingClientRect().left - r.left) / k).toFixed(1)}px ${my.toFixed(1)}px`;
+  }
+
+  // The wisps' shadows on the letters: the sun is high, so each wisp passing in front
+  // of the logo or the texts darkens them in its own shape, a little lower, following
+  // its drift (frame by frame while the wisps are on screen).
+  const [veil] = cloudLayers[1];
+  const shades = veil.style.visibility === "visible";
+  const shape = veil.firstElementChild.getBoundingClientRect(); // the drifting strip
+  const tileH = veil.offsetHeight, tileW = 0.5 * tileH, drop = 0.05 * vh;
+  logoShade.style.visibility = shades ? "visible" : "hidden";
+  if (shades) {
+    following = true;
+    const r = logoShade.getBoundingClientRect();
+    const k = logoShade.offsetWidth ? r.width / logoShade.offsetWidth : 1;
+    const own = `${((shape.left - r.left) / k).toFixed(1)}px ${((shape.top + drop - r.top) / k).toFixed(1)}px`;
+    const ownSize = `${(tileW / k).toFixed(1)}px ${(tileH / k).toFixed(1)}px`;
+    if (logo.style.maskImage) {
+      // and only where the logo itself isn't behind the bank
+      logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp), " + logo.style.maskImage;
+      logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize + ", " + logo.style.maskSize;
+      logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own + ", " + logo.style.maskPosition;
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x, " + logo.style.maskRepeat;
+      logoShade.style.webkitMaskComposite = "source-in, source-over";
+      logoShade.style.maskComposite = "intersect, add";
+    } else {
+      logoShade.style.webkitMaskImage = logoShade.style.maskImage = "url(clouds-shade.webp)";
+      logoShade.style.webkitMaskSize = logoShade.style.maskSize = ownSize;
+      logoShade.style.webkitMaskPosition = logoShade.style.maskPosition = own;
+      logoShade.style.webkitMaskRepeat = logoShade.style.maskRepeat = "repeat-x";
+      logoShade.style.webkitMaskComposite = logoShade.style.maskComposite = "";
+    }
+    logoShade.style.transform = logo.style.transform;
+  }
+  for (const el of shadedWords) {
+    if (!shades) { el.style.backgroundSize = "0 0, 100% 100%"; continue; }
+    const r = el.getBoundingClientRect();
+    el.style.backgroundSize = `${tileW.toFixed(1)}px ${tileH.toFixed(1)}px, 100% 100%`;
+    el.style.backgroundPosition = `${(shape.left - r.left).toFixed(1)}px ${(shape.top + drop - r.top).toFixed(1)}px, 0 0`;
   }
 
   // The video plays (looping) while it's on screen and pauses when it isn't.
@@ -223,7 +259,9 @@ const veil = new Image();
 veil.src = "clouds-veil.webp";
 const mask = new Image();
 mask.src = "clouds-mask.webp";
-const images = [logo, sky, clouds, mid, veil, mask];
+const shade = new Image();
+shade.src = "clouds-shade.webp";
+const images = [logo, sky, clouds, mid, veil, mask, shade];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);

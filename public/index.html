@@ -41,6 +41,12 @@
           <source media="(max-width: 767px)" srcset="logo-mobile-glow.webp" width="1411" height="577">
           <img src="logo-glow.webp" width="1763" height="625" alt="To Hold a Mountain — a film by Biljana Tutorov & Petar Glomazić">
         </picture>
+        <!-- The logo again, darkened: shown only in the shape of the wisps' shadows as
+             they pass over it (main.js). -->
+        <picture class="logo-shade" aria-hidden="true">
+          <source media="(max-width: 767px)" srcset="logo-mobile-glow.webp" width="1411" height="577">
+          <img src="logo-glow.webp" width="1763" height="625" alt="">
+        </picture>
         <a class="button watch" href="https://www.youtube.com/watch?v=SKabqo5MiE8" data-trailer>Watch the trailer</a>
       </div>
       <!-- Phones: the laurels in one row, starting just above the logo and scrolling away
@@ -103,10 +109,8 @@
     </div>
 
   <!-- Clouds at other depths, nearer than the bank: puffs behind the texts, wisps in
-       front of them, each with its shadow (main.js moves them, faster than the bank). -->
-  <div class="cloud-layer clouds-mid shadow" aria-hidden="true"><div></div></div>
+       front of them (main.js moves them, faster than the bank). -->
   <div class="cloud-layer clouds-mid" aria-hidden="true"><div></div></div>
-  <div class="cloud-layer clouds-veil shadow" aria-hidden="true"><div></div></div>
   <div class="cloud-layer clouds-veil" aria-hidden="true"><div></div></div>
 
   <script src="menu.js"></script>

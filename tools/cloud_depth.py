@@ -3,12 +3,14 @@
     python tools/cloud_depth.py public/clouds.webp <out dir> 5   (5: the seed in use)
     cwebp -q 70 -alpha_q 80 -resize 900 0 <out dir>/clouds-mid.png -o public/clouds-mid.webp
     cwebp -q 70 -alpha_q 80 <out dir>/clouds-veil.png -o public/clouds-veil.webp
+    cwebp -q 70 -alpha_q 70 <out dir>/clouds-shade.png -o public/clouds-shade.webp
     cwebp -lossless <out dir>/clouds-mask.png -o public/clouds-mask.webp
     cwebp -lossless <out dir>/clouds-below-mask.png -o public/clouds-below-mask.webp
 
 - clouds-mid: soft puffs with the bank's own texture, lit from above (lighter tops,
   darker undersides), scattered down a tall strip; behind the texts, in front of the bank
 - clouds-veil: large see-through wisps, lit from above; in front of the texts
+- clouds-shade: the wisps' shapes, dark: their shadows on the logo and the texts
 - clouds-mask: where the bank (clouds.webp) has any cloud, even thin haze, this is
   transparent; the logo is masked with it, so it goes behind the clouds instead of
   showing through them
@@ -73,6 +75,10 @@ a = smooth(0.5, 0.78, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
 lit = np.clip(0.5 + 4.0 * (n - np.roll(n, 30, axis=0)), 0, 1)[..., None]
 rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+# Their shadows on the letters: the same shapes, dark (sharpened a little, as a shadow
+# cast close by is crisper than the wisp).
+shade = smooth(0.55, 0.72, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
+Image.fromarray(np.dstack([np.full((h, w, 3), [26, 28, 24], np.float32), shade[..., None] * 150]).astype(np.uint8)).save(f"{out}/clouds-shade.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
 # Not from the bank's see-through-ness alone: at its top that thickens evenly downward,
