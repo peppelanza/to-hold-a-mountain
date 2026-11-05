@@ -1,7 +1,7 @@
 // Homepage: everything scrolls naturally. This shows the loading screen until the
 // fonts, images and a light version of the video are all in (the full-quality one then
 // loads behind it and fades in), shrinks the logo as the clouds come over it,
-// plays the video (looping) while it is on screen, and zooms it in and blurs it as you
+// plays the video (looping) while it is on screen, and blurs it as you
 // scroll on, for the synopsis to sit on.
 const root = document.documentElement;
 const logo = document.querySelector(".intro-logo img");
@@ -197,19 +197,18 @@ function update() {
     else if (!onScreen && !v.paused) v.pause();
   }
 
-  // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
+  // The hand-over from scrolling to blurring: over the last stretch (BLEND, either side
   // of the moment the video fills the screen) the video slows down into place instead
-  // of stopping dead, while the zoom (straight in, from the centre) already begins. The
-  // zoom grows the video past its edges, so it always covers the space the slowing leaves.
-  // Halfway into the zoom it starts to blur, not all the way: the synopsis sits on it.
+  // of stopping dead, while the blur already begins (not all the way: the synopsis
+  // sits on it). No zoom.
   const BLEND = 0.2 * window.innerHeight;
   const t = filmBox.top; // where the video would be, scrolling with the page
   const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
-  const ZOOMED = 0.49 * window.innerHeight; // fully zoomed this far past the video filling the screen
+  const ZOOMED = 0.49 * window.innerHeight; // fully blurred this far past the video filling the screen
   const into = ease(range(BLEND - t, 0, BLEND + ZOOMED));
-  const moved = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
-  const blur = range(into, 0.5, 1);
+  const moved = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
+  const blur = into; // (no zoom: it blurs from the moment it fills the screen)
   // (both clips, while the full-quality one fades in over the light one)
   for (const v of stage.querySelectorAll("video")) {
     v.style.transform = moved;
@@ -431,9 +430,9 @@ if (phone.matches) {
 }
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
 let storyStart = 0; // phones: how far down it sits as it starts to show
-// Phones: the synopsis starts to show (the video's blur at 60%, so its zoom at 0.8)
-// this far past the video filling the screen, × the screen height.
-const STORY_FROM = 0.29;
+// Phones: the synopsis starts to show (the video's blur at 60%) this far past the
+// video filling the screen, × the screen height.
+const STORY_FROM = 0.19;
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
@@ -446,13 +445,13 @@ function fitStory() {
     storyStart = Math.max(0, 0.68 * view - middle);
     filmStory.style.transformOrigin = `50% ${middle}px`;
     storyExtra = Math.max(0, filmStory.offsetHeight - view);
-    // room to scroll it up from there until its end is at the bottom (and for the zoom
+    // room to scroll it up from there until its end is at the bottom (and for the blur
     // to finish, if that's longer)
     const travel = Math.max(STORY_FROM * window.innerHeight + storyStart + storyExtra, 0.49 * window.innerHeight);
     film.style.height = `${stage.clientHeight + travel}px`;
     return;
   }
-  // Larger screens: the page ends as the synopsis comes fully into focus (the zoom done,
+  // Larger screens: the page ends as the synopsis comes fully into focus (the blur done,
   // 0.49 of a screen past the video filling it); on short screens, the poster and
   // synopsis are scaled down until they fit their screen.
   filmStory.style.transformOrigin = "";

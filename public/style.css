@@ -157,7 +157,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 
 /* The block the clouds are held in. It ends 32vh below the video's top edge (its content,
    the video section, carries on past it), so the clouds are let go, and scroll up and
-   away with the page, just as the zoom starts (the moment the video fills
+   away with the page, just as the blur starts (the moment the video fills
    the screen). Clouds top at 50vh + their height, video top 32vh above their bottom:
    height = cloud height + 50vh. */
 .flow { height: calc(var(--cloud-h) + 50vh); }
@@ -165,7 +165,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 /* Starts at the middle of the screen (50vh, under the logo); the clouds' top fades into the sky
    photo. Sticky: once their soft bottom edge has risen to 32% down the screen (the same
    moment the video fills the screen) they are over the top third of the video, and
-   from there they scroll away as the zoom starts. */
+   from there they scroll away as the blur starts. */
 .intro-clouds {
   position: sticky;
   top: calc(32vh - var(--cloud-h));
@@ -313,7 +313,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .film {
   position: relative;
   z-index: 0;
-  height: 149vh; /* scrolling on through it: zoom in straight away, then the synopsis (main.js sets it exactly) */
+  height: 149vh; /* scrolling on through it: the blur straight away, then the synopsis (main.js sets it exactly) */
   margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
 }
 .film-stage {
@@ -323,17 +323,18 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
      the page's colour there once the video is pinned) */
   height: 100vh;
   height: 100lvh;
-  /* Clipped at the sides and bottom only: as the zoom starts the video may grow up
-     past the stage's top edge, under the clouds. */
+  /* Clipped at the sides and bottom only: the video reaches a little past the stage's
+     top edge, under the clouds. */
   clip-path: inset(-100vh 0 0 0);
 }
+/* A little larger than the screen on every side (no zoom): a blur softens a picture's
+   edges, and these stay out of sight. */
 .film-stage video {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: -48px;
+  width: calc(100% + 96px);
+  height: calc(100% + 96px);
   object-fit: cover;
-  /* zooms straight in, towards the centre */
   will-change: transform, filter;
 }
 /* A light shade over the blurred video, fading in with the blur, so the synopsis reads well. */
