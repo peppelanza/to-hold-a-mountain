@@ -98,11 +98,12 @@ function update() {
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
   // together), and stay to be read until the end of the page.
-  // Phones: the same, with the poster a little below the middle of the screen; then
-  // scrolling on moves it all up, like the rest of a page, over the video, which stays put.
+  // Phones: the same, with the poster a little below the middle of the screen, and from
+  // the moment it starts to show, scrolling moves it all up, like the rest of a page,
+  // over the video, which stays put.
   const shown = ease(range(blur, 0.6, 1));
   if (phone.matches) {
-    const y = Math.max(-storyExtra, storyStart - Math.max(0, -t - ZOOMED));
+    const y = Math.max(-storyExtra, storyStart - Math.max(0, -t - STORY_FROM * window.innerHeight));
     filmStory.style.opacity = shown;
     filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
     filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)` +
@@ -252,18 +253,24 @@ if (phone.matches) {
   else video.addEventListener("loadedmetadata", toStart, { once: true });
 }
 let storyExtra = 0; // how much taller than the screen the stacked synopsis is
-let storyStart = 0; // phones: how far down it sits as it comes into focus
+let storyStart = 0; // phones: how far down it sits as it starts to show
+// Phones: the synopsis starts to show (the video's blur at 60%, so its zoom at 0.8)
+// this far past the video filling the screen, × the screen height.
+const STORY_FROM = 0.29;
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
-    // the poster's middle at 58% of the screen; it zooms in around that middle
+    // the poster's middle at 58% of the screen as it starts to show; it zooms in around
+    // that middle
     const poster = story.querySelector(".poster");
     const middle = poster.offsetTop + poster.offsetHeight / 2;
     storyStart = Math.max(0, 0.58 * stage.clientHeight - middle);
     filmStory.style.transformOrigin = `50% ${middle}px`;
     storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
-    // room to bring it into focus, then scroll it up until its end is at the bottom
-    film.style.height = `${stage.clientHeight + 0.49 * window.innerHeight + storyStart + storyExtra}px`;
+    // room to scroll it up from there until its end is at the bottom (and for the zoom
+    // to finish, if that's longer)
+    const travel = Math.max(STORY_FROM * window.innerHeight + storyStart + storyExtra, 0.49 * window.innerHeight);
+    film.style.height = `${stage.clientHeight + travel}px`;
     return;
   }
   filmStory.style.transformOrigin = "";
