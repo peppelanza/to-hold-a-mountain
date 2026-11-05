@@ -76,7 +76,12 @@ a = smooth(thr - 0.07, thr + 0.12, n)  # (no fade at the ends: the page repeats 
 lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[..., None]
 # lighter than the bank behind (bright tops, only a little darker underneath), so the
 # two read as separate layers
-rgb = texture(h, w) * (0.88 + 0.42 * lit) * np.array([0.95, 0.99, 1.02])
+tex = texture(h, w)
+# wrapping top to bottom too (the page repeats this strip): towards its ends the texture
+# hands over to itself half a strip on, which meets up again across the join
+k = (1 - np.sin(np.pi * np.arange(h) / h))[:, None, None]
+tex = tex * (1 - k) + np.roll(tex, h // 2, axis=0) * k
+rgb = tex * (0.88 + 0.42 * lit) * np.array([0.95, 0.99, 1.02])
 rgb = rgb * 0.75 + np.array([226, 231, 234], np.float32) * 0.25
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
