@@ -3,6 +3,7 @@
 
 /* Same feel as the credits on About the film: small caps headings, thin lines. */
 .listing {
+  animation: listing-in 0.5s ease both;
   width: 100%;
   margin-top: 3rem;
   border-collapse: collapse;
@@ -43,3 +44,4 @@
   .listing td { padding: 0; border: 0; }
   .listing td:empty { display: none; }
 }
+@keyframes listing-in { from { opacity: 0; } }

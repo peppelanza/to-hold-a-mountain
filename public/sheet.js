@@ -3,8 +3,7 @@
 // its tab as CSV when it opens and fills its table, one row per line of the tab, in
 // the tab's order. Columns are found by their heading (any case), so new ones can be
 // added; lines above the headings (a note) and empty lines are skipped. Google passes
-// edits on within a few minutes. If the Sheet can't be read, the rows already in the
-// page stay.
+// edits on within a few minutes. The table is hidden until then, and fades in.
 (function () {
   var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
   var TABS = {
