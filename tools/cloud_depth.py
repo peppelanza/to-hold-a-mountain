@@ -75,8 +75,17 @@ rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32)
 Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
+# Not from the bank's see-through-ness alone: at its top that thickens evenly downward,
+# so the logo would go in a straight line. The darker cloud forms count for more, and
+# billowy noise varies it, so the logo goes behind lumps of cloud at different heights.
 alpha = np.asarray(bank.getchannel("A")).astype(np.float32) / 255
-keep = 1 - smooth(0.03, 0.3, alpha)
+lum = np.asarray(bank.convert("L")).astype(np.float32) / 255
+lit = lum[alpha > 0.9]
+form = smooth(np.percentile(lit, 80), np.percentile(lit, 25), lum)  # 1 on the darker forms
+H0, W0 = alpha.shape
+lumps = noise(H0, W0, [(W0 * 0.1, 0.65), (W0 * 0.035, 0.25), (W0 * 0.012, 0.1)])
+score = alpha + 0.55 * (form - 0.5) * (alpha > 0.02) + 0.9 * (lumps - 0.5)
+keep = 1 - smooth(0.32, 0.42, score) * (alpha > 0.02)
 m = np.zeros(alpha.shape + (4,), np.uint8)
 m[..., 3] = (keep * 255).astype(np.uint8)
 Image.fromarray(m).save(f"{out}/clouds-mask.png")
