@@ -57,6 +57,7 @@ loose = np.clip((a0 - haze) / np.maximum(1 - haze, 1e-3), 0, 1)
 # (only up in the open sky: lower, out of the thickening haze, they'd end flat)
 loose *= 1 - smooth(-0.6, 0.6, (v - 0.12) / 0.012 + 2.4 * (noise(H, W, [((30, 60), 1.0)]) - 0.5))
 im[..., 3] = 255 * (top * a0 + (1 - top) * loose)
+im[..., 3] *= smooth(0.02, 0.035, v)  # (no specks along the very top)
 
 # The bottom squeezed down: the source's fade (93% to the end) into the last 3.5%, so the
 # bank is still thick where the video's top lies under it (24vh above the bank's bottom,
