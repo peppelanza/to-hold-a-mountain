@@ -62,8 +62,8 @@ function measure() {
 }
 
 function update() {
-  // Logo: full size on arrival, 90% by the time the clouds cover it (94vh of scrolling).
-  const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
+  // Logo: full size on arrival, 90% by the time the clouds cover it (the end of its hold).
+  const covered = Math.min(1, window.scrollY / (logoHold.offsetHeight - window.innerHeight));
   logo.style.transform = `scale(${1 - 0.1 * covered})`;
 
   // The texts, one after another, each the same: it rises in from below, fading in,

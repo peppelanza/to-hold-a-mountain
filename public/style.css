@@ -109,8 +109,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 
 /* The logo holds still in the middle of the screen while the clouds scroll over it,
-   until their thick part covers it (94vh of scrolling); then it moves on, hidden. */
-.intro-logo-hold { height: 194vh; }
+   until their thick part covers it (140vh of scrolling); then it moves on, hidden. */
+.intro-logo-hold { height: 240vh; }
 .intro-logo {
   position: sticky;
   top: 0;
@@ -170,7 +170,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   position: sticky;
   top: calc(32vh - var(--cloud-h));
   z-index: 1;
-  margin-top: -144vh;
+  margin-top: -190vh; /* (240vh of the logo's hold, less 50vh) */
   height: var(--cloud-h);
   overflow-x: clip;
   pointer-events: none; /* clicks pass through to the logo's trailer button */
