@@ -291,7 +291,9 @@ const mask = new Image();
 mask.src = "clouds-mask.webp";
 const shade = new Image();
 shade.src = "clouds-shade.webp";
-const images = [logo, sky, clouds, mid, veil, mask, shade];
+const high = new Image();
+high.src = "clouds-high.webp";
+const images = [logo, sky, clouds, high, mid, veil, mask, shade];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);

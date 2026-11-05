@@ -192,6 +192,18 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   animation: cloud-drift 240s linear infinite;
   will-change: transform;
 }
+/* Two clouds of their own high above the bank (on a strip on top of it, 12% of its
+   height; tools/cloud_gaps.py): up around the logo as the page opens. They move and
+   drift with the bank. */
+.clouds::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: calc(var(--cloud-h) * 0.12);
+  background: url(clouds-high.webp) left top / auto 100% repeat-x;
+}
 @keyframes cloud-drift {
   from { transform: translateX(0); }
   to { transform: translateX(-33.3333%); }

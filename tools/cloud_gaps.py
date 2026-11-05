@@ -1,9 +1,10 @@
-"""Shapes the cloud bank: two more clouds on their own above it (copies of its own),
-and soft gaps where the blue behind it shows (style.css puts a blue sky behind the bank's thick
+"""Shapes the cloud bank: two more clouds on their own high above it (copies of its own,
+on a strip of their own, clouds-high), and soft gaps where the blue behind it shows (style.css puts a blue sky behind the bank's thick
 part). Needs numpy and Pillow.
 
     python tools/cloud_gaps.py tools/clouds-solid.webp <out dir>
     cwebp -q 80 -alpha_q 88 <out dir>/clouds.png -o public/clouds.webp
+    cwebp -q 80 -alpha_q 88 <out dir>/clouds-high.png -o public/clouds-high.webp
 
 then run tools/cloud_depth.py again (its masks and textures are made from the bank).
 
@@ -40,9 +41,8 @@ im = np.asarray(Image.open(src).convert("RGBA")).astype(np.float32)
 H, W = im.shape[:2]
 v = np.linspace(0, 1, H)[:, None]
 
-# A couple more clouds on their own, higher up: copies (mirrored) of the bank's own two
-# floating clouds, placed elsewhere along the width and higher, at about the logo's
-# height as the bank comes. Only the cloud itself is copied (not the thin haze around
+# A couple more clouds on their own, high up: copies (mirrored) of the bank's own two
+# floating clouds, placed elsewhere along the width. Only the cloud itself is copied (not the thin haze around
 # it), its edges feathered.
 def patch(r0, r1, c0, c1):
     p = im[int(r0 * H):int(r1 * H), int(c0 * W):int(c1 * W)].copy()
@@ -57,6 +57,8 @@ def patch(r0, r1, c0, c1):
 def place(p, r, c):
     h, w = p.shape[:2]
     y0, x0 = int(r * H), int(c * W)
+    h = min(h, im.shape[0] - y0)
+    p = p[:h]
     for dx in range(w):  # (wrapping at the sides)
         x = (x0 + dx) % W
         a = p[:, dx, 3:4] / 255
@@ -66,8 +68,14 @@ def place(p, r, c):
 
 big = patch(0.062, 0.111, 0.36, 0.68)
 small = patch(0.05, 0.092, 0.82, 0.99)
-place(big, 0.028, 0.86)
-place(small, 0.02, 0.2)
+# They go on a strip of their own that sits on top of the bank (12% of its height,
+# style.css), well above its edge: up around the logo as the page opens.
+bank = im
+im = np.zeros((int(0.12 * H), W, 4), np.float32)
+place(big, 0.045, 0.62)
+place(small, 0.0, 0.08)
+Image.fromarray(im.clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-high.png")
+im = bank
 
 n = noise(H, W, [((45, 110), 0.75), ((16, 34), 0.25)])  # blobs wider than tall
 band = smooth(0.2, 0.26, v) * (1 - smooth(0.74, 0.8, v))
