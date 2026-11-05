@@ -1,5 +1,10 @@
 /* Homepage only; colours, type and the menu are in site.css. */
 
+/* The page's own colour is the top of the sky photo, not the other pages' olive:
+   iPhone Safari fills the bands around its address bar with it (it does so whenever a
+   pinned block touches the screen's edge, and the home page has several). */
+html, body { background: #233b4e; }
+
 :root {
   --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */
 }
@@ -14,8 +19,8 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  /* no background colour: iPhone Safari paints the colour of a fixed or sticky block
-     at the screen's edge around its address bar; the photo alone covers the page */
+  /* no background colour: iPhone Safari would paint it around its address bar (a fixed
+     or sticky block at the screen's edge); the photo alone covers the page */
   transition: opacity 0.9s ease;
 }
 .loader::before {
