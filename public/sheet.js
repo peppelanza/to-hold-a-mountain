@@ -3,7 +3,7 @@
 // its tab as CSV when it opens and fills its table, one row per line of the tab, in
 // the tab's order. Columns are found by their heading (any case), so new ones can be
 // added; lines above the headings (a note) and empty lines are skipped. Google passes
-// edits on within about 5 minutes. If the Sheet can't be read, the rows already in the
+// edits on within a few minutes. If the Sheet can't be read, the rows already in the
 // page stay.
 (function () {
   var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
@@ -36,7 +36,8 @@
     return rows;
   }
 
-  fetch(SHEET + "?gid=" + tab.gid + "&single=true&output=csv")
+  // A new address each minute, so browsers don't keep an old copy for 5 minutes.
+  fetch(SHEET + "?gid=" + tab.gid + "&single=true&output=csv&t=" + Math.floor(Date.now() / 60000))
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then(function (text) {
       var rows = parse(text);
@@ -47,28 +48,37 @@
       var head = rows.shift().map(lower);
       var at = {};
       head.forEach(function (h, i) { at[h] = i; });
-      // A LINK (or URL) column makes the title a link to the article.
+      // A LINK (or URL) column makes the whole row a link to the article (the title is
+      // the link itself, for the keyboard and screen readers).
       var link = at.link !== undefined ? at.link : at.url;
       var body = document.createElement("tbody");
       rows.forEach(function (row) {
         if (!row.some(function (cell) { return cell.trim(); })) return;
         var tr = document.createElement("tr");
+        var href = link !== undefined ? (row[link] || "").trim() : "";
+        if (/^[^\s\/:]+\.[^\s]+$/.test(href)) href = "https://" + href; // "www.variety.com/…"
+        if (!tab.link || !/^https?:\/\/\S+$/.test(href)) href = "";
         tab.columns.forEach(function (name) {
           var td = document.createElement("td");
           td.className = name;
           var text = at[name] !== undefined ? (row[at[name]] || "").trim() : "";
-          var href = name === tab.link && link !== undefined ? (row[link] || "").trim() : "";
-          if (/^[^\s\/:]+\.[^\s]+$/.test(href)) href = "https://" + href; // "www.variety.com/…"
-          if (text && /^https?:\/\/\S+$/.test(href)) {
+          if (href && name === tab.link) {
             var a = document.createElement("a");
             a.href = href;
             a.target = "_blank";
             a.rel = "noopener";
-            a.textContent = text;
+            a.textContent = text || href;
             td.appendChild(a);
           } else td.textContent = text;
           tr.appendChild(td);
         });
+        if (href) {
+          tr.className = "linked";
+          tr.addEventListener("click", function (e) {
+            if (e.target.closest("a") || String(getSelection())) return; // the link itself, or selecting text
+            window.open(href, "_blank", "noopener");
+          });
+        }
         body.appendChild(tr);
       });
       table.replaceChild(body, table.tBodies[0]);
