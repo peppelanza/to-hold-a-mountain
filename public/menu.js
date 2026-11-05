@@ -7,10 +7,12 @@
   var items = [
     ["Home", "./"],
     ["About the film", "about.html"],
+    ["Trailer", "https://www.youtube.com/watch?v=SKabqo5MiE8", "trailer"], // opens the player (trailer.js)
     ["Screenings & Awards", "screenings.html"],
     ["Press", "press.html"],
     ["Soundtrack", "soundtrack.html"],
-    ["Community", "community.html"]
+    ["Community", "community.html"],
+    ["Contact", "contact.html"]
   ];
   var file = function (path) { return path.split("/").pop() || "index.html"; };
   var here = file(location.pathname);
@@ -32,6 +34,7 @@
     var links = items.map(function (item, i) {
       var current = (item[1] === "./" ? "index.html" : item[1]) === from;
       return '<li style="--i:' + i + '"><a href="' + item[1] + '"' +
+        (item[2] === "trailer" ? " data-trailer" : "") +
         (current ? ' aria-current="page"' : "") + ">" + item[0] + "</a></li>";
     }).join("");
     document.body.insertAdjacentHTML("afterbegin",
