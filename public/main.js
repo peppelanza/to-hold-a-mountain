@@ -1,5 +1,6 @@
 // Homepage: everything scrolls naturally. This shows the loading screen until the
-// fonts, images and video are all in, shrinks the logo as the clouds come over it,
+// fonts, images and a light version of the video are all in (the full-quality one then
+// loads behind it and fades in), shrinks the logo as the clouds come over it,
 // plays the video (looping) while it is on screen, and zooms it in and blurs it as you
 // scroll on, for the synopsis to sit on.
 const root = document.documentElement;
@@ -16,7 +17,7 @@ const TEXT_OUT = 1.3;
 const FADE = 0.14;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
-const video = film.querySelector("video");
+let video = film.querySelector("video"); // the light clip first, then the full-quality one
 const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
 const story = filmStory.querySelector(".story");
@@ -75,9 +76,13 @@ function update() {
   // The video plays (looping) while it's on screen and pauses when it isn't.
   const filmBox = film.getBoundingClientRect();
   const onScreen = filmBox.top < window.innerHeight && filmBox.bottom > 0;
-  // (Not waiting for a frame first: iPhones load none until they're asked to play.)
-  if (onScreen && video.paused) video.play().catch(() => {});
-  else if (!onScreen && !video.paused) video.pause();
+  // (Not waiting for a frame first: iPhones load none until they're asked to play.) Both
+  // clips while the full-quality one fades in; not that one while it's still loading.
+  for (const v of stage.querySelectorAll("video")) {
+    if (v.dataset.loading) continue;
+    if (onScreen && v.paused) v.play().catch(() => {});
+    else if (!onScreen && !v.paused) v.pause();
+  }
 
   // The hand-over from scrolling to zooming: over the last stretch (BLEND, either side
   // of the moment the video fills the screen) the video slows down into place instead
@@ -90,9 +95,13 @@ function update() {
   const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
   const ZOOMED = 0.49 * window.innerHeight; // fully zoomed this far past the video filling the screen
   const into = ease(range(BLEND - t, 0, BLEND + ZOOMED));
-  video.style.transform = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
+  const moved = `translate3d(0, ${lag.toFixed(1)}px, 0) scale(${1 + 0.6 * into})`;
   const blur = range(into, 0.5, 1);
-  video.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
+  // (both clips, while the full-quality one fades in over the light one)
+  for (const v of stage.querySelectorAll("video")) {
+    v.style.transform = moved;
+    v.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
+  }
   wash.style.opacity = ease(blur);
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
@@ -164,8 +173,8 @@ function imageReady(img) {
   });
 }
 
-// The whole clip, read piece by piece to show progress, so it's in the browser's cache
-// when the page opens. The video keeps its normal address (iPhones don't reliably
+// The whole light clip (under 1 MB), read piece by piece to show progress, so it's in
+// the browser's cache when the page opens. The video keeps its normal address (iPhones don't reliably
 // play a copy held in memory).
 async function loadVideo() {
   try {
@@ -189,6 +198,38 @@ async function loadVideo() {
   showProgress();
 }
 
+// Once the page is in, the full-quality clip loads behind the light one (playing,
+// muted and unseen: iPhones load nothing until asked to play). When it can play
+// through, it's put in step with the light one and fades in over it.
+function loadFullVideo() {
+  const full = video.cloneNode();
+  full.removeAttribute("poster");
+  full.src = "bg2.mp4";
+  full.preload = "auto";
+  full.muted = true;
+  full.style.opacity = "0";
+  full.dataset.loading = "1";
+  video.after(full);
+  full.play().catch(() => {});
+  full.addEventListener("canplaythrough", () => {
+    full.addEventListener("seeked", () => {
+      delete full.dataset.loading; // from now on it plays and pauses with the light one
+      if (video.paused) full.pause();
+      else full.play().catch(() => {});
+      full.style.transition = "opacity 0.8s ease";
+      full.style.opacity = "1";
+      setTimeout(() => {
+        const light = video;
+        video = full;
+        light.remove();
+        full.style.transition = "";
+        requestUpdate();
+      }, 900);
+    }, { once: true });
+    full.currentTime = video.currentTime;
+  }, { once: true });
+}
+
 function reveal() {
   if (!root.classList.contains("loading")) return;
   window.scrollTo(0, 0);
@@ -197,6 +238,7 @@ function reveal() {
   setTimeout(() => {
     root.classList.remove("loading");
     root.classList.add("revealing");
+    loadFullVideo();
     setTimeout(() => { root.classList.replace("revealing", "loaded"); }, 1000);
   }, 350);
 }
