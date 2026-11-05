@@ -106,11 +106,14 @@ function update() {
   // The sky behind the logo moves up, at a third of the scrolling (it's far away).
   introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
 
-  // The nearer clouds.
+  // The nearer clouds; they fade away as the video comes up (gone before it fills the
+  // screen).
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
+  const nearGone = range(film.getBoundingClientRect().top / vh, 0.55, 0.2);
   for (const [layer, speed, lead] of cloudLayers) {
     const ly = speed * (bank.top - edgeAtMiddle) + lead * vh;
-    layer.style.visibility = ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
+    layer.style.visibility = nearGone < 1 && ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
+    layer.style.opacity = (1 - nearGone).toFixed(3);
     layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
   }
 
