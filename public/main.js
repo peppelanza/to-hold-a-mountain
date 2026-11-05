@@ -153,7 +153,7 @@ function update() {
   // stay until the words go behind the clouds)
   const shades = !!veil && !!veil.dataset.over;
   const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
-  const tileH = 10.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
+  const tileH = 13 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
   if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) following = true;
   if (shades && logoShade) {

@@ -7,7 +7,7 @@
 html, body { background: var(--page, #939ca2); transition: background-color 0.4s ease; }
 
 :root {
-  --cloud-h: max(213vw, 440vh); /* height of the cloud image (thick from 28% to 84%) */
+  --cloud-h: max(242vw, 500vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
 /* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls
@@ -231,7 +231,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   mask-image: linear-gradient(transparent, #000 25vh, #000 calc(100% - 25vh), transparent);
 }
 .clouds-mid div { background-image: url(clouds-mid.webp); background-size: auto 50%; background-repeat: repeat; } /* the strip twice, one under the other */
-.clouds-veil { z-index: 6; --layer-h: 1060vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
+.clouds-veil { z-index: 6; --layer-h: 1300vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 20s; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
