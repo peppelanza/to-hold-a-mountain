@@ -70,8 +70,8 @@ html, body { background: var(--page, #233b4e); transition: background-color 0.4s
 .laurels {
   position: absolute;
   top: 20px;
-  left: 100px;  /* the same room on both sides as the menu button takes, so it's centred */
-  right: 100px;
+  left: 184px;  /* the same room on both sides as the menu button (144px wide at 20px) takes, so it's centred */
+  right: 184px;
   height: 68px;
   z-index: 5;
   display: flex;

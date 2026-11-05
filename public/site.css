@@ -39,41 +39,64 @@ a { color: inherit; }
 
 /* ---------- Menu ---------- */
 
+/* A pill: the three lines, then MENU to their right. */
 .menu-button {
   position: fixed;
   top: calc(20px + env(safe-area-inset-top, 0px)); /* clear of the iPhone status bar, the page drawing under it */
   right: 20px;
   z-index: 30;
-  width: 68px;
   height: 68px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px 0 24px;
+  border-radius: 999px;
   border: 1px solid rgba(246, 239, 230, 0.45);
   background: transparent; /* no tint: only the page behind, blurred */
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  color: var(--ink);
+  font-family: var(--serif);
   cursor: pointer;
   transition: background 0.3s, border-color 0.3s, transform 0.3s;
 }
 .menu-button:hover { transform: scale(1.05); }
 .menu-button:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
 
-.menu-button span {
+.menu-icon { position: relative; flex: none; width: 26px; height: 16px; }
+.menu-icon span {
   position: absolute;
-  left: 21px;
+  left: 0;
   width: 26px;
   height: 2px;
   border-radius: 1px;
   background: var(--ink);
   transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.25s;
 }
-.menu-button span:nth-child(1) { top: 26px; }
-.menu-button span:nth-child(2) { top: 33px; }
-.menu-button span:nth-child(3) { top: 40px; }
+.menu-icon span:nth-child(1) { top: 0; }
+.menu-icon span:nth-child(2) { top: 7px; }
+.menu-icon span:nth-child(3) { top: 14px; }
+.menu-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  margin-right: -0.22em; /* the spacing after the last letter */
+  text-transform: uppercase;
+  line-height: 1;
+}
 
 .menu-open .menu-button { background: transparent; border-color: rgba(246, 239, 230, 0.7); }
-.menu-open .menu-button span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.menu-open .menu-button span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.menu-open .menu-button span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.menu-open .menu-icon span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-open .menu-icon span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.menu-open .menu-icon span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 767px) {
+  /* centred on the title at the left, as on larger screens */
+  .menu-button { top: calc(28px + env(safe-area-inset-top, 0px)); height: 52px; gap: 10px; padding: 0 18px 0 16px; right: 16px; }
+  .menu-icon, .menu-icon span { width: 22px; }
+  .menu-label { font-size: 0.75rem; letter-spacing: 0.18em; margin-right: -0.18em; }
+}
+@media (max-width: 370px) { .home-link { font-size: 0.78rem; } } /* narrow phones: room for both */
 
 /* The panel fades in: a solid olive, darker than the pages', that covers the whole page. */
 .menu {
