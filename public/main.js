@@ -9,9 +9,13 @@ const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
-// Where (in screens of scrolling into the pause) each text gives way to the next.
-const TEXT_SWAPS = [0.45, 0.85, 1.25];
-const FADE = 0.14;
+// The texts' rhythm, in screens of scrolling: the first's middle moment, then one every
+// TEXT_EVERY; through the middle they slow to (1 - TEXT_EASE) of the scrolling, over
+// about TEXT_SLOW either side.
+const TEXT_FIRST = -0.18;
+const TEXT_EVERY = 0.75;
+const TEXT_EASE = 0.8;
+const TEXT_SLOW = 0.2;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
 let video = film.querySelector("video"); // the light clip first, then the full-quality one
@@ -62,28 +66,26 @@ function update() {
   const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
   logo.style.transform = `scale(${1 - 0.1 * covered})`;
 
-  // Text: rides up with the clouds, slows to a stop in the centre of the screen and
-  // stays there: the bank keeps rising, and the last quote goes behind the cumulus near
-  // its bottom. u is how far the track has scrolled past the top of the screen; the
-  // text stays back by an amount that shrinks smoothly (no sudden stop).
-  // The text is fixed to the screen and only this moves it (no fight with the page's
-  // own scrolling, so it doesn't tremble).
+  // The texts, one after another, each the same: it rises in from below, fading in,
+  // slows softly through the middle of the screen (a brief, gentle pause, never a
+  // stop), then rises on, fading out, as the next rises in. u is how far the track has
+  // scrolled past the top of the screen, in screens; each text's middle moment is
+  // TEXT_FIRST + its place × TEXT_EVERY. They're fixed to the screen and only this moves
+  // them (no fight with the page's own scrolling, so they don't tremble).
   following = false;
   const vh = window.innerHeight;
-  const u = window.scrollY - trackTop;
-  const soft = 0.12 * vh; // how gently it slows down
-  const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
-  const y = smoothStep(-u);
-  cloudText.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
-
-  // Each text fades out as the next fades in; the last stays.
-  const at = (screens) => ease(range(u / vh, screens - FADE / 2, screens + FADE / 2));
+  const u = (window.scrollY - trackTop) / vh;
+  let anyShown = false;
   quotes.forEach((q, i) => {
-    const fadeIn = i === 0 ? 1 : at(TEXT_SWAPS[i - 1]);
-    const fadeOut = i < TEXT_SWAPS.length ? at(TEXT_SWAPS[i]) : 0;
-    q.style.opacity = fadeIn * (1 - fadeOut);
-    q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
+    const s = TEXT_FIRST + i * TEXT_EVERY - u; // screens of scrolling until its middle moment
+    const y = s - TEXT_EASE * TEXT_SLOW * Math.tanh(s / TEXT_SLOW); // where it is: slower near the middle
+    const shown = 1 - ease(range(Math.abs(y), 0.15, 0.3));
+    q.style.opacity = shown.toFixed(3);
+    q.style.transform = `translate3d(0, ${(y * vh).toFixed(1)}px, 0)`;
+    if (shown > 0) anyShown = true;
   });
+  cloudText.style.transform = "";
+  const y = anyShown ? 0 : vh; // (for the visibility below)
 
   // ...behind those clouds: masked with clouds-below-mask.webp (opaque down to the
   // cumulus near the bank's bottom), kept on the bank's place and its drift, once the
