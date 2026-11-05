@@ -79,8 +79,8 @@ function update() {
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
 
-  // The sky behind the logo moves up slowly (it's far away), slower than the clouds.
-  introLogo.style.setProperty("--sky-y", `${(-0.12 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
+  // The sky behind the logo moves up, at a third of the scrolling (it's far away).
+  introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
 
   // The nearer clouds.
   const bank = introClouds.getBoundingClientRect();
