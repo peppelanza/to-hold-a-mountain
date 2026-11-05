@@ -221,7 +221,8 @@ function update() {
   const blur = ease(range(-t, 0.1 * window.innerHeight, ZOOMED));
   // (both clips, while the full-quality one fades in over the light one)
   // The clouds over the video's top slow down with it, so they settle together (they
-  // reach their place, 32vh down, at the same moment it fills the screen).
+  // reach their place, 24vh down, just above the mountains, at the same moment it fills
+  // the screen).
   introClouds.style.transform = lag ? `translate3d(0, ${lag.toFixed(1)}px, 0)` : "";
   for (const v of stage.querySelectorAll("video")) {
     v.style.transform = moved;

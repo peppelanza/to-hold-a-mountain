@@ -7,7 +7,7 @@
 html, body { background: var(--page, #939ca2); transition: background-color 0.4s ease; }
 
 :root {
-  --cloud-h: max(300vw, 620vh); /* height of the cloud image (thick from 28% to 84%) */
+  --cloud-h: max(300vw, 565vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
 /* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls
@@ -157,7 +157,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 
 /* The block the clouds are held in: main.js makes it end where the film does, so the
    clouds stay over the top of the video, as it stays put, to the end of the page.
-   (Before that's measured: clouds top at 50vh + their height, video top 32vh above their
+   (Before that's measured: clouds top at 50vh + their height, video top 24vh above their
    bottom: height = cloud height + 50vh.) */
 .flow { height: calc(var(--cloud-h) + 50vh); }
 
@@ -168,7 +168,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
    comes into focus). */
 .intro-clouds {
   position: sticky;
-  top: calc(32vh - var(--cloud-h));
+  top: calc(24vh - var(--cloud-h));
   z-index: 1;
   margin-top: -190vh; /* (240vh of the logo's hold, less 50vh) */
   height: var(--cloud-h);
@@ -343,7 +343,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   position: relative;
   z-index: 0;
   height: 149vh; /* scrolling on through it: the blur straight away, then the synopsis (main.js sets it exactly) */
-  margin-top: -32vh; /* the clouds' soft bottom lies over its top, so they arrive and stop together */
+  margin-top: -24vh; /* the clouds' soft bottom lies over its top (just above the mountains), so they arrive and stop together */
 }
 .film-stage {
   position: sticky;

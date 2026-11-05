@@ -44,4 +44,26 @@ band = smooth(0.2, 0.26, v) * (1 - smooth(0.74, 0.8, v))
 fine = noise(H, W, [((6, 10), 0.6), ((2.5, 4), 0.4)])  # wispy, broken edges
 gap = smooth(0.58, 0.9, n + 0.18 * (fine - 0.5)) * band
 im[..., 3] *= 1 - 0.8 * gap
+# The top edge in billows: rounded cloud tops at different heights, soft or crisper,
+# instead of the source's even band of haze (the logo, masked by the bank, went behind
+# that in a straight line). Above them only the loose clouds stay: what stands out of
+# the haze (which is even along each row, its median), so no band is left either.
+tops = noise(H, W, [((40, 90), 0.7), ((14, 30), 0.3)])
+field = (v - 0.17) / 0.045 + 2.4 * (tops - 0.5)
+top = smooth(-0.7, 0.7, field)
+a0 = im[..., 3] / 255
+haze = np.median(a0, axis=1, keepdims=True)
+loose = np.clip((a0 - haze) / np.maximum(1 - haze, 1e-3), 0, 1)
+# (only up in the open sky: lower, out of the thickening haze, they'd end flat)
+loose *= 1 - smooth(-0.6, 0.6, (v - 0.12) / 0.012 + 2.4 * (noise(H, W, [((30, 60), 1.0)]) - 0.5))
+im[..., 3] = 255 * (top * a0 + (1 - top) * loose)
+
+# The bottom squeezed down: the source's fade (93% to the end) into the last 3.5%, so the
+# bank is still thick where the video's top lies under it (24vh above the bank's bottom,
+# style.css) and its edge doesn't show; below that it thins out over the video's sky.
+# (tools/cloud_depth.py moves its hand-traced cumulus line the same way: SQUEEZE.)
+SQUEEZE = ([0, 0.8, 0.965, 1], [0, 0.8, 0.93, 1])  # rows out, rows of the source
+rows = np.interp(np.linspace(0, 1, H), *SQUEEZE) * (H - 1)
+lo = np.floor(rows).astype(int); hi = np.minimum(lo + 1, H - 1); f = (rows - lo)[:, None, None]
+im = im[lo] * (1 - f) + im[hi] * f
 Image.fromarray(im.clip(0, 255).astype(np.uint8)).save(f"{out}/clouds.png")
