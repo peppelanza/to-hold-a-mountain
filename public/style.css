@@ -121,7 +121,19 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   align-content: center;
   gap: clamp(28px, 5vh, 48px);
   padding: 0 16px;
-  background: url(sky.webp) center top / cover no-repeat; /* no colour: Safari would paint it around its address bar */
+  overflow: hidden;
+}
+/* The sky photo, a little taller than the screen: main.js moves it up slowly as you
+   scroll (it's far away), slower than the clouds coming over it. No colour: Safari
+   would paint it around its address bar. */
+.intro-logo::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -30vh 0;
+  z-index: -1;
+  background: url(sky.webp) center top / cover no-repeat;
+  transform: translate3d(0, var(--sky-y, 0px), 0);
+  will-change: transform;
 }
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
@@ -175,6 +187,35 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   .clouds { animation: none; transform: none; }
 }
 
+/* More clouds, at other depths (made by tools/cloud_depth.py), fixed to the screen and
+   moved by main.js faster than the bank, as they're nearer: puffs between the bank and
+   the texts (clouds-mid.webp), and very thin wisps in front of the texts
+   (clouds-veil.webp). Both drift sideways too, faster than the bank. */
+.cloud-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden; /* until main.js places them */
+  will-change: transform;
+}
+.cloud-layer div {
+  height: 100%;
+  width: calc(var(--layer-h) * 0.5 * 3); /* three copies side by side (each half as wide as tall) */
+  background: left top / auto 100% repeat-x;
+  animation: cloud-drift 55s linear infinite;
+  will-change: transform;
+}
+.clouds-mid { z-index: 2; --layer-h: 360vh; height: var(--layer-h); }
+.clouds-mid div { background-image: url(clouds-mid.webp); }
+.clouds-veil { z-index: 4; --layer-h: 480vh; height: var(--layer-h); }
+.clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
+@media (prefers-reduced-motion: reduce) {
+  .cloud-layer div { animation: none; }
+}
+
 /* Where the text rides with the clouds; main.js slows it gently into the centre of
    the screen, holds it there for 50vh of scrolling, then lets it move on. */
 .cloud-text-track {
@@ -190,7 +231,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2; /* above the clouds, below the menu */
+  z-index: 3; /* above the clouds and the puffs behind it, below the thin wisps and the menu */
   height: 100vh;
   height: 100svh;
   pointer-events: none;

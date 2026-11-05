@@ -22,6 +22,12 @@ const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
 const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
+const introLogo = document.querySelector(".intro-logo");
+const cloudTile = document.querySelector(".clouds");
+// Clouds nearer than the bank, and how much faster than it they move: puffs behind the
+// texts, thin wisps in front of them. Their tops are at the top of the screen when the
+// bank's edge (12% down it) reaches the middle of the screen.
+const cloudLayers = [[document.querySelector(".clouds-mid"), 1.3], [document.querySelector(".clouds-veil"), 1.7]];
 const watch = document.querySelector(".intro-logo .watch");
 
 // 0 before a, 1 after b, linear in between.
@@ -72,6 +78,39 @@ function update() {
     q.style.opacity = fadeIn * (1 - fadeOut);
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
+
+  // The sky behind the logo moves up slowly (it's far away), slower than the clouds.
+  introLogo.style.setProperty("--sky-y", `${(-0.12 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
+
+  // The nearer clouds.
+  const bank = introClouds.getBoundingClientRect();
+  const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
+  for (const [layer, speed] of cloudLayers) {
+    const ly = speed * (bank.top - edgeAtMiddle);
+    layer.style.visibility = ly < vh && ly + layer.offsetHeight > 0 ? "visible" : "hidden";
+    layer.style.transform = `translate3d(0, ${ly.toFixed(1)}px, 0)`;
+  }
+
+  // The logo and its button go behind the bank: masked with clouds-mask.webp (clear
+  // where the bank has any cloud, even haze), kept on the bank's place and its drift,
+  // and in full above the bank's top. Followed frame by frame while the bank's edge is
+  // over them (the bank keeps drifting when the page doesn't scroll).
+  following = false;
+  for (const el of [logo, watch]) {
+    const r = el.getBoundingClientRect();
+    const k = el.offsetWidth ? r.width / el.offsetWidth : 1; // the logo's own shrinking
+    const my = (bank.top - r.top) / k;
+    if (my > el.offsetHeight) {
+      el.style.webkitMaskImage = el.style.maskImage = "";
+      continue;
+    }
+    if (my > -0.25 * bank.height / k) following = true;
+    el.style.webkitMaskImage = el.style.maskImage = "linear-gradient(#000, #000), url(clouds-mask.webp)";
+    el.style.webkitMaskRepeat = el.style.maskRepeat = "no-repeat, repeat-x";
+    el.style.webkitMaskSize = el.style.maskSize = `100% ${Math.max(0, my).toFixed(1)}px, auto ${(bank.height / k).toFixed(1)}px`;
+    el.style.webkitMaskPosition = el.style.maskPosition =
+      `0 0, ${((cloudTile.getBoundingClientRect().left - r.left) / k).toFixed(1)}px ${my.toFixed(1)}px`;
+  }
 
   // The video plays (looping) while it's on screen and pauses when it isn't.
   const filmBox = film.getBoundingClientRect();
@@ -136,9 +175,11 @@ function update() {
   if (tone !== pageTone) root.style.setProperty("--page", (pageTone = tone));
 
   ticking = false;
+  if (following && root.classList.contains("loaded")) requestUpdate();
 }
 
 let pageTone = "";
+let following = false; // the logo's mask is following the drifting bank
 let ticking = false;
 const requestUpdate = () => {
   if (!ticking) {
@@ -157,7 +198,13 @@ const sky = new Image();
 sky.src = "sky.webp";
 const clouds = new Image();
 clouds.src = "clouds.webp";
-const images = [logo, sky, clouds];
+const mid = new Image();
+mid.src = "clouds-mid.webp";
+const veil = new Image();
+veil.src = "clouds-veil.webp";
+const mask = new Image();
+mask.src = "clouds-mask.webp";
+const images = [logo, sky, clouds, mid, veil, mask];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);
