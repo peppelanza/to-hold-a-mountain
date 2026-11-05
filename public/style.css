@@ -20,8 +20,7 @@ html, body { background: var(--page, #233b4e); transition: background-color 0.4s
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  /* no background colour: iPhone Safari would paint it around its address bar (a fixed
-     or sticky block at the screen's edge); the photo alone covers the page */
+  background: #233b4e; /* the page's own colour (Safari's bands), until the photo is in */
   transition: opacity 0.9s ease;
 }
 .loader::before {
@@ -82,6 +81,9 @@ html, body { background: var(--page, #233b4e); transition: background-color 0.4s
 }
 .laurels img { height: auto; }
 .laurels .laurels-wide { display: block; width: 100%; max-width: 1000px; }
+/* Hidden while loading; they come into focus with the logo. */
+.loading .laurels { opacity: 0; }
+.revealing .laurels, .loaded .laurels { animation: laurels-in 2.2s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
 .logo-laurels { display: none; }
 @media (max-width: 767px) {
   .laurels { display: none; }
@@ -126,7 +128,7 @@ html, body { background: var(--page, #233b4e); transition: background-color 0.4s
   align-content: center;
   gap: clamp(28px, 5vh, 48px);
   padding: 0 16px;
-  background: url(sky.webp) center top / cover no-repeat; /* no colour: see .loader */
+  background: url(sky.webp) center top / cover no-repeat; /* no colour: Safari would paint it around its address bar */
 }
 /* The logo with a very faint glow baked in (the glow adds 5.3% of the width around it;
    baked in because iPhone Safari can paint CSS-glowed images as white boxes). */
