@@ -122,7 +122,7 @@ function update() {
   const cloudsAtTop = cloudsBox.top + 0.28 * cloudsBox.height <= 0 && cloudsBox.top + 0.84 * cloudsBox.height > 0;
   const tone = shown > 0.5 ? "#454941"
     : cloudsAtTop ? "#9ea9ae"
-    : cloudsBox.top + 0.28 * cloudsBox.height > 0 ? "#233b4e"
+    : cloudsBox.top + 0.28 * cloudsBox.height > 0 ? "#939ca2"
     : "#8f9ea5";
   if (tone !== pageTone) root.style.setProperty("--page", (pageTone = tone));
 
