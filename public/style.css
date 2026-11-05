@@ -10,7 +10,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   --cloud-h: max(174vw, 360vh); /* height of the cloud image (thick from 28% to 84%) */
 }
 
-/* Loading screen: the sky photo blurred, a small bar and percentage. Nothing scrolls
+/* Loading screen: the page's light sky colour, a small dark blue bar and percentage. Nothing scrolls
    until it is done; then it fades and the logo comes into focus. */
 .loader { display: none; }
 .loading .loader, .revealing .loader {
@@ -20,26 +20,19 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  background: #939ca2; /* the page's own colour (Safari's bands), until the photo is in */
+  background: #939ca2; /* the page's own colour (also Safari's bands) */
   transition: opacity 0.9s ease;
-}
-.loader::before {
-  content: "";
-  position: absolute;
-  inset: -60px;
-  background: url(sky.webp) center top / cover no-repeat;
-  filter: blur(28px);
 }
 .revealing .loader { opacity: 0; pointer-events: none; }
 .loading { overflow: hidden; }
 
 .loader-box { position: relative; width: 140px; text-align: center; }
-.loader-bar { height: 1px; background: rgba(246, 239, 230, 0.25); overflow: hidden; }
+.loader-bar { height: 1px; background: rgba(35, 59, 78, 0.25); overflow: hidden; }
 .loader-bar span {
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--ink);
+  background: #233b4e;
   transform-origin: left;
   transform: scaleX(0);
   transition: transform 0.3s ease-out;
@@ -49,7 +42,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.24em;
-  color: var(--ink);
+  color: #233b4e;
   font-variant-numeric: tabular-nums;
 }
 
