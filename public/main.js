@@ -24,10 +24,11 @@ const cloudTile = document.querySelector(".clouds");
 // Clouds nearer than the bank, and how much faster than it they move: puffs behind the
 // texts, thin wisps in front of them. Their tops are at the top of the screen when the
 // bank's edge (12% down it) reaches the middle of the screen.
-// Each also casts a shadow, a little lower and to the left (in screen heights).
+// Each also has a shadow, a little to the left (in screen heights); the puffs' runs
+// well ahead of them, so their shadows reach the logo as the clouds come.
 const cloudLayers = [
   [document.querySelector(".clouds-mid:not(.shadow)"), 1.3, 0, 0],
-  [document.querySelector(".clouds-mid.shadow"), 1.3, 0.07, -0.03],
+  [document.querySelector(".clouds-mid.shadow"), 1.3, -0.35, -0.03],
   [document.querySelector(".clouds-veil:not(.shadow)"), 1.7, 0, 0],
   [document.querySelector(".clouds-veil.shadow"), 1.7, 0.05, -0.02]
 ];
@@ -101,11 +102,6 @@ function update() {
 
   // The sky behind the logo moves up, at a third of the scrolling (it's far away).
   introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
-  // The sun breaks through as you scroll (brightest as the clouds come over the logo),
-  // its rays turning slowly.
-  const sunUp = Math.min(1, window.scrollY / (0.6 * vh));
-  introLogo.style.setProperty("--sun", (0.35 + 0.65 * ease(sunUp)).toFixed(3));
-  introLogo.style.setProperty("--sun-turn", `${(window.scrollY * 0.01).toFixed(2)}deg`);
 
   // The nearer clouds.
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
