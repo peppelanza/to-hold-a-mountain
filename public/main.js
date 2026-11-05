@@ -260,11 +260,11 @@ const STORY_FROM = 0.29;
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
-    // the poster's middle at 58% of the screen as it starts to show; it zooms in around
+    // the poster's middle at 68% of the screen as it starts to show; it zooms in around
     // that middle
     const poster = story.querySelector(".poster");
     const middle = poster.offsetTop + poster.offsetHeight / 2;
-    storyStart = Math.max(0, 0.58 * stage.clientHeight - middle);
+    storyStart = Math.max(0, 0.68 * stage.clientHeight - middle);
     filmStory.style.transformOrigin = `50% ${middle}px`;
     storyExtra = Math.max(0, filmStory.offsetHeight - stage.clientHeight);
     // room to scroll it up from there until its end is at the bottom (and for the zoom
