@@ -10,7 +10,7 @@ const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
 // Where (in screens of scrolling into the pause) each text gives way to the next.
-const TEXT_SWAPS = [0.5, 1.0, 1.5];
+const TEXT_SWAPS = [0.45, 0.85, 1.25];
 const FADE = 0.14;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
