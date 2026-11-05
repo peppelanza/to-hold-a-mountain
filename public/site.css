@@ -200,6 +200,9 @@ a { color: inherit; }
 .socials a:hover, .socials a:focus-visible { color: #fff; opacity: 1; }
 .socials svg { display: block; height: 20px; width: auto; }
 
+/* On the homepage: at the bottom of the synopsis screen. */
+.film-story .site-footer { position: absolute; left: 0; right: 0; bottom: 0; }
+
 
 @media (max-width: 767px) {
   .site-footer { flex-direction: column-reverse; align-items: flex-start; gap: 12px; padding: 16px; font-size: 0.72rem; }
