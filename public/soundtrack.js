@@ -3,6 +3,12 @@
 // phone) and lets people tap or drag on it to jump. Written in plain older
 // JavaScript so it also runs on older iPhones and Android phones.
 (function () {
+  // The background video fades in once it's actually playing.
+  var bgVideo = document.querySelector(".bg-video");
+  function videoReady() { document.documentElement.classList.add("video-ready"); }
+  if (!bgVideo.paused && bgVideo.readyState >= 3) videoReady();
+  else bgVideo.addEventListener("playing", videoReady);
+
   var page = document.body;
   var audio = document.querySelector("audio");
   var playButton = document.querySelector(".play");
