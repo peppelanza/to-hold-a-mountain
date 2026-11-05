@@ -51,12 +51,12 @@
 .listing .filled td { animation: listing-in 0.5s ease both; }
 @keyframes skeleton-pulse { to { opacity: 0.45; } }
 
-/* Phones: the same table without the Type column, smaller, so the rest fits. */
+/* Phones: the same table without Press's Type column, smaller, so the rest fits. */
 @media (max-width: 767px) {
-  .listing th:last-child, .listing td.type { display: none; }
+  .listing .type { display: none; }
   .listing th { padding: 0 0.9rem 0.7rem 0; font-size: 0.68rem; letter-spacing: 0.12em; }
   .listing td { padding: 0.7rem 0.9rem 0.7rem 0; font-size: 0.95rem; line-height: 1.4; }
-  .listing th:nth-last-child(2), .listing td:nth-last-child(2) { padding-right: 0; }
+  .listing .selection, .listing .title { padding-right: 0; }
   .listing .date { width: 22%; }
   .listing .location, .listing .publisher { width: 28%; }
 }

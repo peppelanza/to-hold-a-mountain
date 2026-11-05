@@ -8,7 +8,7 @@
 (function () {
   var SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRTgvW1CmsaEPwPY1yOxKLhln5JXk4Vgo4pfgCxR32tNTMMGPxot-Qw3WeVy8EcTN46OJf4NfaCrZo3/pub";
   var TABS = {
-    screenings: { gid: "0", columns: ["date", "location", "selection", "type"] },
+    screenings: { gid: "0", columns: ["date", "location", "selection"] },
     press: { gid: "459324254", columns: ["date", "publisher", "title", "type"], link: "title" }
   };
 
