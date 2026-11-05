@@ -1,6 +1,7 @@
 /* Until the background video plays: a plain colour; then the video and its shade fade in
    (soundtrack.js adds .video-ready). */
-body { background: #7d6f4c; }
+:root { --page: #7d6f4c; } /* also Safari's bands (the edge strips, site.css) */
+body { background: var(--page); }
 .bg-video, .bg-shade { opacity: 0; transition: opacity 0.6s ease; }
 .video-ready .bg-video, .video-ready .bg-shade { opacity: 1; }
 .bg-video {
