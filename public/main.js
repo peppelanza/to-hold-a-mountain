@@ -9,11 +9,8 @@ const textTrack = document.querySelector(".cloud-text-track");
 const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
-const TEXT_HOLD = 1.2; // screens of scrolling the logline and quotes stay in the centre
-// Where (in screens of scrolling into the pause) each text gives way to the next, and
-// where the last one fades as it leaves, so both press quotes get the same time.
+// Where (in screens of scrolling into the pause) each text gives way to the next.
 const TEXT_SWAPS = [0.3, 0.85];
-const TEXT_OUT = 1.3;
 const FADE = 0.14;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
@@ -56,34 +53,50 @@ function update() {
   const covered = Math.min(1, window.scrollY / (0.94 * window.innerHeight));
   logo.style.transform = `scale(${1 - 0.1 * covered})`;
 
-  // Text: rides up with the clouds, slows to a stop in the centre of the screen, holds,
-  // then speeds up again and moves on. u is how far the track has scrolled past the
-  // top of the screen; the text stays back by an amount that grows and shrinks
-  // smoothly (no sudden stop or start).
+  // Text: rides up with the clouds, slows to a stop in the centre of the screen and
+  // stays there: the bank keeps rising, and the last quote goes behind the cumulus near
+  // its bottom. u is how far the track has scrolled past the top of the screen; the
+  // text stays back by an amount that shrinks smoothly (no sudden stop).
   // The text is fixed to the screen and only this moves it (no fight with the page's
   // own scrolling, so it doesn't tremble).
+  following = false;
   const vh = window.innerHeight;
   const u = window.scrollY - trackTop;
-  const soft = 0.12 * vh; // how gently it slows down and speeds up
+  const soft = 0.12 * vh; // how gently it slows down
   const smoothStep = (x) => (x > 20 * soft ? x : soft * Math.log1p(Math.exp(x / soft))); // smooth max(0, x)
-  const y = -(smoothStep(u - TEXT_HOLD * vh) - smoothStep(-u));
-  cloudText.style.visibility = Math.abs(y) < vh ? "visible" : "hidden";
+  const y = smoothStep(-u);
   cloudText.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
 
-  // Each text fades out as the next fades in; the last fades out as it moves away.
+  // Each text fades out as the next fades in; the last stays.
   const at = (screens) => ease(range(u / vh, screens - FADE / 2, screens + FADE / 2));
   quotes.forEach((q, i) => {
     const fadeIn = i === 0 ? 1 : at(TEXT_SWAPS[i - 1]);
-    const fadeOut = i < TEXT_SWAPS.length ? at(TEXT_SWAPS[i]) : ease(range(u / vh, TEXT_OUT, TEXT_OUT + 0.15));
+    const fadeOut = i < TEXT_SWAPS.length ? at(TEXT_SWAPS[i]) : 0;
     q.style.opacity = fadeIn * (1 - fadeOut);
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
+
+  // ...behind those clouds: masked with clouds-below-mask.webp (opaque down to the
+  // cumulus near the bank's bottom), kept on the bank's place and its drift, once the
+  // bank's top is above the text; hidden once the cumulus has covered the last quote.
+  const bank = introClouds.getBoundingClientRect();
+  const textBox = cloudText.getBoundingClientRect();
+  const lastBox = quotes[quotes.length - 1].getBoundingClientRect();
+  const behind = bank.top < textBox.top;
+  cloudText.style.visibility = y < vh && bank.top + 0.92 * bank.height > lastBox.top ? "visible" : "hidden";
+  cloudText.style.webkitMaskImage = cloudText.style.maskImage = behind ? "url(clouds-below-mask.webp)" : "";
+  if (behind) {
+    cloudText.style.webkitMaskRepeat = cloudText.style.maskRepeat = "repeat-x";
+    cloudText.style.webkitMaskSize = cloudText.style.maskSize = `auto ${bank.height.toFixed(1)}px`;
+    cloudText.style.webkitMaskPosition = cloudText.style.maskPosition =
+      `${(cloudTile.getBoundingClientRect().left - textBox.left).toFixed(1)}px ${(bank.top - textBox.top).toFixed(1)}px`;
+    if (bank.top + 0.92 * bank.height > textBox.top && bank.top + 0.8 * bank.height < textBox.bottom) following = true;
+  }
 
   // The sky behind the logo moves up, at a third of the scrolling (it's far away).
   introLogo.style.setProperty("--sky-y", `${(-0.35 * Math.min(window.scrollY, logoHold.offsetHeight)).toFixed(1)}px`);
 
   // The nearer clouds.
-  const bank = introClouds.getBoundingClientRect();
   const edgeAtMiddle = 0.5 * vh - 0.12 * bank.height;
   for (const [layer, speed] of cloudLayers) {
     const ly = speed * (bank.top - edgeAtMiddle);
@@ -95,7 +108,6 @@ function update() {
   // where the bank has any cloud, even haze), kept on the bank's place and its drift,
   // and in full above the bank's top. Followed frame by frame while the bank's edge is
   // over them (the bank keeps drifting when the page doesn't scroll).
-  following = false;
   for (const el of [logo, watch]) {
     const r = el.getBoundingClientRect();
     const k = el.offsetWidth ? r.width / el.offsetWidth : 1; // the logo's own shrinking

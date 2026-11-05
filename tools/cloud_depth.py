@@ -1,16 +1,19 @@
 """Makes the extra cloud layers of the homepage. Needs numpy and Pillow.
 
-    python tools/cloud_depth.py public/clouds.webp <out dir>
+    python tools/cloud_depth.py public/clouds.webp <out dir> 5   (5: the seed in use)
     cwebp -q 70 -alpha_q 80 -resize 900 0 <out dir>/clouds-mid.png -o public/clouds-mid.webp
     cwebp -q 70 -alpha_q 80 <out dir>/clouds-veil.png -o public/clouds-veil.webp
     cwebp -lossless <out dir>/clouds-mask.png -o public/clouds-mask.webp
+    cwebp -lossless <out dir>/clouds-below-mask.png -o public/clouds-below-mask.webp
 
 - clouds-mid: soft puffs with the bank's own texture, lit from above (lighter tops,
   darker undersides), scattered down a tall strip; behind the texts, in front of the bank
-- clouds-veil: large, very thin wisps; in front of the texts
+- clouds-veil: large see-through wisps, lit from above; in front of the texts
 - clouds-mask: where the bank (clouds.webp) has any cloud, even thin haze, this is
   transparent; the logo is masked with it, so it goes behind the clouds instead of
   showing through them
+- clouds-below-mask: opaque down to the cumulus near the bottom of the bank; the last
+  quote is masked with it, so it goes behind those clouds as they rise
 Noise that wraps at the sides (made in frequency space), so the layers can drift
 sideways without a seam.
 """
@@ -19,7 +22,7 @@ import numpy as np
 from PIL import Image
 
 src, out = sys.argv[1], sys.argv[2]
-rng = np.random.default_rng(11)
+rng = np.random.default_rng(int(sys.argv[3]) if len(sys.argv) > 3 else 5)
 
 
 def smooth(a, b, x):
@@ -50,24 +53,26 @@ def texture(h, w):
     return t.mean(2, keepdims=True)
 
 
-# Puffs behind the texts.
+# Puffs behind the texts: thresholded noise, soft, lit from above.
 h, w = 2400, 1200
 y = np.linspace(0, 1, h)[:, None]
 n = noise(h, w, [(300, 0.7), (115, 0.24), (40, 0.06)])
 cover = noise(h, 1, [(300, 1.0)])
-thr = 1 - (0.18 + 0.32 * cover)
+thr = 1 - (0.18 + 0.3 * cover)
 a = smooth(thr - 0.07, thr + 0.12, n) * smooth(0.0, 0.06, y) * (1 - smooth(0.92, 1.0, y))
 lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[..., None]
 rgb = texture(h, w) * (0.6 + 0.8 * lit) * np.array([0.95, 0.99, 1.02])
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
-# Thin wisps in front of the texts: large, soft, faint.
+# Wisps in front of the texts: large and soft, see-through but clearly there, light on
+# top and greyer underneath.
 h, w = 1600, 800
 y = np.linspace(0, 1, h)[:, None]
-n = noise(h, w, [(160, 0.75), (60, 0.25)])
-a = smooth(0.45, 0.8, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
-rgb = np.full((h, w, 3), [226, 231, 234], np.float32) * (0.85 + 0.15 * n[..., None])
-Image.fromarray(np.dstack([rgb, a[..., None] * 90]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+n = noise(h, w, [(150, 0.7), (55, 0.22), (18, 0.08)])
+a = smooth(0.5, 0.78, n) * smooth(0.0, 0.08, y) * (1 - smooth(0.9, 1.0, y))
+lit = np.clip(0.5 + 4.0 * (n - np.roll(n, 30, axis=0)), 0, 1)[..., None]
+rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32) * lit  # whiter than the bank behind, so they show
+Image.fromarray(np.dstack([rgb, a[..., None] * 190]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 
 # The logo's mask: opaque where the bank is clear sky, transparent where it has cloud.
 alpha = np.asarray(bank.getchannel("A")).astype(np.float32) / 255
@@ -75,3 +80,18 @@ keep = 1 - smooth(0.03, 0.3, alpha)
 m = np.zeros(alpha.shape + (4,), np.uint8)
 m[..., 3] = (keep * 255).astype(np.uint8)
 Image.fromarray(m).save(f"{out}/clouds-mask.png")
+
+# The texts' mask: opaque down to the top of the cumulus near the bottom of the bank
+# (traced by hand from it, at 1072 px + these, wrapping at the sides), transparent
+# below; the last quote is masked with it, so it goes behind those clouds as they rise.
+H, W = alpha.shape
+pts = [(0, 520), (30, 490), (60, 480), (110, 465), (170, 470), (220, 455), (270, 450),
+       (300, 440), (340, 436), (380, 445), (420, 460), (470, 470), (520, 490), (560, 505),
+       (600, 520), (640, 535), (680, 530), (717, 520)]
+edge = 1072 + np.interp(np.arange(W), [p[0] for p in pts], [p[1] for p in pts])
+edge = edge + 10 * (noise(1, W, [(W * 0.03, 0.7), (W * 0.012, 0.3)])[0] - 0.5)
+ys = np.arange(H)[:, None]
+keep = 1 - smooth(-6, 6, ys - edge[None, :])
+m = np.zeros((H, W, 4), np.uint8)
+m[..., 3] = (keep * 255).astype(np.uint8)
+Image.fromarray(m).save(f"{out}/clouds-below-mask.png")
