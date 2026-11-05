@@ -10,7 +10,7 @@
     ["Trailer", "https://www.youtube.com/watch?v=SKabqo5MiE8", "trailer"], // opens the player (trailer.js)
     ["Screenings & Awards", "screenings.html"],
     ["Press", "press.html"],
-    ["Soundtrack", "soundtrack.html"],
+    ["Soundscape", "soundtrack.html"],
     // ["Community", "community.html"], (hidden for now; the page is still there)
     ["Contact", "contact.html"]
   ];
