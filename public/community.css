@@ -41,6 +41,10 @@
   background: #ddd8cb;
   -webkit-user-drag: none;
 }
+/* The first photo: a plain colour in the photo's place until it has loaded, then it fades in. */
+.print.first { background: linear-gradient(#78879d, #78879d) content-box, #f2eee4; }
+.print.first img { background: none; opacity: 0; transition: opacity 0.4s ease; }
+.print.first img.loaded { opacity: 1; }
 /* The top print slides off to the right (or left, if swiped that way) and fades. */
 .print.leaving, .print.leaving-left {
   opacity: 0;

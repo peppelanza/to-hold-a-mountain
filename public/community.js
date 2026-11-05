@@ -28,6 +28,11 @@
     img.alt = "Photo " + i + " of " + total + " from the community";
     img.setAttribute("data-src", "gallery/" + pad(i) + ".jpg");
     img.decoding = "async";
+    if (i === 1) {
+      // The first photo: a plain colour until it has loaded, then it fades in.
+      fig.className += " first";
+      img.onload = function () { this.classList.add("loaded"); };
+    }
     fig.appendChild(img);
     fig.number = i;
     tilt(fig, i === 1);
