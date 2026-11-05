@@ -81,7 +81,7 @@ rgb = rgb * 0.75 + np.array([226, 231, 234], np.float32) * 0.25
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
 # Wisps in front of the texts: one long strip (7.6 screens, 333 px a screen), drifting
-# up the page; large (a third of the screen or so), soft, partly see-through, light on
+# up the page; large (a third of the screen or so), soft, see-through (the words read through them), light on
 # top and greyer underneath; they pass over the texts.
 # Where they are is planned against what passes under them (main.js places the strip):
 # - down to 1.5 screens: none, the sky above and around the logo as the page opens;
@@ -105,7 +105,7 @@ rgb = np.array([178, 186, 192], np.float32) + np.array([70, 66, 60], np.float32)
 # drawn well blurred: the nearest clouds, out of focus (their shadows keep the shape above)
 seen = blur_wrapped(a, 14)
 rgb = np.dstack([blur_wrapped(rgb[..., i] / 255, 14) for i in range(3)]) * 255
-Image.fromarray(np.dstack([rgb, seen[..., None] * 228]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
+Image.fromarray(np.dstack([rgb, seen[..., None] * 125]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-veil.png")
 # Their shadows on the letters, as from a high sun: each wisp exactly, its shape and
 # its soft or crisp edge, cast 0.2 of a screen lower, gently dark, and none where a
 # wisp is in front: a cloud, sky, then the letters darkened in its shape.
