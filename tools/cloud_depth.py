@@ -71,8 +71,8 @@ n = noise(h, w, [(300, 0.7), (115, 0.24), (40, 0.06)])
 # the same share of cloud in every stretch (each row's own 70th percentile), so this
 # layer never thins out or runs out
 thr = np.quantile(n, 0.7, axis=1, keepdims=True)
-thr = np.convolve(np.pad(thr[:, 0], 60, mode="edge"), np.ones(121) / 121, mode="valid")[:, None]
-a = smooth(thr - 0.07, thr + 0.12, n) * smooth(0.0, 0.03, y) * (1 - smooth(0.95, 1.0, y))
+thr = np.convolve(np.pad(thr[:, 0], 60, mode="wrap"), np.ones(121) / 121, mode="valid")[:, None]
+a = smooth(thr - 0.07, thr + 0.12, n)  # (no fade at the ends: the page repeats it, one under the other)
 lit = np.clip(0.5 + 4.5 * (n - np.roll(n, 40, axis=0)) + 0.8 * (n - thr), 0, 1)[..., None]
 # lighter than the bank behind (bright tops, only a little darker underneath), so the
 # two read as separate layers
@@ -80,19 +80,19 @@ rgb = texture(h, w) * (0.88 + 0.42 * lit) * np.array([0.95, 0.99, 1.02])
 rgb = rgb * 0.75 + np.array([226, 231, 234], np.float32) * 0.25
 Image.fromarray(np.dstack([rgb, a[..., None] * 225]).clip(0, 255).astype(np.uint8)).save(f"{out}/clouds-mid.png")
 
-# Wisps in front of the texts: one long strip (7.6 screens, 333 px a screen), drifting
+# Wisps in front of the texts: one long strip (10.6 screens, 333 px a screen), drifting
 # up the page; large (a third of the screen or so), soft, see-through (the words read through them), light on
 # top and greyer underneath; they pass over the texts.
 # Where they are is planned against what passes under them (main.js places the strip):
 # - down to 1.5 screens: none, the sky above and around the logo as the page opens;
-# - 5.7 to 7.2: a group above the last quote (Variety) and its logo, for their shadows;
+# - 8 to 10.2: a group above the last quote (Variety) and its logo, for their shadows;
 # - elsewhere, scattered.
 PER = 333  # px a screen
-h, w = int(7.6 * PER), 800
+h, w = int(10.6 * PER), 800
 y = np.linspace(0, 1, h)[:, None]
 at = np.arange(h)[:, None] / PER  # screens down the strip
 n = noise(h, w, [(120, 0.7), (44, 0.22), (14, 0.08)])  # large ones
-dense = smooth(5.7, 5.8, at) * (1 - smooth(7.2, 7.3, at))
+dense = smooth(7.9, 8.0, at) * (1 - smooth(10.2, 10.3, at))
 clear = 1 - smooth(1.45, 1.55, at)
 lift = 0.3 * clear - 0.05 * dense  # higher threshold: fewer wisps; lower: more
 # Some wisps soft, almost a gradient, others with a crisper edge.

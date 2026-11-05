@@ -10,7 +10,7 @@ const cloudText = document.querySelector(".cloud-text");
 const logoHold = document.querySelector(".intro-logo-hold");
 const quotes = [...cloudText.querySelectorAll(".quote")];
 // Where (in screens of scrolling into the pause) each text gives way to the next.
-const TEXT_SWAPS = [0.3, 0.85];
+const TEXT_SWAPS = [0.5, 1.0, 1.5];
 const FADE = 0.14;
 const film = document.querySelector(".film");
 const stage = film.querySelector(".film-stage");
@@ -28,12 +28,12 @@ const cloudTile = document.querySelector(".clouds");
 // (by this many screen heights), so they're already up in the sky over the logo when
 // the page opens and their shadows fall on it.
 const cloudLayers = [
-  [document.querySelector(".clouds-mid"), 1.5, 0],
-  [document.querySelector(".clouds-veil"), 2.3, -0.75]
+  [document.querySelector(".clouds-mid"), 1.7, 0],
+  [document.querySelector(".clouds-veil"), 2.7, -1.05]
 ].filter(([layer]) => layer); // (a page from before a layer existed still works)
 const watch = document.querySelector(".intro-logo .watch");
 const logoShade = document.querySelector(".logo-shade img");
-const shadedWords = [...document.querySelectorAll(".logline p, .quote blockquote")];
+const shadedWords = [...document.querySelectorAll(".honours p, .logline p, .quote blockquote")];
 const pressShades = [...document.querySelectorAll(".quote .shade")];
 
 // 0 before a, 1 after b, linear in between.
@@ -148,7 +148,7 @@ function update() {
   // stay until the words go behind the clouds)
   const shades = !!veil && !!veil.dataset.over;
   const shape = shades ? veil.firstElementChild.getBoundingClientRect() : null; // the drifting strip
-  const tileH = 7.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
+  const tileH = 10.6 * vh, tileW = 2.4 * vh; // the strip's size (style.css)
   if (logoShade) logoShade.style.visibility = shades ? "visible" : "hidden";
   if (shades) following = true;
   if (shades && logoShade) {
@@ -291,9 +291,7 @@ const mask = new Image();
 mask.src = "clouds-mask.webp";
 const shade = new Image();
 shade.src = "clouds-shade.webp";
-const high = new Image();
-high.src = "clouds-high.webp";
-const images = [logo, sky, clouds, high, mid, veil, mask, shade];
+const images = [logo, sky, clouds, mid, veil, mask, shade];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);
