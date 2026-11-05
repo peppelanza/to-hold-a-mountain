@@ -54,7 +54,6 @@
   padding-top: 0.95rem;
 }
 .facts dd { font-size: 1.1rem; line-height: 1.5; color: var(--ink); }
-.contact p + p { margin-top: 0.6rem; }
 /* The Contact page uses these too. */
 .contact-page .facts { margin-top: 3rem; }
 
