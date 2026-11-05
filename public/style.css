@@ -175,6 +175,35 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   .clouds { animation: none; transform: none; }
 }
 
+/* Nearer clouds (clouds-near.webp: soft puffs down a tall strip, made by
+   tools/cloud_layers.py): in front of the logo and the texts, below the menu. Fixed to
+   the screen and moved by main.js, faster than the cloud bank, so they pass the logo
+   before the bank covers it and drift across the texts; they also drift sideways,
+   faster than the bank (three copies side by side, as for .clouds). */
+:root { --near-h: 360vh; }
+.clouds-near {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: var(--near-h);
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden; /* until main.js places it */
+  will-change: transform;
+}
+.clouds-near-drift {
+  height: 100%;
+  width: calc(var(--near-h) * 0.5 * 3);
+  background: url(clouds-near.webp) left top / auto 100% repeat-x;
+  animation: cloud-drift 45s linear infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .clouds-near-drift { animation: none; }
+}
+
 /* Where the text rides with the clouds; main.js slows it gently into the centre of
    the screen, holds it there for 50vh of scrolling, then lets it move on. */
 .cloud-text-track {

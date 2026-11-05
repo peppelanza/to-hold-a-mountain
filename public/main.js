@@ -22,6 +22,10 @@ const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
 const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
+const nearClouds = document.querySelector(".clouds-near");
+// The nearer clouds move this much faster than the bank; their top is at the top of the
+// screen when the bank's edge (11.5% down it) reaches the middle of the screen.
+const NEAR_SPEED = 1.3;
 const watch = document.querySelector(".intro-logo .watch");
 
 // 0 before a, 1 after b, linear in between.
@@ -72,6 +76,13 @@ function update() {
     q.style.opacity = fadeIn * (1 - fadeOut);
     q.style.transform = `translateY(${12 * (1 - fadeIn) - 12 * fadeOut}px)`;
   });
+
+  // The nearer clouds, ahead of the bank and faster.
+  const bankTop = introClouds.getBoundingClientRect().top;
+  const edgeAtMiddle = 0.5 * vh - 0.115 * introClouds.offsetHeight;
+  const nearY = NEAR_SPEED * (bankTop - edgeAtMiddle);
+  nearClouds.style.visibility = nearY < vh && nearY + nearClouds.offsetHeight > 0 ? "visible" : "hidden";
+  nearClouds.style.transform = `translate3d(0, ${nearY.toFixed(1)}px, 0)`;
 
   // The video plays (looping) while it's on screen and pauses when it isn't.
   const filmBox = film.getBoundingClientRect();
@@ -157,7 +168,9 @@ const sky = new Image();
 sky.src = "sky.webp";
 const clouds = new Image();
 clouds.src = "clouds.webp";
-const images = [logo, sky, clouds];
+const near = new Image();
+near.src = "clouds-near.webp";
+const images = [logo, sky, clouds, near];
 
 function showProgress() {
   const p = 0.75 * videoShare + 0.25 * (imagesDone / images.length);
