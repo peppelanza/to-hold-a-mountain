@@ -3,11 +3,19 @@
 // phone) and lets people tap or drag on it to jump. Written in plain older
 // JavaScript so it also runs on older iPhones and Android phones.
 (function () {
-  // The background video fades in once it's actually playing.
+  // The background video fades in once a frame of it is actually on screen ("playing"
+  // can come a moment before that).
   var bgVideo = document.querySelector(".bg-video");
   function videoReady() { document.documentElement.classList.add("video-ready"); }
-  if (!bgVideo.paused && bgVideo.readyState >= 3) videoReady();
-  else bgVideo.addEventListener("playing", videoReady);
+  function onFrame() {
+    if (bgVideo.requestVideoFrameCallback) bgVideo.requestVideoFrameCallback(videoReady);
+    // (and in any case once it has played a little, should that never come)
+    bgVideo.addEventListener("timeupdate", function tick() {
+      if (bgVideo.currentTime > 0.4) { bgVideo.removeEventListener("timeupdate", tick); videoReady(); }
+    });
+  }
+  if (!bgVideo.paused && bgVideo.readyState >= 3) onFrame();
+  else bgVideo.addEventListener("playing", onFrame, { once: true });
 
   var page = document.body;
   var audio = document.querySelector("audio");

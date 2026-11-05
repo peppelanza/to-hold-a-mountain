@@ -1,7 +1,10 @@
-/* Until the background video plays: a plain colour; then the video and its shade fade in
-   (soundtrack.js adds .video-ready). */
-body { background: #7d6f4c; }
-.bg-video, .bg-shade { opacity: 0; transition: opacity 0.6s ease; }
+/* Until the background video shows a frame: a plain colour, the whole page's (both
+   html and body, so iPhone Safari's bands keep one colour from the start); then the
+   video and its shade fade in (soundtrack.js adds .video-ready). The video carries the
+   same colour, for the moment before its first frame. */
+html, body { background: #7d6f4c; }
+.bg-video, .bg-shade { opacity: 0; transition: opacity 0.6s ease; will-change: opacity; }
+.bg-video { background: #7d6f4c; }
 .video-ready .bg-video, .video-ready .bg-shade { opacity: 1; }
 .bg-video {
   position: fixed;
