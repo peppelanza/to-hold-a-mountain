@@ -200,7 +200,8 @@ function update() {
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
-  // together), and stay to be read until the end of the page.
+  // together), and stay to be read; scrolling on moves them up, with the reviews and the
+  // footer below, over the video, which stays put.
   // Phones: the same, with the poster a little below the middle of the screen, and from
   // the moment it starts to show, scrolling moves it all up, like the rest of a page,
   // over the video, which stays put.
@@ -212,9 +213,11 @@ function update() {
     filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)` +
       (shown < 1 ? ` scale(${0.88 + 0.12 * shown})` : "");
   } else {
+    const y = -Math.min(storyExtra, Math.max(0, -t - STORY_SCROLL * window.innerHeight));
     filmStory.style.opacity = shown;
     filmStory.style.filter = shown < 1 ? `blur(${16 * (1 - shown)}px)` : "";
-    filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
+    filmStory.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)` +
+      (shown < 1 ? ` scale(${0.88 + 0.12 * shown})` : ""); // and zooms in as it sharpens
   }
   filmStory.classList.toggle("shown", shown > 0.5);
 
@@ -359,6 +362,14 @@ setTimeout(reveal, 20000); // never keep people waiting forever on a slow connec
 video.addEventListener("loadeddata", requestUpdate); // start it if it's already on screen
 
 window.addEventListener("scroll", requestUpdate, { passive: true });
+
+// The reviews fade up as they come into view.
+const reviewsSeen = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (e.isIntersecting) { e.target.classList.add("in"); reviewsSeen.unobserve(e.target); }
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".review").forEach((r) => reviewsSeen.observe(r));
 // Phones: the laurels above the logo drift right to left for ever, one copy following
 // the other. A finger can drag them either way; let go, and they glide on with the
 // throw, easing back into the steady drift.
@@ -415,6 +426,9 @@ let storyStart = 0; // phones: how far down it sits as it starts to show
 // Phones: the synopsis starts to show (the video's blur at 60%, so its zoom at 0.8)
 // this far past the video filling the screen, × the screen height.
 const STORY_FROM = 0.29;
+// Larger screens: the synopsis, in focus, stays put this far past the video filling the
+// screen (× the screen height), then moves up to the reviews as you scroll on.
+const STORY_SCROLL = 0.8;
 function fitStory() {
   story.style.transform = "";
   if (phone.matches) {
@@ -433,10 +447,15 @@ function fitStory() {
     film.style.height = `${stage.clientHeight + travel}px`;
     return;
   }
-  filmStory.style.transformOrigin = "";
-  storyExtra = 0;
-  film.style.height = "";
-  const room = filmStory.clientHeight - parseFloat(getComputedStyle(filmStory).paddingTop) - parseFloat(getComputedStyle(filmStory).paddingBottom);
+  // Larger screens: the synopsis zooms in around the middle of its screen; scrolling on
+  // after a short pause, it moves up until the footer is at the bottom. On short
+  // screens, the poster and synopsis are scaled down until they fit their screen.
+  const view = document.documentElement.clientHeight;
+  filmStory.style.transformOrigin = `50% ${view / 2}px`;
+  storyExtra = Math.max(0, filmStory.offsetHeight - view);
+  film.style.height = `${stage.clientHeight + STORY_SCROLL * window.innerHeight + storyExtra}px`;
+  const screen = story.parentElement;
+  const room = screen.clientHeight - parseFloat(getComputedStyle(screen).paddingTop) - parseFloat(getComputedStyle(screen).paddingBottom);
   const need = story.offsetHeight;
   if (need > room) story.style.transform = `scale(${room / need})`;
 }
