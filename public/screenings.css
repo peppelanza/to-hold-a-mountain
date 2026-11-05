@@ -25,7 +25,7 @@
   color: var(--ink);
   border-bottom: 1px solid rgba(246, 239, 230, 0.2);
 }
-.listing .date { width: 14%; }
+.listing .date { width: 1%; white-space: nowrap; } /* as wide as its longest date, on one line */
 .listing .location { width: 20%; }
 
 /* Until the Sheet's rows arrive: a bar in each cell, gently pulsing; then the rows fade in. */
@@ -49,7 +49,7 @@
   .listing th { padding: 0 0.9rem 0.7rem 0; font-size: 0.68rem; letter-spacing: 0.12em; }
   .listing td { padding: 0.7rem 0.9rem 0.7rem 0; font-size: 0.95rem; line-height: 1.4; }
   .listing .selection { padding-right: 0; }
-  .listing .date { width: 22%; }
+  .listing .date { width: 22%; white-space: normal; } /* phones: two lines are fine */
   .listing .location { width: 28%; }
 }
 @keyframes listing-in { from { opacity: 0; } }

@@ -1,5 +1,4 @@
-/* Press: what the critics wrote. The outlet in small spaced capitals, stars where
-   given, the quote in italics, the critic below; three columns (two on tablets, one on
+/* Press: what the critics wrote. The outlet's logo, stars where given, the quote in italics, the critic below; three columns (two on tablets, one on
    phones), a thin line above each. Each fades up as it comes into view (press.js adds
    .in), a row at a time. */
 .press-page { max-width: 72rem; padding-bottom: 18vh; }
@@ -19,14 +18,11 @@
   transition-delay: calc(var(--col, 0) * 0.12s);
 }
 .review.in { opacity: 1; transform: none; }
-.review .outlet {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--cream);
-}
-.review .stars { margin-top: 0.5rem; font-size: 0.95rem; letter-spacing: 0.2em; color: var(--cream); }
+/* The outlet's logo, white, each sized for about the same visual weight (its height set
+   in the page from its shape), at the left of the column, from its bottom line. */
+.review .outlet { height: 56px; display: flex; align-items: flex-end; }
+.review .outlet img { display: block; width: auto; max-width: 100%; object-fit: contain; object-position: left bottom; }
+.review .stars { margin-top: 0.8rem; font-size: 0.95rem; letter-spacing: 0.2em; color: var(--cream); }
 .review blockquote {
   margin-top: 1rem;
   font-style: italic;
