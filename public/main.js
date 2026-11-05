@@ -219,7 +219,7 @@ window.addEventListener("scroll", requestUpdate, { passive: true });
 const belt = document.querySelector(".logo-laurels");
 const track = belt.querySelector(".laurel-track");
 const DRIFT = -24; // px per second, to the left
-const BELT_GAP = 30; // the gap after each copy, as in style.css
+const BELT_GAP = 26; // the gap after each copy, as in style.css
 let beltX = 0, beltV = DRIFT, beltLast = 0, drag = null;
 function beltStep(now) {
   const dt = Math.min(0.05, (now - (beltLast || now)) / 1000);
