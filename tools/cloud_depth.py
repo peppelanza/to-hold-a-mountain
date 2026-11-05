@@ -85,7 +85,7 @@ form = smooth(np.percentile(lit, 80), np.percentile(lit, 25), lum)  # 1 on the d
 H0, W0 = alpha.shape
 lumps = noise(H0, W0, [(W0 * 0.1, 0.65), (W0 * 0.035, 0.25), (W0 * 0.012, 0.1)])
 score = alpha + 0.55 * (form - 0.5) * (alpha > 0.02) + 0.9 * (lumps - 0.5)
-keep = 1 - smooth(0.32, 0.42, score) * (alpha > 0.02)
+keep = 1 - smooth(0.22, 0.55, score) * smooth(0.0, 0.05, alpha)  # a soft edge: letters melt into the cloud
 m = np.zeros(alpha.shape + (4,), np.uint8)
 m[..., 3] = (keep * 255).astype(np.uint8)
 Image.fromarray(m).save(f"{out}/clouds-mask.png")
