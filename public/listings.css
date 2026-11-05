@@ -29,12 +29,10 @@
 .listing .location { width: 20%; }
 .listing .type { width: 16%; }
 .listing .publisher { width: 20%; }
-/* Press: a row with a link opens the article; it lightens under the pointer, and an
-   arrow after the title shows it's a link (phones have no pointer). */
+/* Press: a row with a link opens the article; it lightens under the pointer. */
 .listing tr.linked { cursor: pointer; transition: background 0.2s; }
 .listing tr.linked:hover { background: rgba(246, 239, 230, 0.08); }
 .listing .title a { color: inherit; text-decoration: none; }
-.listing .title a::after { content: " \2197"; font-size: 0.85em; color: var(--muted); }
 .listing .title a:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
 
 /* Phones: each row is a block; empty cells are hidden. */
