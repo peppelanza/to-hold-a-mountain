@@ -89,6 +89,16 @@ function update() {
   cloudText.style.transform = "";
   const y = anyShown ? 0 : vh; // (for the visibility below)
 
+  // The video's soft landing: over the last stretch (BLEND, either side of the moment it
+  // fills the screen) it slows down into place instead of stopping dead (below). The
+  // bank, which by then scrolls with the video (held at the bottom of .flow), lands with
+  // it exactly, as part of it, and stays on it, blurred and shaded with it, until the
+  // synopsis comes in.
+  const filmTop = film.getBoundingClientRect().top;
+  const BLEND = 0.2 * vh;
+  const landed = filmTop >= BLEND ? filmTop : filmTop <= -BLEND ? 0 : (filmTop + BLEND) ** 2 / (4 * BLEND); // where the video's top is
+  introClouds.style.transform = landed !== filmTop ? `translate3d(0, ${(landed - filmTop).toFixed(1)}px, 0)` : "";
+
   // ...behind those clouds: masked with clouds-below-mask.webp (opaque down to the
   // cumulus near the bank's bottom), kept on the bank's place and its drift, once the
   // bank's top is above the text; hidden once the cumulus has covered the last quote.
@@ -206,10 +216,8 @@ function update() {
   // of the moment the video fills the screen) the video slows down into place instead
   // of stopping dead, while the blur already begins (not all the way: the synopsis
   // sits on it). No zoom.
-  const BLEND = 0.2 * window.innerHeight;
   const t = filmBox.top; // where the video would be, scrolling with the page
-  const eased = t >= BLEND ? t : t <= -BLEND ? 0 : (t + BLEND) ** 2 / (4 * BLEND); // where it is
-  const lag = eased - Math.max(t, 0); // the stage stops at the top of the screen (sticky)
+  const lag = landed - Math.max(t, 0); // where it is (landed, above); the stage stops at the top of the screen (sticky)
   const ZOOMED = 0.49 * window.innerHeight; // fully blurred this far past the video filling the screen
   const moved = `translate3d(0, ${lag.toFixed(1)}px, 0)`;
   // (no zoom) it starts to blur a little after it has settled (a tenth of a screen)
@@ -220,6 +228,9 @@ function update() {
     v.style.filter = blur > 0 ? `blur(${16 * blur}px)` : "";
   }
   wash.style.opacity = ease(blur);
+  // the bank on the video blurs and darkens with it (as under the wash), and fades away
+  // as the synopsis comes in (it would lie over it)
+  introClouds.style.filter = blur > 0 ? `blur(${16 * blur}px) brightness(${(1 - 0.28 * ease(blur)).toFixed(3)})` : "";
 
   // Over the last steps of the video's blur, the poster and synopsis come into focus in
   // place, growing slightly from a blur (a cross-blur: one goes soft as the other sharpens, ending
@@ -240,6 +251,7 @@ function update() {
     filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
   }
   filmStory.classList.toggle("shown", shown > 0.5);
+  introClouds.style.opacity = shown > 0 ? (1 - shown).toFixed(3) : "";
 
   // Safari's bands around its address bar (iPhone) take the page's colour; it follows
   // what's at the top of the screen: the sky, the clouds (their thick part, until they

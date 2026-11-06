@@ -221,6 +221,11 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .clouds-mid { z-index: 3; --layer-h: 360vh; height: var(--layer-h); }
 .clouds-mid div { background-image: url(clouds-mid.webp); }
 .clouds-veil { z-index: 6; --layer-h: 760vh; --tile-w: 240vh; height: var(--layer-h); } /* one long strip, its wisps placed by tools/cloud_depth.py */
+/* the strip's end fades out (it would cut through the wisps there: a hard line) */
+.clouds-veil {
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 50vh), transparent);
+  mask-image: linear-gradient(#000 calc(100% - 50vh), transparent);
+}
 .clouds-veil div { background-image: url(clouds-veil.webp); animation-duration: 40s; }
 @media (prefers-reduced-motion: reduce) {
   .cloud-layer div { animation: none; }
@@ -354,6 +359,10 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   height: calc(100% + 96px);
   object-fit: cover;
   will-change: transform, filter;
+  /* its top edge, under the thin end of the clouds as it rises, softened: no line
+     (the fade is all in the part above the screen once it's in place) */
+  -webkit-mask-image: linear-gradient(transparent, #000 48px);
+  mask-image: linear-gradient(transparent, #000 48px);
 }
 /* A light shade over the blurred video, fading in with the blur, so the synopsis reads well. */
 .film-wash {
