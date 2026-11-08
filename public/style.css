@@ -301,7 +301,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
-.quote.honours img { width: auto; height: clamp(90px, 15vh, 140px); }
+.quote.honours img { width: auto; height: clamp(130px, 22vh, 200px); }
 .logline p {
   max-width: 34rem;
   font-size: clamp(1.5rem, 3.4vw, 2.4rem);

@@ -24,15 +24,12 @@
     document.body.insertAdjacentHTML("afterbegin",
       (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
       '<a class="menu-button" href="menu.html" aria-label="Menu">' + icon + "</a>");
-    // A tap while the page is still gliding from a quick scroll (phones) only stops the
-    // glide: no click, and the touch is cancelled rather than ended. So while the page
-    // is moving (it scrolled in the last moment), touching MENU opens it straight away.
+    // MENU opens as it's pressed, not on the click: pressing while the page still glides
+    // from a quick scroll only stops the glide, and no click follows.
     var button = document.querySelector(".menu-button");
-    var lastScroll = 0;
-    window.addEventListener("scroll", function () { lastScroll = Date.now(); }, { passive: true });
-    button.addEventListener("touchstart", function (e) {
-      if (e.touches.length === 1 && Date.now() - lastScroll < 150) location.href = button.href;
-    }, { passive: true });
+    button.addEventListener("pointerdown", function (e) {
+      if (e.button === 0) location.href = button.href;
+    });
   } else {
     // The page you came from (this site's), marked as the current one; back to it on close.
     var from = "";
