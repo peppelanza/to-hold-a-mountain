@@ -8,6 +8,7 @@
     ["Home", "./"],
     ["About the film", "about.html"],
     ["Trailer", "trailer.html"],
+    ["Theatrical Release", "theatrical.html"],
     ["Festivals", "screenings.html"],
     ["Press", "press.html"],
     ["Soundscape", "soundtrack.html"],

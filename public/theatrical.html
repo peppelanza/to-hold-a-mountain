@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Theatrical Release — To Hold a Mountain</title>
+  <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+  <script src="gate.js"></script>
+  <link rel="stylesheet" href="screenings.css">
+</head>
+<body>
+  <main class="page-main listing-page">
+    <h1>Theatrical Release</h1>
+
+    <!-- One row per screening, from the "Theatrical Release" tab of the Google Sheet
+         (sheet.js), sorted by date; each row links to its cinema's page (the Link
+         column). The headings show at once, the rows once it has been read. -->
+    <table class="listing" data-gid="795570067" data-columns="date venue city" data-link="link">
+      <thead>
+        <tr><th scope="col">Date</th><th scope="col">Venue</th><th scope="col">City</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <script src="menu.js"></script>
+  <script src="sheet.js"></script>
+</body>
+</html>
