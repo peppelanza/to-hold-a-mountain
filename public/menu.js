@@ -8,7 +8,7 @@
     ["Home", "./"],
     ["About the film", "about.html"],
     ["Trailer", "trailer.html"],
-    ["Screenings", "screenings.html"],
+    ["Festivals", "screenings.html"],
     ["Press", "press.html"],
     ["Soundscape", "soundtrack.html"],
     // ["Community", "community.html"], (hidden for now; the page is still there)
