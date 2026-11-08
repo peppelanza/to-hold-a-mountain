@@ -1,7 +1,7 @@
 /* Festivals and Theatrical Release: a table filled from the Google Sheet by sheet.js. */
 .listing-page { max-width: 72rem; padding-bottom: 18vh; }
 
-/* Same feel as the credits on About the film: small caps headings, thin lines. */
+/* Same feel as the credits on About the Film: small caps headings, thin lines. */
 .listing {
   width: 100%;
   margin-top: 3rem;

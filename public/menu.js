@@ -6,7 +6,7 @@
 (function () {
   var items = [
     ["Home", "./"],
-    ["About the film", "about.html"],
+    ["About the Film", "about.html"],
     ["Trailer", "trailer.html"],
     ["Theatrical Release", "theatrical.html"],
     ["Festivals", "screenings.html"],
