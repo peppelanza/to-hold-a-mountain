@@ -76,7 +76,7 @@
   footer.className = "site-footer";
   footer.innerHTML =
     '<p>© 2026 Wake Up Films, Les Film de L’œil Sauvage, Ardor Films, Cvinger Film, Kinematograf, RTV Slovenja — ' +
-    'Website designed by <a class="plain" href="mailto:g.lanzafame@me.com">Lanzafame</a>.</p>' +
+    'Website designed by <a class="plain" href="https://www.giuseppelanzafame.com/" target="_blank" rel="noopener">Lanzafame</a>.</p>' +
     '<ul class="socials">' + socials.map(function (s) {
       return '<li><a href="' + s[1] + '" target="_blank" rel="noopener" aria-label="' + s[0] + '" title="' + s[0] + '">' + s[2] + "</a></li>";
     }).join("") + "</ul>";
