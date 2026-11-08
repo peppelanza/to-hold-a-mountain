@@ -24,6 +24,21 @@
     document.body.insertAdjacentHTML("afterbegin",
       (here === "index.html" ? "" : '<a class="home-link" href="./">To Hold a Mountain</a>') +
       '<a class="menu-button" href="menu.html" aria-label="Menu">' + icon + "</a>");
+    // A tap while the page is still gliding from a quick scroll (phones) only stops the
+    // glide, with no click; so a tap on MENU (the finger lifted where it went down)
+    // opens it itself.
+    var button = document.querySelector(".menu-button");
+    var tap = null;
+    button.addEventListener("touchstart", function (e) {
+      tap = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+    }, { passive: true });
+    button.addEventListener("touchend", function (e) {
+      var t = e.changedTouches[0];
+      if (!tap || Math.abs(t.clientX - tap.x) > 10 || Math.abs(t.clientY - tap.y) > 10) return;
+      tap = null;
+      e.preventDefault(); // (no click after it as well)
+      location.href = button.href;
+    });
   } else {
     // The page you came from (this site's), marked as the current one; back to it on close.
     var from = "";
