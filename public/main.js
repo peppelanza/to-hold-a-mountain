@@ -21,6 +21,7 @@ const stage = film.querySelector(".film-stage");
 let video = film.querySelector("video"); // the light clip first, then the full-quality one
 const wash = film.querySelector(".film-wash");
 const filmStory = film.querySelector(".film-story");
+const support = document.querySelector(".support");
 const story = filmStory.querySelector(".story");
 const introClouds = document.querySelector(".intro-clouds");
 const introLogo = document.querySelector(".intro-logo");
@@ -251,6 +252,7 @@ function update() {
     filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
   }
   filmStory.classList.toggle("shown", shown > 0.5);
+  support.classList.toggle("away", shown > 0); // the impact campaign button, gone as the synopsis comes in
   introClouds.style.opacity = shown > 0 ? (1 - shown).toFixed(3) : "";
 
   // Safari's bands around its address bar (iPhone) take the page's colour; it follows
