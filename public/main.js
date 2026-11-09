@@ -252,7 +252,7 @@ function update() {
     filmStory.style.transform = shown < 1 ? `scale(${0.88 + 0.12 * shown})` : ""; // and zooms in as it sharpens
   }
   filmStory.classList.toggle("shown", shown > 0.5);
-  support.classList.toggle("away", shown > 0); // the impact campaign button, gone as the synopsis comes in
+  support.classList.toggle("away", blur > 0); // the impact campaign button, gone as the video starts to blur
   introClouds.style.opacity = shown > 0 ? (1 - shown).toFixed(3) : "";
 
   // Safari's bands around its address bar (iPhone) take the page's colour; it follows

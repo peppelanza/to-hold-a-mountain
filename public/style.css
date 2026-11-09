@@ -468,7 +468,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 
 /* The impact campaign: a small white pill, fixed at the bottom left from the start
-   until the synopsis comes in (main.js adds .away): the Women Make Movies logo, the
+   until the video starts to blur (main.js adds .away): the Women Make Movies logo, the
    words, an arrow (another site). */
 .support {
   position: fixed;
