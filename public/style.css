@@ -475,11 +475,11 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   left: 20px;
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   z-index: 30;
-  height: 44px;
+  height: 36px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 16px 0 14px;
+  padding: 0 14px 0 14px;
   border-radius: 999px;
   background: #fff;
   color: #1d1d16;
@@ -492,7 +492,7 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .support:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
 .support.away, .loading .support { opacity: 0; visibility: hidden; }
 .support-logo { flex: none; display: flex; }
-.support-logo img { display: block; width: auto; height: 22px; }
+.support-logo img { display: block; width: auto; height: 13px; }
 .support-label {
   font-size: 0.66rem;
   font-weight: 600;
@@ -503,8 +503,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 .support-arrow { flex: none; width: 11px; height: 11px; }
 @media (max-width: 767px) {
   /* smaller still, the words on two lines */
-  .support { left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); height: 40px; gap: 8px; padding: 0 13px 0 11px; }
-  .support-logo img { height: 18px; }
+  .support { left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); height: 34px; gap: 8px; padding: 0 12px 0 12px; }
+  .support-logo img { height: 11px; }
   .support-label { font-size: 0.56rem; letter-spacing: 0.13em; }
   .support-label span { display: block; }
   .support-arrow { width: 10px; height: 10px; }
