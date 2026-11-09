@@ -15,11 +15,10 @@
 /* One solid colour, no gradient: iPhone Safari fills the bands around its address bar
    (top and bottom) with the page's colour, so they match it. (Home: style.css.) */
 html { background: var(--olive-deep); color: var(--ink); }
-/* The menu page, and the trailer or the password screen while they cover a page: their
+/* The menu page, and the trailer while it covers a page: their
    own colour, for Safari's bands. */
 html.menu-page, .menu-page body { background: #2c2c1c; } /* the menu, a page of its own (menu.js) */
 html.trailer-open, .trailer-open body { background-color: #0c0c08; }
-html.locked, .locked body { background-color: var(--olive-deep); }
 body { background: var(--olive-deep); color: var(--ink); }
 
 body {
@@ -258,57 +257,3 @@ a { color: inherit; }
 .trailer-close span:first-child { transform: rotate(45deg); }
 .trailer-close span:last-child { transform: rotate(-45deg); }
 .trailer-close:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
-
-/* ---------- Password screen (gate.js) ---------- */
-
-.locked { overflow: hidden; } /* the page stays where it was */
-.locked body > :not(.gate) { visibility: hidden; }
-.gate {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: var(--olive-deep);
-  text-align: center;
-  transition: opacity 0.5s ease;
-}
-.gate.leaving { opacity: 0; pointer-events: none; }
-.gate-title {
-  margin-bottom: 1.6rem;
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-.gate-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.gate-input {
-  width: min(280px, 80vw);
-  padding: 0.7em 1em;
-  border: 1px solid rgba(246, 239, 230, 0.5);
-  border-radius: 999px;
-  background: rgba(20, 20, 10, 0.2);
-  color: var(--ink);
-  font: inherit;
-  font-size: 1.1rem;
-  text-align: center;
-  letter-spacing: 0.1em;
-  outline: none;
-}
-.gate-input:focus { border-color: var(--ink); }
-.gate-button { margin-top: 0.4rem; background: transparent; cursor: pointer; font-family: inherit; }
-.gate-error { min-height: 1.4em; font-style: italic; color: var(--cream); }
-.gate.shake .gate-input { animation: gate-shake 0.4s; }
-@keyframes gate-shake {
-  20%, 60% { transform: translateX(-8px); }
-  40%, 80% { transform: translateX(8px); }
-}
