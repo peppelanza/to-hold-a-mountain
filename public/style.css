@@ -446,6 +446,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
 }
 .synopsis .release a { color: inherit; text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
 .synopsis .release a:hover { text-decoration-thickness: 2px; }
+/* Phones: a little smaller, so each line fits on one row (from 375 wide). */
+@media (max-width: 767px) { .synopsis .release { font-size: 0.69rem; } }
 .watch { background: rgba(20, 30, 40, 0.15); }
 /* Phones: stacked, taller than the screen: the poster full width, then the heading, the
    synopsis, the two buttons and the footer. It stays inside the pinned video's box (cut
