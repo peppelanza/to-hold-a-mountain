@@ -467,7 +467,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   .film-story .site-footer { position: static; margin-top: 56px; padding: 16px 0 24px; }
 }
 
-/* The impact campaign: a small white pill, fixed at the bottom left from the start
+/* The impact campaign: a small see-through pill like MENU (a thin light border, the
+   page behind blurred), fixed at the bottom left from the start
    until the video starts to blur (main.js adds .away): the Women Make Movies logo, the
    words, an arrow (another site). */
 .support {
@@ -481,18 +482,20 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   gap: 10px;
   padding: 0 14px 0 14px;
   border-radius: 999px;
-  background: #fff;
-  color: #1d1d16;
+  border: 1px solid rgba(246, 239, 230, 0.45);
+  background: transparent;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
   font-family: var(--serif);
   text-decoration: none;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
   transition: opacity 0.4s, visibility 0.4s, transform 0.3s;
 }
 .support:hover { transform: scale(1.05); }
 .support:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; }
 .support.away, .loading .support { opacity: 0; visibility: hidden; }
 .support-logo { flex: none; display: flex; }
-.support-logo img { display: block; width: auto; height: 13px; }
+.support-logo img { display: block; width: auto; height: 13px; filter: brightness(0) invert(1); } /* white, like the words */
 .support-label {
   font-size: 0.66rem;
   font-weight: 600;
