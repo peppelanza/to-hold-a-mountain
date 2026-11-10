@@ -444,8 +444,8 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   text-transform: uppercase;
   color: var(--ink);
 }
-.synopsis .release a { color: inherit; text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
-.synopsis .release a:hover { text-decoration-thickness: 2px; }
+.synopsis .release a { color: inherit; text-decoration: none; }
+.synopsis .release a:hover { text-decoration: underline; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
 /* Phones: a little smaller, so each line fits on one row (from 375 wide). */
 @media (max-width: 767px) { .synopsis .release { font-size: 0.69rem; } }
 .watch { background: rgba(20, 30, 40, 0.15); }
@@ -469,34 +469,32 @@ html, body { background: var(--page, #939ca2); transition: background-color 0.4s
   .film-story .site-footer { position: static; margin-top: 56px; padding: 16px 0 24px; }
 }
 
-/* The impact campaign, under the release lines in the synopsis: a pill outlined like the
-   buttons above, the Women Make Movies logo (white), the words, an arrow (another site). */
+/* The impact campaign, right below the two buttons: outlined like them, the same size
+   of letters, with the Women Make Movies logo (white) and an arrow (another site). */
 .support {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 1.4rem;
-  padding: 0.75em 1.4em;
+  gap: 0.9em;
+  margin-top: 12px; /* the buttons' own gap */
+  padding: 0.85em 1.8em;
   border: 1px solid var(--ink);
   border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--ink);
   text-decoration: none;
   transition: background 0.25s, color 0.25s;
 }
-.support:hover, .support:focus-visible { background: rgba(246, 239, 230, 0.12); outline: none; }
+.support:hover, .support:focus-visible { background: var(--ink); color: #46462e; outline: none; }
+.support:hover .support-logo img, .support:focus-visible .support-logo img { filter: brightness(0); opacity: 0.75; }
 .support-logo { flex: none; display: flex; }
-.support-logo img { display: block; width: auto; height: 15px; filter: brightness(0) invert(1); } /* white, like the words */
-.support-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-.support-arrow { flex: none; width: 11px; height: 11px; }
+.support-logo img { display: block; width: auto; height: 1.3em; filter: brightness(0) invert(1); } /* white, like the words */
+.support-arrow { flex: none; width: 0.95em; height: 0.95em; }
 @media (max-width: 767px) {
-  .support { gap: 10px; padding: 0.7em 1.1em; }
-  .support-logo img { height: 13px; }
-  .support-label { font-size: 0.62rem; letter-spacing: 0.13em; }
+  /* as the buttons on phones; too long for one row there, so the words on two lines */
+  .support { padding: 0.8em 1.4em 0.8em 1.1em; font-size: 0.72rem; letter-spacing: 0.14em; white-space: normal; line-height: 1.35; }
+  .support-label span { display: block; }
 }
